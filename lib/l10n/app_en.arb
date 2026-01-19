@@ -1,0 +1,39 @@
+{
+  "@@locale": "en",
+
+  "onboardingTitle1": "DAILY BOOST",
+  "onboardingSubtitle1": "Elevate Your Life",
+  "onboardingDescription1": "Daily Boost helps you build better habits, stay motivated, and reach your personal goals every day.",
+
+  "onboardingTitle2": "STAY FOCUSED",
+  "onboardingSubtitle2": "Achieve Your Goals",
+  "onboardingDescription2": "Track your progress and stay focused on what really matters.",
+
+  "onboardingTitle3": "GROW EVERYDAY",
+  "onboardingSubtitle3": "Better Version of You",
+  "onboardingDescription3": "Develop skills, habits, and routines that help you grow every day.",
+
+  "next": "Next",
+  "getStarted": "Get Started",
+
+  "authLogin": "Login",
+  "authSignup": "Sign Up",
+  "fullName": "Full Name",
+  "enterName": "Your name",
+  "nameRequired": "Name is required",
+  "nameMinChars": "Enter a valid name with more than 3 chars",
+  "email": "Email",
+  "enterEmail": "example@email.com",
+  "emailRequired": "Email is required",
+  "emailInvalid": "Enter a valid email",
+  "password": "Password",
+  "enterPassword": "••••••••",
+  "passwordRequired": "Password is required",
+  "passwordMin": "Password must be at least 6 characters",
+  "createAccount": "Create Account",
+  "forgotPasswordTitle": "Forgot Password",
+  "forgotPasswordDescription": "Enter your email address below to receive password reset instructions.",
+  "sendResetLink": "Send Reset Link",
+  "orContinueWith": "Or continue with"
+
+}

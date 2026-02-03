@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "980697009125",
+    "project_id": "e-commerce-282a6",
+    "storage_bucket": "e-commerce-282a6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980697009125:android:d04112a423ef07c48f3d0c",
+        "android_client_info": {
+          "package_name": "com.yasmen.boost.boo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "980697009125-vhibcu3tg7vb2tqkimheef8fgjanvl1u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yasmen.boost.boo",
+            "certificate_hash": "5d383623947dac936b7272dd32093986bdf04a56"
+          }
+        },
+        {
+          "client_id": "980697009125-7pturol3t5psqoiq0cnkk4gr059bkptt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhOQw0Xq0RiKhP4VkuT9uHdxBUNttYkaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "980697009125-7pturol3t5psqoiq0cnkk4gr059bkptt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "980697009125-bca3bq3d8i1238rsp6bdpcguucv0c18b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yasmen.boost.boo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

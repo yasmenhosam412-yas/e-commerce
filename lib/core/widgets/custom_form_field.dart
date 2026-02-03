@@ -8,9 +8,13 @@ class CustomFormField extends StatelessWidget {
   final String? label;
   final String? hint;
   final String? Function(String? value)? validator;
+  final String? Function(String? value)? onChanged;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final bool obscureText;
+  final int? maxLines;
+  final bool? readOnly;
+  final VoidCallback? onTap;
 
   const CustomFormField({
     super.key,
@@ -22,6 +26,10 @@ class CustomFormField extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.obscureText = false,
+    this.maxLines,
+    this.onChanged,
+    this.readOnly,
+    this.onTap,
   });
 
   @override
@@ -31,8 +39,15 @@ class CustomFormField extends StatelessWidget {
       keyboardType: textInputType,
       validator: validator,
       obscureText: obscureText,
+      readOnly: readOnly ?? false,
+      onTap: onTap ?? () {},
+      maxLines: maxLines ?? 1,
+      onChanged: onChanged,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.darkBlack,fontSize: 16),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        color: AppColors.darkBlack,
+        fontSize: 16,
+      ),
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppPadding.medium,
@@ -43,9 +58,10 @@ class CustomFormField extends StatelessWidget {
         hintStyle: Theme.of(
           context,
         ).textTheme.labelMedium?.copyWith(color: Colors.grey.shade500),
-        labelStyle: Theme.of(
-          context,
-        ).textTheme.labelMedium?.copyWith(color: Colors.grey.shade700,fontSize: 16),
+        labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: Colors.grey.shade700,
+          fontSize: 16,
+        ),
         floatingLabelStyle: Theme.of(
           context,
         ).textTheme.labelMedium?.copyWith(color: AppColors.primaryColor),

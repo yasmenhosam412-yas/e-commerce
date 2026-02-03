@@ -8,4 +8,5 @@ class AppImages {
   static final String auth = "$imagePath/auth.svg";
   static final String facebook = "$iconPath/facebook.png";
   static final String google= "$iconPath/google.png";
+  static final String loading= "$iconPath/loading.json";
 }

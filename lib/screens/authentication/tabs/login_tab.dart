@@ -1,4 +1,7 @@
+import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
+import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/services/get_init.dart';
 import '../../../core/services/navigation_service.dart';
@@ -6,11 +9,11 @@ import '../../../core/utils/app_colors.dart';
 import '../../../core/utils/app_padding.dart';
 import '../../../core/widgets/custom_form_field.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../main_screen/main_screen_seller/main_screen_seller.dart';
 import '../widgets/forget_password_widget.dart';
 import '../widgets/gredient_button.dart';
-import '../widgets/social_buttons.dart';
 
-class LoginTab extends StatelessWidget {
+class LoginTab extends StatefulWidget {
   const LoginTab({
     super.key,
     required this.emailController,
@@ -23,27 +26,24 @@ class LoginTab extends StatelessWidget {
   final GlobalKey<FormState> formKey;
 
   @override
+  State<LoginTab> createState() => _LoginTabState();
+}
+
+class _LoginTabState extends State<LoginTab> {
+  bool isBuyerSelected = true;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(AppPadding.large),
-      decoration: BoxDecoration(
-        // color: AppColors.whiteColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.darkBlack.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: Offset(0, 10),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
       child: Form(
-        key: formKey,
+        key: widget.formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             CustomFormField(
-              controller: emailController,
+              controller: widget.emailController,
               label: AppLocalizations.of(context)!.email,
               hint: AppLocalizations.of(context)!.enterEmail,
               prefixIcon: Icon(Icons.alternate_email),
@@ -59,7 +59,7 @@ class LoginTab extends StatelessWidget {
             ),
             SizedBox(height: AppPadding.large),
             CustomFormField(
-              controller: passwordController,
+              controller: widget.passwordController,
               label: AppLocalizations.of(context)!.password,
               hint: AppLocalizations.of(context)!.enterPassword,
               prefixIcon: Icon(Icons.lock_outline),
@@ -95,14 +95,43 @@ class LoginTab extends StatelessWidget {
             ),
 
             SizedBox(height: AppPadding.xxlarge),
-            GradientButton(
-              text: AppLocalizations.of(context)!.authLogin,
-              onPressed: () {
-                if (formKey.currentState!.validate()) {}
+            BlocConsumer<AuthCubit, AuthState>(
+              listener: (context, state) {
+                if (state is AuthLoaded) {
+                  if (state.userType == "seller") {
+                    getIt<NavigationService>().navigatePushReplace(
+                      MainScreenSeller(),
+                    );
+                  } else {
+                    getIt<NavigationService>().navigatePushReplace(
+                      MainScreenBuyer(),
+                    );
+                  }
+                }
+
+                if (state is AuthError) {
+                  getIt<NavigationService>().showToast(state.error);
+                }
+              },
+              builder: (context, state) {
+                return GradientButton(
+                  text: (state is AuthLoading)
+                      ? AppLocalizations.of(context)!.loading
+                      : AppLocalizations.of(context)!.authLogin,
+                  onPressed: (state is AuthLoading)
+                      ? null
+                      : () {
+                          if (widget.formKey.currentState!.validate()) {
+                            context.read<AuthCubit>().signInWithEmail(
+                              widget.emailController.text,
+                              widget.passwordController.text,
+                            );
+                          }
+                        },
+                );
               },
             ),
             SizedBox(height: AppPadding.large),
-            const SocialAuthButtons(),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NavigationService {
   late final GlobalKey<NavigatorState> navigatorKey;
@@ -20,6 +21,13 @@ class NavigationService {
     );
   }
 
+  Future<dynamic> navigatePushRemoveUntil(Widget widget) {
+    return navigatorKey.currentState!.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => widget),
+      (route) => false,
+    );
+  }
+
   Future<void> showCustomDialog(Widget widget) async {
     showAdaptiveDialog(
       context: navigatorKey.currentContext!,
@@ -33,8 +41,19 @@ class NavigationService {
     return showModalBottomSheet(
       context: navigatorKey.currentContext!,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => content,
+      backgroundColor: AppColors.whiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          10,
+          10,
+          10,
+          MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: content,
+      ),
     );
   }
 
@@ -47,5 +66,9 @@ class NavigationService {
         behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  Future<void> showToast(String text) async {
+    Fluttertoast.showToast(msg: text, backgroundColor: AppColors.primaryColor);
   }
 }

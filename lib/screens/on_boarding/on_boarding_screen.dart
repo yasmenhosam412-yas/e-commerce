@@ -153,7 +153,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                       ?.copyWith(
                                     color: AppColors.primaryColor
                                         .withValues(alpha: 0.7),
-                                    fontSize: 16,
+                                    fontSize: 18,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),

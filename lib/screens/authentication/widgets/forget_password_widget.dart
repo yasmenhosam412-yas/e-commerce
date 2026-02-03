@@ -1,4 +1,6 @@
+import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../l10n/app_localizations.dart';
 import 'gredient_button.dart';
 import '../../../core/utils/app_padding.dart';
@@ -81,12 +83,27 @@ class ForgotPasswordWidget extends StatelessWidget {
 
                 SizedBox(height: AppPadding.xxlarge),
 
-                GradientButton(
-                  text: AppLocalizations.of(context)!.sendResetLink,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
+                BlocConsumer<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    if (state is AuthLoaded) {
                       Navigator.of(context).pop();
                     }
+                  },
+                  builder: (context, state) {
+                    return GradientButton(
+                      text: (state is AuthLoading)
+                          ? AppLocalizations.of(context)!.loading
+                          : AppLocalizations.of(context)!.sendResetLink,
+                      onPressed: (state is AuthLoading)
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                context.read<AuthCubit>().resetPassword(
+                                  emailController.text,
+                                );
+                              }
+                            },
+                    );
                   },
                 ),
 

@@ -5,7 +5,7 @@ import '../../../core/utils/app_colors.dart';
 
 class GradientButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const GradientButton({
     super.key,
@@ -28,12 +28,7 @@ class GradientButton extends StatelessWidget {
         ),
         child: Ink(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppColors.primaryColor,
-                AppColors.primaryColor.withValues(alpha: 0.8),
-              ],
-            ),
+            color: AppColors.primaryColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Container(

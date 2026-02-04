@@ -1,35 +1,28 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../../../core/models/banner_model.dart';
-import '../../../../../../../l10n/app_localizations.dart';
-
 class BannerBadgeWidget extends StatelessWidget {
-  final BannerModel banner;
+  final Map<String, dynamic> banner;
 
   const BannerBadgeWidget({super.key, required this.banner});
 
   @override
   Widget build(BuildContext context) {
-    late final String text;
-    late final Color color;
+    final String hexColor = banner['badgeColor']?.toString() ?? 'FF0000FF';
+    Color bgColor;
 
-    if (banner.isNewShop) {
-      text = AppLocalizations.of(context)!.neww;
-      color = Colors.green;
-    } else if (banner.hasDiscount) {
-      text = AppLocalizations.of(context)!.discount;
-      color = Colors.red;
-    } else if (banner.isBestSelling) {
-      text = AppLocalizations.of(context)!.bestSeller;
-      color = Colors.orange;
-    } else {
-      return const SizedBox.shrink();
+    try {
+      String formattedHex = hexColor.length == 8 ? hexColor : 'FF$hexColor';
+      bgColor = Color(int.parse(formattedHex, radix: 16));
+    } catch (e) {
+      bgColor = Colors.red;
     }
+
+    final String text = banner['badgeText']?.toString() ?? 'NEW';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color,
+        color: bgColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

@@ -11,6 +11,9 @@ class ProductsModel {
   final String? collectionName;
   final double? newPrice;
   final String? discount;
+  final String? storeId;
+  final String? storeName;
+  final String? storeImage;
 
   ProductsModel({
     required this.id,
@@ -25,11 +28,14 @@ class ProductsModel {
     this.collectionName,
     this.newPrice,
     this.discount,
+    this.storeId,
+    this.storeName,
+    this.storeImage,
   });
 
   factory ProductsModel.fromMap(Map<String, dynamic> map) {
     return ProductsModel(
-      id: map['id'],
+      id: int.parse(map['id']),
       image: map['image'] ?? '',
       name: map['name'] ?? '',
       desc: map['desc'] ?? '',
@@ -41,6 +47,9 @@ class ProductsModel {
       discount: map['discount'],
       collectionName: map['collectionName'],
       isFeatured: map['isFeatured'],
+      storeId: map['storeId'] ?? '',
+      storeName: map['storeName'] ?? '',
+      storeImage: map['storeImage'],
     );
   }
 
@@ -57,6 +66,9 @@ class ProductsModel {
       'collectionName': collectionName,
       'newPrice': newPrice,
       'discount': discount,
+      "storeId": storeId,
+      "storeName": storeName,
+      "storeImage": storeImage,
     };
   }
 }

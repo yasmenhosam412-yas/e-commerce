@@ -136,13 +136,41 @@
   "all_label": "الكل",
   "collection_label": "المجموعة",
   "show_featured_only": "عرض المميز فقط",
-  "nothing" : "لا يوجد منتجات",
+  "nothing": "لا يوجد منتجات",
   "selectImage": "يرجى اختيار صورة.",
   "enterBadge": "يرجى إدخال نص الشارة.",
-  "saved": "تم حفظ الإعلان بنجاح."
-
-
-
-
-
+  "saved": "تم حفظ الإعلان بنجاح.",
+  "couponCode": "كود الكوبون",
+  "enterCouponCode": "من فضلك أدخل كود الكوبون",
+  "discountType": "نوع الخصم",
+  "percentage": "نسبة مئوية",
+  "fixedAmount": "مبلغ ثابت",
+  "discountPercentage": "نسبة الخصم %",
+  "discountAmount": "قيمة الخصم",
+  "selectExpiryDate": "اختر تاريخ الانتهاء",
+  "expiryDate": "تاريخ الانتهاء",
+  "saveCoupon": "حفظ الكوبون",
+  "couponSaved": "تم حفظ الكوبون بنجاح",
+  "selectExpiryDateError": "من فضلك اختر تاريخ الانتهاء",
+  "editing": "التعديل",
+  "products": "المنتجات",
+  "ads": "الإعلانات",
+  "discounts": "الخصومات",
+  "coupons": "القسائم",
+  "collections": "المجموعات",
+  "options": "خيارات التعديل",
+  "productUpdated": "تم تحديث المنتج بنجاح",
+  "editProduct": "تعديل المنتج",
+  "deleteProduct": "حذف المنتج",
+  "deleteConfirmation": "هل أنت متأكد أنك تريد الحذف؟",
+  "cancel": "إلغاء",
+  "delete": "حذف",
+  "noAnyData": "لا يوجد بيانات",
+  "editCollection": "تعديل المجموعة",
+  "collectionUpdated": "تم تحديث المجموعة بنجاح",
+  "storeInfo": "عن المتجر",
+  "off": "خصم",
+  "item": "قطع",
+  "addToCart": "اضف الي السلة",
+  "addedToCart": "تم الاضافة للسلة"
 }

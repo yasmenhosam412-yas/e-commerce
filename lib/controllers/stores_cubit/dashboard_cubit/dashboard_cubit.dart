@@ -87,6 +87,29 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
+  Future<void> addCoupon(
+    String name,
+    String value,
+    String expiryDate,
+    String type,
+  ) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.addCoupon(name, value, expiryDate, type);
+
+      emit(DashboardSuccess(isLoading: false, isLoaded: true, error: ''));
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
   Future<void> addAds(
     File image,
     String badgeText,
@@ -201,6 +224,166 @@ class DashboardCubit extends Cubit<DashboardState> {
           collections: result,
         ),
       );
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> getCoupons() async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      final result = await storeService.getCoupons();
+
+      emit(
+        state.copyWith(
+          isLoading: false,
+          isLoaded: true,
+          error: '',
+          coupons: result,
+        ),
+      );
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteCollection(String collectionId) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.deleteCollection(collectionId);
+      await getCollection();
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteAds(String adID) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.deleteAd(adId: adID);
+      await getAds();
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteDiscount(String disId) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.deleteDiscount(disId);
+      await getDiscount();
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteCoupon(String couponId) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.deleteCoupon(couponId);
+      await getAds();
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> getAds() async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      final ads = await storeService.getAds();
+      emit(
+        state.copyWith(isLoading: false, isLoaded: true, error: '', ads: ads),
+      );
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> updateCollection(
+    String collectionId,
+    String name,
+    String desc,
+  ) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.updateCollection(
+        collectionId: collectionId,
+        name: name,
+        description: desc,
+      );
+
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
+    } catch (e) {
+      emit(
+        DashboardSuccess(
+          isLoading: false,
+          isLoaded: false,
+          error: ErrorHandler.fromException(e).message,
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+
+    try {
+      await storeService.deleteProduct(productId: productId);
+      await getProducts();
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
     } catch (e) {
       emit(
         DashboardSuccess(

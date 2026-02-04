@@ -427,4 +427,103 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get saved => 'تم حفظ الإعلان بنجاح.';
+
+  @override
+  String get couponCode => 'كود الكوبون';
+
+  @override
+  String get enterCouponCode => 'من فضلك أدخل كود الكوبون';
+
+  @override
+  String get discountType => 'نوع الخصم';
+
+  @override
+  String get percentage => 'نسبة مئوية';
+
+  @override
+  String get fixedAmount => 'مبلغ ثابت';
+
+  @override
+  String get discountPercentage => 'نسبة الخصم %';
+
+  @override
+  String get discountAmount => 'قيمة الخصم';
+
+  @override
+  String get selectExpiryDate => 'اختر تاريخ الانتهاء';
+
+  @override
+  String get expiryDate => 'تاريخ الانتهاء';
+
+  @override
+  String get saveCoupon => 'حفظ الكوبون';
+
+  @override
+  String get couponSaved => 'تم حفظ الكوبون بنجاح';
+
+  @override
+  String get selectExpiryDateError => 'من فضلك اختر تاريخ الانتهاء';
+
+  @override
+  String get editing => 'التعديل';
+
+  @override
+  String get products => 'المنتجات';
+
+  @override
+  String get ads => 'الإعلانات';
+
+  @override
+  String get discounts => 'الخصومات';
+
+  @override
+  String get coupons => 'القسائم';
+
+  @override
+  String get collections => 'المجموعات';
+
+  @override
+  String get options => 'خيارات التعديل';
+
+  @override
+  String get editProduct => 'تعديل المنتج';
+
+  @override
+  String get productUpdated => 'تم تحديث المنتج بنجاح';
+
+  @override
+  String get deleteProduct => 'حذف المنتج';
+
+  @override
+  String get deleteConfirmation => 'هل أنت متأكد أنك تريد الحذف؟';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get noAnyData => 'لا يوجد بيانات';
+
+  @override
+  String get editCollection => 'تعديل المجموعة';
+
+  @override
+  String get collectionUpdated => 'تم تحديث المجموعة بنجاح';
+
+  @override
+  String get storeInfo => 'عن المتجر';
+
+  @override
+  String get off => 'خصم';
+
+  @override
+  String get item => 'قطع';
+
+  @override
+  String get addToCart => 'اضف الي السلة';
+
+  @override
+  String get addedToCart => 'تم الاضافة للسلة';
 }

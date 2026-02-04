@@ -21,7 +21,6 @@ class ManageProductsScreen extends StatefulWidget {
 
 class _ManageProductsScreenState extends State<ManageProductsScreen> {
   final Map<int, bool> _featuredOverrides = {};
-
   final Map<int, String?> _productDiscounts = {};
   final Map<int, String?> _productCollections = {};
 
@@ -62,22 +61,34 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   }
 
   void _toggleFeatured(ProductsModel product) {
-    final current = _isFeaturedNow(product);
-    final newValue = !current;
+    final newValue = !_isFeaturedNow(product);
 
-    if (newValue) {
-      final total = _totalFeaturedAfterChange(product.id, true);
-      if (total > 3) {
-        getIt<NavigationService>().showToast(
-          AppLocalizations.of(context)!.max_featured_products,
-        );
-        return;
-      }
+    if (newValue && _totalFeaturedAfterChange(product.id, true) > 3) {
+      getIt<NavigationService>().showToast(
+        AppLocalizations.of(context)!.max_featured_products,
+      );
+      return;
     }
 
     setState(() {
       _featuredOverrides[product.id] = newValue;
     });
+  }
+
+  String resolveDiscount(ProductsModel product, List<String> discounts) {
+    final value =
+        _productDiscounts[product.id] ?? product.discount ?? noneDiscount;
+
+    return discounts.contains(value) ? value : noneDiscount;
+  }
+
+  String resolveCollection(ProductsModel product, List<String> collections) {
+    final value =
+        _productCollections[product.id] ??
+        product.collectionName ??
+        noneCollection;
+
+    return collections.contains(value) ? value : noneCollection;
   }
 
   void _setDiscount(int productId, String? value) {
@@ -95,14 +106,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
     });
   }
 
-  String resolveDiscount(ProductsModel product) =>
-      _productDiscounts[product.id] ?? product.discount ?? noneDiscount;
-
-  String resolveCollection(ProductsModel product) =>
-      _productCollections[product.id] ??
-      product.collectionName ??
-      noneCollection;
-
   void _openProductActions(
     ProductsModel product,
     List<String> discounts,
@@ -119,8 +122,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
       builder: (_) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            final isFeatured = _isFeaturedNow(product);
-
             return Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -143,7 +144,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                         ),
                       ),
                       Checkbox(
-                        value: isFeatured,
+                        value: _isFeaturedNow(product),
                         activeColor: AppColors.primaryColor,
                         onChanged: (_) {
                           _toggleFeatured(product);
@@ -156,7 +157,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                   const SizedBox(height: 12),
 
                   CustomDropdown(
-                    value: resolveDiscount(product),
+                    value: resolveDiscount(product, discounts),
                     label: AppLocalizations.of(context)!.discountValue,
                     items: discounts,
                     onChanged: (v) {
@@ -168,7 +169,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                   const SizedBox(height: 12),
 
                   CustomDropdown(
-                    value: resolveCollection(product),
+                    value: resolveCollection(product, collections),
                     label: AppLocalizations.of(context)!.collectionName,
                     items: collections,
                     onChanged: (v) {
@@ -187,7 +188,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                         );
                         Navigator.pop(context);
                       }
-                      if (state.error != "") {
+                      if (state.error.isNotEmpty) {
                         getIt<NavigationService>().showToast(state.error);
                       }
                     },
@@ -200,13 +201,15 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                               : () {
                                   context.read<DashboardCubit>().updateProduct(
                                     productId: productId.toString(),
-                                    discount: _productDiscounts[product.id],
+                                    discount:
+                                        _productDiscounts[productId] ??
+                                        noneDiscount,
                                     collectionName:
-                                        _productCollections[product.id],
+                                        _productCollections[productId],
                                     isFeatured: _isFeaturedNow(product),
                                     newPrice: _calc(
                                       product.price,
-                                      _productDiscounts[product.id],
+                                      _productDiscounts[productId],
                                     ),
                                   );
                                 },
@@ -232,8 +235,8 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
         automaticallyImplyLeading: false,
+        backgroundColor: AppColors.primaryColor,
         title: Text(AppLocalizations.of(context)!.viewProducts),
         centerTitle: true,
       ),
@@ -242,33 +245,31 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           final products = state.products ?? [];
           _lastProducts = products;
 
-          final List<String> discounts = [
+          final List<String> discounts = {
             noneDiscount,
             ...?state.discounts?.map((e) => e.value.toString()),
-          ];
+          }.toList();
 
-          final List<String> collections = [
+          final List<String> collections = {
             noneCollection,
             ...?state.collections?.map((e) => e["name"].toString()),
-          ];
+          }.toList();
 
           final filteredProducts = products.where((p) {
             final matchesSearch = p.name.toLowerCase().contains(
               _searchQuery.toLowerCase(),
             );
-            final productDiscount = _productDiscounts[p.id] ?? p.discount;
-            final productCollection =
-                _productCollections[p.id] ?? p.collectionName;
-            final productFeatured =
-                _featuredOverrides[p.id] ?? (p.isFeatured ?? false);
 
             final matchesDiscount =
                 _selectedDiscount == null ||
-                productDiscount == _selectedDiscount;
+                (_productDiscounts[p.id] ?? p.discount) == _selectedDiscount;
+
             final matchesCollection =
                 _selectedCollection == null ||
-                productCollection == _selectedCollection;
-            final matchesFeatured = !_filterFeatured || productFeatured;
+                (_productCollections[p.id] ?? p.collectionName) ==
+                    _selectedCollection;
+
+            final matchesFeatured = !_filterFeatured || _isFeaturedNow(p);
 
             return matchesSearch &&
                 matchesDiscount &&
@@ -277,9 +278,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
           }).toList();
 
           if (state.isLoading) {
-            return Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           return Column(
@@ -299,46 +298,44 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                 onFeaturedChanged: (v) => setState(() => _filterFeatured = v),
               ),
 
-              if (filteredProducts.isNotEmpty)
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                    itemCount: filteredProducts.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: .6,
-                          crossAxisSpacing: 14,
-                          mainAxisSpacing: 14,
+              Expanded(
+                child: filteredProducts.isEmpty
+                    ? Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.nothing,
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
-                    itemBuilder: (_, i) {
-                      final product = filteredProducts[i];
-                      return ItemCard(
-                        product: product,
-                        discount:
-                            _productDiscounts[product.id] ?? product.discount,
-                        collection:
-                            _productCollections[product.id] ??
-                            product.collectionName,
-                        isFeatured: _isFeaturedNow(product),
-                        onProductClick: () => _openProductActions(
-                          product,
-                          discounts,
-                          collections,
-                        ),
-                      );
-                    },
-                  ),
-                )
-              else
-                Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.nothing,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                ),
+                      )
+                    : GridView.builder(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                        itemCount: filteredProducts.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: .6,
+                              crossAxisSpacing: 14,
+                              mainAxisSpacing: 14,
+                            ),
+                        itemBuilder: (_, i) {
+                          final product = filteredProducts[i];
+                          return ItemCard(
+                            product: product,
+                            discount:
+                                _productDiscounts[product.id] ??
+                                product.discount,
+                            collection:
+                                _productCollections[product.id] ??
+                                product.collectionName,
+                            isFeatured: _isFeaturedNow(product),
+                            onProductClick: () => _openProductActions(
+                              product,
+                              discounts,
+                              collections,
+                            ),
+                          );
+                        },
+                      ),
+              ),
             ],
           );
         },
@@ -346,11 +343,10 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
     );
   }
 
-  double _calc(double price, String? selectedDiscount) {
-    if (selectedDiscount == null || selectedDiscount.isEmpty) return price;
-    final discountString = selectedDiscount.replaceAll('%', '');
-    final discountValue = double.tryParse(discountString);
-    if (discountValue == null) return price;
-    return price - (price * discountValue / 100);
+  double _calc(double price, String? discount) {
+    if (discount == null || discount == noneDiscount) return price;
+    final value = double.tryParse(discount.replaceAll('%', ''));
+    if (value == null) return price;
+    return price - (price * value / 100);
   }
 }

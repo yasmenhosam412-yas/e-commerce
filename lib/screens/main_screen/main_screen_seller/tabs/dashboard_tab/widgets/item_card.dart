@@ -98,7 +98,7 @@ class ItemCard extends StatelessWidget {
                     ),
                   ),
 
-                  if (discount != null)
+                  if (discount != null && discount != "0")
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(

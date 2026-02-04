@@ -1,10 +1,13 @@
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../../core/utils/app_colors.dart';
 import '../../../../../../../core/utils/app_padding.dart';
 
 class ShopListWidget extends StatelessWidget {
-  const ShopListWidget({super.key});
+  final List<CreateStoreModel> stores;
+
+  const ShopListWidget({super.key, required this.stores});
 
   @override
   Widget build(BuildContext context) {
@@ -12,9 +15,10 @@ class ShopListWidget extends StatelessWidget {
       height: MediaQuery.sizeOf(context).height * 0.2,
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: 10,
+        itemCount: stores.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
+          final store = stores[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Container(
@@ -44,16 +48,14 @@ class ShopListWidget extends StatelessWidget {
                         width: 2,
                       ),
                       image: DecorationImage(
-                        image: NetworkImage(
-                          "https://tse1.mm.bing.net/th/id/OIP.79xrm2hm2KK2zC1DQsoz-wHaEK?rs=1&pid=ImgDetMain&o=7&rm=3",
-                        ),
+                        image: NetworkImage(store.selectedImage),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Shop Name",
+                    store.selectedName,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -68,12 +70,11 @@ class ShopListWidget extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryColor.withValues(alpha:
-                      0.1),
+                      color: AppColors.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      "New",
+                      store.selectedCat,
                       style: TextStyle(
                         fontSize: 10,
                         color: AppColors.primaryColor,

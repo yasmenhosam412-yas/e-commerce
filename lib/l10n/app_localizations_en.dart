@@ -427,4 +427,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saved => 'Ads saved successfully.';
+
+  @override
+  String get couponCode => 'Coupon Code';
+
+  @override
+  String get enterCouponCode => 'Please enter the coupon code';
+
+  @override
+  String get discountType => 'Discount Type';
+
+  @override
+  String get percentage => 'Percentage';
+
+  @override
+  String get fixedAmount => 'Fixed Amount';
+
+  @override
+  String get discountPercentage => 'Discount %';
+
+  @override
+  String get discountAmount => 'Discount Amount';
+
+  @override
+  String get selectExpiryDate => 'Select expiry date';
+
+  @override
+  String get expiryDate => 'Expiry date';
+
+  @override
+  String get saveCoupon => 'Save Coupon';
+
+  @override
+  String get couponSaved => 'Coupon saved successfully';
+
+  @override
+  String get selectExpiryDateError => 'Please select an expiry date';
+
+  @override
+  String get editing => 'Editing';
+
+  @override
+  String get products => 'Products';
+
+  @override
+  String get ads => 'Ads';
+
+  @override
+  String get discounts => 'Discounts';
+
+  @override
+  String get coupons => 'Coupons';
+
+  @override
+  String get collections => 'Collections';
+
+  @override
+  String get options => 'Edit Options';
+
+  @override
+  String get editProduct => 'Edit Product';
+
+  @override
+  String get productUpdated => 'Product updated successfully';
+
+  @override
+  String get deleteProduct => 'Delete Product';
+
+  @override
+  String get deleteConfirmation => 'Are you sure you want to delete?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get noAnyData => 'No Data Yet';
+
+  @override
+  String get editCollection => 'Edit Collection';
+
+  @override
+  String get collectionUpdated => 'Collection updated successfully';
+
+  @override
+  String get storeInfo => 'About Store';
+
+  @override
+  String get off => 'OFF';
+
+  @override
+  String get item => 'Items';
+
+  @override
+  String get addToCart => 'Add to cart';
+
+  @override
+  String get addedToCart => 'Added to cart';
 }

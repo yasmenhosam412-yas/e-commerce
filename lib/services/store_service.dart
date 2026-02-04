@@ -56,15 +56,48 @@ class StoreService {
   }
 
   Future<void> addCollection(String name, String desc) async {
+    final docRef = firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("collections")
+        .doc();
+
+    await docRef.set({
+      "id": docRef.id,
+      "name": name,
+      "desc": desc,
+      "createdAt": FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteCollection(String collectionId) async {
     await firebaseFirestore
         .collection("dashboard")
         .doc(firebaseAuth.currentUser!.uid)
         .collection("collections")
-        .add({
-          "name": name,
-          "desc": desc,
-          "createdAt": FieldValue.serverTimestamp(),
-        });
+        .doc(collectionId)
+        .delete();
+  }
+
+  Future<void> updateCollection({
+    required String collectionId,
+    String? name,
+    String? description,
+  }) async {
+    final Map<String, dynamic> updatedData = {};
+
+    if (name != null && name.isNotEmpty) updatedData['name'] = name;
+    if (description != null && description.isNotEmpty)
+      updatedData['desc'] = description;
+
+    if (updatedData.isEmpty) return;
+
+    await firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("collections")
+        .doc(collectionId)
+        .update(updatedData);
   }
 
   Future<void> addAds(
@@ -76,17 +109,55 @@ class StoreService {
   ) async {
     final imagePath = await CloudinaryService().saveToCloudinary(image);
 
+    final docRef = firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("ads")
+        .doc();
+    await docRef.set({
+      "id": docRef.id,
+      "image": imagePath,
+      "badgeText": badgeText,
+      "position": position,
+      "badgeColor": badgeColor,
+      "textColor": textColor,
+    });
+
+    await firebaseFirestore.collection("AllAds").doc(docRef.id).set({
+      "id": docRef.id,
+      "image": imagePath,
+      "badgeText": badgeText,
+      "position": position,
+      "badgeColor": badgeColor,
+      "textColor": textColor,
+      "storeId": FirebaseAuth.instance.currentUser?.uid,
+    });
+  }
+
+  Future<void> deleteAd({required String adId}) async {
     await firebaseFirestore
         .collection("dashboard")
         .doc(firebaseAuth.currentUser!.uid)
         .collection("ads")
-        .add({
-          "image": imagePath,
-          "badgeText": badgeText,
-          "position": position,
-          "badgeColor": badgeColor,
-          "textColor": textColor,
-        });
+        .doc(adId)
+        .delete();
+    await firebaseFirestore.collection("AllAds").doc(adId).delete();
+  }
+
+  Future<List<Map<String, dynamic>>> getAds() async {
+    final querySnapshot = await firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("ads")
+        .get();
+
+    final ads = querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      data["id"] = doc.id;
+      return data;
+    }).toList();
+
+    return ads;
   }
 
   Future<void> addDiscount(
@@ -95,17 +166,74 @@ class StoreService {
     String start,
     String end,
   ) async {
+    final docRef = firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("discount")
+        .doc();
+
+    await docRef.set({
+      "id": docRef.id,
+      "name": name,
+      "value": "$value %",
+      "start": start,
+      "end": end,
+      "createdAt": FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> addCoupon(
+    String name,
+    String value,
+    String expiryDate,
+    String type,
+  ) async {
+    final docRef = firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("coupons")
+        .doc();
+    await docRef.set({
+      "id": docRef.id,
+      "code": name,
+      "value": value,
+      "expiryDate": expiryDate,
+      "type": type,
+
+      "createdAt": FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> deleteDiscount(String discountId) async {
     await firebaseFirestore
         .collection("dashboard")
         .doc(firebaseAuth.currentUser!.uid)
         .collection("discount")
-        .add({
-          "name": name,
-          "value": "$value %",
-          "start": start,
-          "end": end,
-          "createdAt": FieldValue.serverTimestamp(),
-        });
+        .doc(discountId)
+        .delete();
+  }
+
+  Future<void> deleteCoupon(String couponId) async {
+    await firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("coupons")
+        .doc(couponId)
+        .delete();
+  }
+
+  Future<List<Map<String, dynamic>>> getCoupons() async {
+    final querySnapshot = await firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("coupons")
+        .get();
+
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
   }
 
   Future<List<ProductsModel>> getProducts() async {
@@ -172,24 +300,65 @@ class StoreService {
   }) async {
     final Map<String, dynamic> updatedData = {};
 
-    if (image != null) updatedData['image'] = image;
+    String? imagePath;
+
+    if (image != null && image.isNotEmpty) {
+      imagePath = await CloudinaryService().saveToCloudinary(File(image));
+      updatedData['image'] = imagePath;
+    }
+
     if (name != null) updatedData['name'] = name;
     if (desc != null) updatedData['desc'] = desc;
     if (price != null) updatedData['price'] = price;
     if (category != null) updatedData['category'] = category;
     if (quantity != null) updatedData['quantity'] = quantity;
     if (sizes != null) updatedData['sizes'] = sizes;
-
-    updatedData['collectionName'] = collectionName;
-    updatedData['discount'] = discount;
+    if (collectionName != null) {
+      updatedData['collectionName'] = collectionName;
+    }
+    if (discount != null) updatedData['discount'] = discount;
     if (newPrice != null) updatedData['newPrice'] = newPrice;
     if (isFeatured != null) updatedData['isFeatured'] = isFeatured;
 
+    final productRef = firebaseFirestore
+        .collection("dashboard")
+        .doc(firebaseAuth.currentUser!.uid)
+        .collection("products")
+        .doc(productId);
+
+    await productRef.update(updatedData);
+
+    if (isFeatured == true) {
+      final productSnapshot = await productRef.get();
+      final productData = productSnapshot.data()!;
+
+      await firebaseFirestore
+          .collection("featuredProducts")
+          .doc(productId)
+          .set({
+            ...productData,
+            "id": productId,
+            "storeId": FirebaseAuth.instance.currentUser?.uid,
+          });
+    } else if (isFeatured == false) {
+      await firebaseFirestore
+          .collection("featuredProducts")
+          .doc(productId)
+          .delete();
+    }
+  }
+
+  Future<void> deleteProduct({required String productId}) async {
     await firebaseFirestore
         .collection("dashboard")
         .doc(firebaseAuth.currentUser!.uid)
         .collection("products")
         .doc(productId)
-        .update(updatedData);
+        .delete();
+
+    await firebaseFirestore
+        .collection("featuredProducts")
+        .doc(productId)
+        .delete();
   }
 }

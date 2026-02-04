@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
+import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/services/get_init.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
@@ -11,7 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key});
+  final ProductsModel? productsModel;
+
+  const AddProductScreen({super.key, this.productsModel});
 
   @override
   State<AddProductScreen> createState() => _AddProductScreenState();
@@ -28,6 +31,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   File? _productImage;
   final ImagePicker _picker = ImagePicker();
+  String? _existingImageUrl;
+
+  bool get isEditing => widget.productsModel != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEditing) {
+      _nameController.text = widget.productsModel!.name;
+      _descController.text = widget.productsModel!.desc;
+      _priceController.text = widget.productsModel!.price.toString();
+      _catController.text = widget.productsModel!.category;
+      _quantityController.text = widget.productsModel!.quantity.toString();
+      _sizes.addAll(widget.productsModel!.sizes);
+      _existingImageUrl = widget.productsModel!.image;
+    }
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     Navigator.pop(context);
@@ -40,6 +60,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (pickedFile != null) {
       setState(() {
         _productImage = File(pickedFile.path);
+        _existingImageUrl = null; // remove existing image if picking new
       });
     }
   }
@@ -48,7 +69,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => SafeArea(
@@ -70,12 +91,54 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
+  void _submit() {
+    if ((_productImage != null || _existingImageUrl != null) &&
+        _nameController.text.isNotEmpty &&
+        _descController.text.isNotEmpty &&
+        _priceController.text.isNotEmpty &&
+        _catController.text.isNotEmpty &&
+        _sizes.isNotEmpty &&
+        _quantityController.text.isNotEmpty) {
+      if (isEditing) {
+        context.read<DashboardCubit>().updateProduct(
+          productId: widget.productsModel!.id.toString(),
+          image: _productImage?.path,
+          name: _nameController.text,
+          desc: _descController.text,
+          price: double.parse(_priceController.text),
+          category: _catController.text,
+          quantity: int.parse(_quantityController.text),
+          sizes: _sizes,
+          isFeatured: widget.productsModel!.isFeatured,
+        );
+      } else {
+        context.read<DashboardCubit>().addProduct(
+          _productImage!.path,
+          _nameController.text,
+          _descController.text,
+          _priceController.text,
+          _catController.text,
+          _quantityController.text,
+          _sizes,
+        );
+      }
+    } else {
+      getIt<NavigationService>().showToast(
+        AppLocalizations.of(context)!.enterAllData,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
-        title: Text(AppLocalizations.of(context)!.addProduct),
+        title: Text(
+          isEditing
+              ? AppLocalizations.of(context)!.editProduct
+              : AppLocalizations.of(context)!.addProduct,
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -104,25 +167,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               width: double.infinity,
                             ),
                           )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_a_photo_outlined,
-                                size: 30,
-                                color: AppColors.primaryColor,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                AppLocalizations.of(context)!.addProductImage,
-                                style: Theme.of(context).textTheme.labelLarge
-                                    ?.copyWith(
+                        : (_existingImageUrl != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.network(
+                                    _existingImageUrl!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                  ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 30,
                                       color: AppColors.primaryColor,
-                                      fontSize: 16,
                                     ),
-                              ),
-                            ],
-                          ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.addProductImage,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                            color: AppColors.primaryColor,
+                                            fontSize: 16,
+                                          ),
+                                    ),
+                                  ],
+                                )),
                   ),
                 ),
               ),
@@ -181,9 +257,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 8),
-
               Wrap(
                 spacing: 8,
                 children: _sizes
@@ -206,18 +280,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 listener: (context, state) {
                   if (state.isLoaded == true) {
                     getIt<NavigationService>().showToast(
-                      AppLocalizations.of(context)!.productAdded,
+                      isEditing
+                          ? AppLocalizations.of(context)!.productUpdated
+                          : AppLocalizations.of(context)!.productAdded,
                     );
 
-                    setState(() {
-                      _productImage = null;
-                      _sizes.clear();
-                    });
-                    _nameController.clear();
-                    _descController.clear();
-                    _priceController.clear();
-                    _catController.clear();
-                    _quantityController.clear();
+                    if (!isEditing) {
+                      setState(() {
+                        _productImage = null;
+                        _sizes.clear();
+                      });
+                      _nameController.clear();
+                      _descController.clear();
+                      _priceController.clear();
+                      _catController.clear();
+                      _quantityController.clear();
+                    } else {
+                      context.read<DashboardCubit>().getProducts();
+                      Navigator.pop(context);
+                    }
                   }
 
                   if (state.error != "") {
@@ -228,36 +309,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   return SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: (state.isLoading == true)
-                          ? null
-                          : () {
-                              if (_productImage != null &&
-                                  _nameController.text.isNotEmpty &&
-                                  _descController.text.isNotEmpty &&
-                                  _priceController.text.isNotEmpty &&
-                                  _catController.text.isNotEmpty &&
-                                  _sizes.isNotEmpty &&
-                                  _quantityController.text.isNotEmpty) {
-                                print(_productImage?.path);
-                                context.read<DashboardCubit>().addProduct(
-                                  _productImage!.path,
-                                  _nameController.text,
-                                  _descController.text,
-                                  _priceController.text,
-                                  _catController.text,
-                                  _quantityController.text,
-                                  _sizes,
-                                );
-                              } else {
-                                getIt<NavigationService>().showToast(
-                                  AppLocalizations.of(context)!.enterAllData,
-                                );
-                                return;
-                              }
-                            },
+                      onPressed: state.isLoading == true ? null : _submit,
                       child: Text(
-                        (state.isLoading == true)
+                        state.isLoading == true
                             ? AppLocalizations.of(context)!.loading
+                            : isEditing
+                            ? AppLocalizations.of(context)!.editProduct
                             : AppLocalizations.of(context)!.addProduct,
                       ),
                     ),

@@ -9,6 +9,8 @@ sealed class DashboardState extends Equatable {
   final List<ProductsModel>? products;
   final List<DiscountModel>? discounts;
   final List<Map<String, dynamic>>? collections;
+  final List<Map<String, dynamic>>? ads;
+  final List<Map<String, dynamic>>? coupons;
 
   const DashboardState({
     required this.isLoading,
@@ -17,6 +19,8 @@ sealed class DashboardState extends Equatable {
     this.products,
     this.discounts,
     this.collections,
+    this.ads,
+    this.coupons,
   });
 
   DashboardState copyWith({
@@ -26,6 +30,8 @@ sealed class DashboardState extends Equatable {
     List<ProductsModel>? products,
     List<DiscountModel>? discounts,
     List<Map<String, dynamic>>? collections,
+    List<Map<String, dynamic>>? ads,
+    List<Map<String, dynamic>>? coupons,
   });
 
   @override
@@ -35,21 +41,24 @@ sealed class DashboardState extends Equatable {
     error,
     products,
     discounts,
+    ads,
     collections,
+    coupons,
   ];
 }
 
-
 final class DashboardInitial extends DashboardState {
   const DashboardInitial()
-      : super(
-    isLoading: false,
-    isLoaded: false,
-    error: '',
-    products: null,
-    discounts: null,
-    collections: null,
-  );
+    : super(
+        isLoading: false,
+        isLoaded: false,
+        error: '',
+        products: null,
+        discounts: null,
+        collections: null,
+        coupons: null,
+        ads: null,
+      );
 
   @override
   DashboardInitial copyWith({
@@ -59,6 +68,8 @@ final class DashboardInitial extends DashboardState {
     List<ProductsModel>? products,
     List<DiscountModel>? discounts,
     List<Map<String, dynamic>>? collections,
+    List<Map<String, dynamic>>? ads,
+    List<Map<String, dynamic>>? coupons,
   }) {
     return DashboardInitial();
   }
@@ -71,7 +82,9 @@ final class DashboardSuccess extends DashboardState {
     required super.error,
     super.products,
     super.discounts,
+    super.ads,
     super.collections,
+    super.coupons,
   });
 
   @override
@@ -82,6 +95,8 @@ final class DashboardSuccess extends DashboardState {
     List<ProductsModel>? products,
     List<DiscountModel>? discounts,
     List<Map<String, dynamic>>? collections,
+    List<Map<String, dynamic>>? ads,
+    List<Map<String, dynamic>>? coupons,
   }) {
     return DashboardSuccess(
       isLoading: isLoading ?? this.isLoading,
@@ -90,6 +105,8 @@ final class DashboardSuccess extends DashboardState {
       products: products ?? this.products,
       discounts: discounts ?? this.discounts,
       collections: collections ?? this.collections,
+      ads: ads ?? this.ads,
+      coupons: coupons ?? this.coupons,
     );
   }
 }

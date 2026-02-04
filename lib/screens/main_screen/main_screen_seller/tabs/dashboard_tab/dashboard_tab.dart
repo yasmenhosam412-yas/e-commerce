@@ -7,9 +7,12 @@ import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/ac
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/add_discount_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/add_product_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/create_ads_screen.dart';
+import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/editing_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/manage_products_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/services/get_init.dart';
+import '../../../../authentication/auth_screen.dart';
 import 'actions/add_collection_screen.dart';
 
 class DashboardTab extends StatefulWidget {
@@ -70,6 +73,21 @@ class _DashboardTabState extends State<DashboardTab> {
         color: Colors.red,
         onTab: () {
           getIt<NavigationService>().navigatePush(AddCouponScreen());
+        },
+      ),
+      ActionModel(
+        title: AppLocalizations.of(context)!.editing,
+        color: Colors.brown,
+        onTab: () {
+          getIt<NavigationService>().navigatePush(EditingScreen());
+        },
+      ),
+      ActionModel(
+        title:  "Sign out",
+        color: Colors.red,
+        onTab: () {
+          FirebaseAuth.instance.signOut();
+          getIt<NavigationService>().navigatePushReplace(AuthScreen());
         },
       ),
     ];

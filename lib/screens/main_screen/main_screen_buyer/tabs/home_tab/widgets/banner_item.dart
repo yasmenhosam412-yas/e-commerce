@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../../../../core/models/banner_model.dart';
 import '../../../../../../../core/widgets/cached_image_widget.dart';
 import 'banner_badge.dart';
 
 class BannerItem extends StatelessWidget {
-  final BannerModel banner;
+  final Map<String, dynamic> banner;
 
   const BannerItem({super.key, required this.banner});
 
@@ -14,15 +13,41 @@ class BannerItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: CachedImageWidget(imagePath: banner.image),
+          child: CachedImageWidget(imagePath: banner['image']),
         ),
-        if (banner.hasBadge)
-          Positioned(
-            top: 12,
-            left: 12,
+        Align(
+          alignment: getAlign(banner['position']),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
             child: BannerBadgeWidget(banner: banner),
           ),
+        ),
       ],
     );
+  }
+
+  AlignmentGeometry getAlign(String banner) {
+    switch (banner) {
+      case "topLeft":
+        {
+          return AlignmentGeometry.topLeft;
+        }
+      case "topRight":
+        {
+          return AlignmentGeometry.topRight;
+        }
+      case "bottomLeft":
+        {
+          return AlignmentGeometry.bottomLeft;
+        }
+      case "bottomRight":
+        {
+          return AlignmentGeometry.bottomRight;
+        }
+      default:
+        {
+          return AlignmentGeometry.topLeft;
+        }
+    }
   }
 }

@@ -139,7 +139,42 @@
   "nothing" : "No Products",
   "selectImage"  : "Please select an image.",
   "enterBadge"  : "Please enter badge text.",
-  "saved" : "Ads saved successfully."
+  "saved" : "Ads saved successfully.",
+  "couponCode": "Coupon Code",
+  "enterCouponCode": "Please enter the coupon code",
+  "discountType": "Discount Type",
+  "percentage": "Percentage",
+  "fixedAmount": "Fixed Amount",
+  "discountPercentage": "Discount %",
+  "discountAmount": "Discount Amount",
+  "selectExpiryDate": "Select expiry date",
+  "expiryDate": "Expiry date",
+  "saveCoupon": "Save Coupon",
+  "couponSaved": "Coupon saved successfully",
+  "selectExpiryDateError": "Please select an expiry date",
+  "editing" : "Editing",
+  "products": "Products",
+  "ads": "Ads",
+  "discounts": "Discounts",
+  "coupons": "Coupons",
+  "collections": "Collections",
+  "options" : "Edit Options",
+  "editProduct": "Edit Product",
+  "productUpdated": "Product updated successfully",
+  "deleteProduct": "Delete Product",
+  "deleteConfirmation": "Are you sure you want to delete?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "noAnyData" : "No Data Yet",
+  "editCollection": "Edit Collection",
+  "collectionUpdated": "Collection updated successfully",
+  "storeInfo" : "About Store",
+  "off" : "OFF",
+  "item" : "Items",
+  "addToCart":  "Add to cart",
+  "addedToCart" : "Added to cart"
+
+
 
 }
 

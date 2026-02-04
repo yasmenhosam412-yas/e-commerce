@@ -934,6 +934,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ads saved successfully.'**
   String get saved;
+
+  /// No description provided for @couponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon Code'**
+  String get couponCode;
+
+  /// No description provided for @enterCouponCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the coupon code'**
+  String get enterCouponCode;
+
+  /// No description provided for @discountType.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Type'**
+  String get discountType;
+
+  /// No description provided for @percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get percentage;
+
+  /// No description provided for @fixedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed Amount'**
+  String get fixedAmount;
+
+  /// No description provided for @discountPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount %'**
+  String get discountPercentage;
+
+  /// No description provided for @discountAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Amount'**
+  String get discountAmount;
+
+  /// No description provided for @selectExpiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select expiry date'**
+  String get selectExpiryDate;
+
+  /// No description provided for @expiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry date'**
+  String get expiryDate;
+
+  /// No description provided for @saveCoupon.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Coupon'**
+  String get saveCoupon;
+
+  /// No description provided for @couponSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon saved successfully'**
+  String get couponSaved;
+
+  /// No description provided for @selectExpiryDateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an expiry date'**
+  String get selectExpiryDateError;
+
+  /// No description provided for @editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing'**
+  String get editing;
+
+  /// No description provided for @products.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get products;
+
+  /// No description provided for @ads.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads'**
+  String get ads;
+
+  /// No description provided for @discounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Discounts'**
+  String get discounts;
+
+  /// No description provided for @coupons.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupons'**
+  String get coupons;
+
+  /// No description provided for @collections.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections'**
+  String get collections;
+
+  /// No description provided for @options.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Options'**
+  String get options;
+
+  /// No description provided for @editProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Product'**
+  String get editProduct;
+
+  /// No description provided for @productUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Product updated successfully'**
+  String get productUpdated;
+
+  /// No description provided for @deleteProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Product'**
+  String get deleteProduct;
+
+  /// No description provided for @deleteConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete?'**
+  String get deleteConfirmation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @noAnyData.
+  ///
+  /// In en, this message translates to:
+  /// **'No Data Yet'**
+  String get noAnyData;
+
+  /// No description provided for @editCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Collection'**
+  String get editCollection;
+
+  /// No description provided for @collectionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection updated successfully'**
+  String get collectionUpdated;
+
+  /// No description provided for @storeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'About Store'**
+  String get storeInfo;
+
+  /// No description provided for @off.
+  ///
+  /// In en, this message translates to:
+  /// **'OFF'**
+  String get off;
+
+  /// No description provided for @item.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get item;
+
+  /// No description provided for @addToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart'**
+  String get addToCart;
+
+  /// No description provided for @addedToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to cart'**
+  String get addedToCart;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

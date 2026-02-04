@@ -1,10 +1,15 @@
 import 'package:boo/core/models/banner_model.dart';
+import 'package:boo/core/models/create_store_model.dart';
+import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/home_tab/widgets/mixed_list.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import '../../../../../../controllers/buyer_cubits/home_cubit/home_cubit.dart';
 import '../widgets/banner_item.dart';
 import '../widgets/feature_pick_list.dart';
 import '../widgets/shop_list_widget.dart';
@@ -19,40 +24,12 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  final List<BannerModel> banners = [
-    BannerModel(
-      isNewShop: true,
-      hasDiscount: false,
-      isBestSelling: false,
-      isUserAllow: false,
-      image:
-          "https://tse1.mm.bing.net/th/id/OIP.79xrm2hm2KK2zC1DQsoz-wHaEK?rs=1&pid=ImgDetMain&o=7&rm=3",
-    ),
-    BannerModel(
-      isNewShop: false,
-      hasDiscount: true,
-      isBestSelling: false,
-      isUserAllow: true,
-      image:
-          "https://images.vexels.com/media/users/3/194701/list/aa72abca784117244de372b5e9926988-online-shopping-slider-template.jpg",
-    ),
-    BannerModel(
-      isNewShop: false,
-      hasDiscount: false,
-      isBestSelling: true,
-      isUserAllow: true,
-      image:
-          "https://images.vexels.com/media/users/3/194698/raw/34d9aa618f832510ce7290b4f183484a-shop-online-slider-template.jpg",
-    ),
-  ];
-
-  late final List<BannerModel> allowedBanners;
-  int currentIndex = -1;
-
   @override
   void initState() {
     super.initState();
-    allowedBanners = banners.where((b) => b.isUserAllow).toList();
+    context.read<HomeCubit>().getFeaturedPicks();
+    context.read<HomeCubit>().getAds();
+    context.read<HomeCubit>().getStores();
   }
 
   @override
@@ -68,16 +45,36 @@ class _HomeTabState extends State<HomeTab> {
               spacing: AppPadding.medium,
               children: [
                 SizedBox(height: AppPadding.large),
-                CarouselSlider(
-                  items: allowedBanners.map((banner) {
-                    return BannerItem(banner: banner);
-                  }).toList(),
-                  options: CarouselOptions(
-                    autoPlay: true,
-                    enableInfiniteScroll: allowedBanners.length > 1,
-                    aspectRatio: 2.5,
-                    enlargeCenterPage: true,
-                  ),
+                BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    if (state.ads?.isNotEmpty == true) {
+                      return CarouselSlider(
+                        items: state.ads?.map((banner) {
+                          return BannerItem(banner: banner);
+                        }).toList(),
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          enableInfiniteScroll: false,
+                          aspectRatio: 2.5,
+                          enlargeCenterPage: true,
+                        ),
+                      );
+                    }
+                    if (state.isLoadingAds == true) {
+                      return Skeletonizer(
+                        child: CarouselSlider(
+                          items: [],
+                          options: CarouselOptions(
+                            autoPlay: true,
+                            enableInfiniteScroll: false,
+                            aspectRatio: 2.5,
+                            enlargeCenterPage: true,
+                          ),
+                        ),
+                      );
+                    }
+                    return Center(child: Text(state.errorAds ?? ""));
+                  },
                 ),
                 Text(
                   AppLocalizations.of(context)!.shops,
@@ -86,7 +83,41 @@ class _HomeTabState extends State<HomeTab> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                ShopListWidget(),
+                BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    if (state.stores?.isNotEmpty == true) {
+                      return ShopListWidget(stores: state.stores ?? []);
+                    }
+                    if (state.isLoadingS == true) {
+                      return Skeletonizer(
+                        child: ShopListWidget(
+                          stores: List.generate(
+                            5,
+                            (index) => CreateStoreModel(
+                              selectedName: '',
+                              selectedDesc: '',
+                              selectedCat: '',
+                              selectedPhone: '',
+                              selectedEmail: '',
+                              selectedAddress: '',
+                              selectedFees: '',
+                              selectedDelivery: '',
+                              selectedImage: '',
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return Center(
+                      child: Text(
+                        state.errorS ?? "",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 SizedBox(height: AppPadding.large),
                 Text(
                   AppLocalizations.of(context)!.samples,
@@ -95,7 +126,42 @@ class _HomeTabState extends State<HomeTab> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                FeaturedPickList(),
+                BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    if (state.featuredProducts?.isNotEmpty == true) {
+                      return FeaturedPickList(
+                        products: state.featuredProducts ?? [],
+                      );
+                    }
+                    if (state.isLoadingF == true) {
+                      return Skeletonizer(
+                        child: FeaturedPickList(
+                          products: List.generate(
+                            5,
+                            (index) => ProductsModel(
+                              id: 0,
+                              image: "",
+                              name: "",
+                              desc: "",
+                              price: 0,
+                              category: "",
+                              quantity: 0,
+                              sizes: [],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return Center(
+                      child: Text(
+                        state.errorF ?? "",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 SizedBox(height: AppPadding.large),
                 Text(
                   AppLocalizations.of(context)!.usersWantToSell,

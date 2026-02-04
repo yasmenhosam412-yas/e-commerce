@@ -1,4 +1,5 @@
 import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
+import 'package:boo/controllers/buyer_cubits/home_cubit/home_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/services/navigation_service.dart';
@@ -7,6 +8,7 @@ import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart
 import 'package:boo/screens/main_screen/main_screen_seller/main_screen_seller.dart';
 import 'package:boo/screens/on_boarding/on_boarding_screen.dart';
 import 'package:boo/services/auth_service.dart';
+import 'package:boo/services/buyer_service/home_service.dart';
 import 'package:boo/services/store_creation_service.dart';
 import 'package:boo/services/store_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,6 +44,7 @@ Future<void> main() async {
           ),
         ),
         BlocProvider(create: (context) => DashboardCubit(StoreService())),
+        BlocProvider(create: (context) => HomeCubit(HomeService())),
       ],
       child: MainApp(userType: userType),
     ),

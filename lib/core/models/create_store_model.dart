@@ -8,6 +8,7 @@ class CreateStoreModel {
   final String selectedFees;
   final String selectedDelivery;
   final String selectedImage;
+  final String? id;
 
   CreateStoreModel({
     required this.selectedName,
@@ -19,5 +20,36 @@ class CreateStoreModel {
     required this.selectedFees,
     required this.selectedDelivery,
     required this.selectedImage,
+    this.id,
   });
+
+  factory CreateStoreModel.fromJson(Map<String, dynamic> json) {
+    return CreateStoreModel(
+      selectedName: json['name'] ?? '',
+      selectedDesc: json['description'] ?? '',
+      selectedCat: json['category'] ?? '',
+      selectedPhone: json['phone'] ?? '',
+      selectedEmail: json['email'] ?? '',
+      selectedAddress: json['address'] ?? '',
+      selectedFees: json['fees'] ?? '',
+      selectedDelivery: json['delivery'] ?? '',
+      selectedImage: json['image'] ?? '',
+      id: json['id'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': selectedName,
+      'description': selectedDesc,
+      'category': selectedCat,
+      'phone': selectedPhone,
+      'email': selectedEmail,
+      'address': selectedAddress,
+      'fees': selectedFees,
+      'delivery': selectedDelivery,
+      'image': selectedImage,
+      "id": id,
+    };
+  }
 }

@@ -1,9 +1,13 @@
+import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
+import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/custom_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../../core/utils/app_padding.dart';
+import '../../../../../../l10n/app_localizations.dart';
 
 class AddCouponScreen extends StatefulWidget {
   const AddCouponScreen({super.key});
@@ -17,7 +21,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _valueController = TextEditingController();
   DateTime? _expiryDate;
-  String _discountType = 'Percentage'; // or 'Fixed Amount'
+  String _discountType = 'Percentage';
 
   void _pickExpiryDate() async {
     DateTime now = DateTime.now();
@@ -52,38 +56,13 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
     }
   }
 
-  void _saveCoupon() {
-    if (_formKey.currentState!.validate() && _expiryDate != null) {
-      final coupon = {
-        "code": _codeController.text,
-        "type": _discountType,
-        "value": _valueController.text,
-        "expiryDate": _expiryDate!.toIso8601String(),
-      };
-      print("Coupon saved: $coupon");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Coupon saved successfully!')),
-      );
-      // Clear form
-      _formKey.currentState!.reset();
-      setState(() {
-        _expiryDate = null;
-        _discountType = 'Percentage';
-      });
-    } else if (_expiryDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an expiry date')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         automaticallyImplyLeading: false,
-        title: const Text('Add Coupon'),
+        title: Text(AppLocalizations.of(context)!.addCoupon),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,9 +72,10 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
             children: [
               CustomFormField(
                 controller: _codeController,
-                hint: 'Coupon Code',
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter coupon code' : null,
+                hint: AppLocalizations.of(context)!.couponCode,
+                validator: (value) => value == null || value.isEmpty
+                    ? AppLocalizations.of(context)!.enterCouponCode
+                    : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -106,7 +86,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                   labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: AppColors.primaryColor,
                   ),
-                  labelText: 'Discount Type',
+                  labelText: AppLocalizations.of(context)!.discountType,
                   border: OutlineInputBorder(
                     borderSide: const BorderSide(
                       color: AppColors.primaryColor,
@@ -140,7 +120,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                   DropdownMenuItem(
                     value: 'Percentage',
                     child: Text(
-                      'Percentage',
+                      AppLocalizations.of(context)!.percentage,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: AppColors.primaryColor,
                       ),
@@ -149,7 +129,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                   DropdownMenuItem(
                     value: 'Fixed Amount',
                     child: Text(
-                      'Fixed Amount',
+                      AppLocalizations.of(context)!.fixedAmount,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: AppColors.primaryColor,
                       ),
@@ -169,10 +149,10 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                 controller: _valueController,
                 textInputType: TextInputType.number,
                 hint: _discountType == 'Percentage'
-                    ? 'Discount %'
-                    : 'Discount Amount',
+                    ? AppLocalizations.of(context)!.discount
+                    : AppLocalizations.of(context)!.discountAmount,
                 validator: (value) => value == null || value.isEmpty
-                    ? 'Enter discount value'
+                    ? AppLocalizations.of(context)!.enterDiscountValue
                     : null,
               ),
               const SizedBox(height: 16),
@@ -180,8 +160,8 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(
                   _expiryDate == null
-                      ? 'Select Expiry Date'
-                      : 'Expiry Date: ${DateFormat('yyyy-MM-dd').format(_expiryDate!)}',
+                      ? AppLocalizations.of(context)!.selectExpiryDate
+                      : '${AppLocalizations.of(context)!.expiryDate}: ${DateFormat('yyyy-MM-dd').format(_expiryDate!)}',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: AppColors.primaryColor,
                   ),
@@ -190,9 +170,57 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
                 onTap: _pickExpiryDate,
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _saveCoupon,
-                child: const Text('Save Coupon'),
+              BlocConsumer<DashboardCubit, DashboardState>(
+                listener: (context, state) {
+                  if (state.isLoaded) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.couponSaved),
+                      ),
+                    );
+
+                    _codeController.clear();
+                    _valueController.clear();
+                  }
+
+                  if (state.error != "") {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(state.error)));
+                  }
+                },
+                builder: (context, state) {
+                  return ElevatedButton(
+                    onPressed: (state.isLoading)
+                        ? null
+                        : () {
+                            if (_formKey.currentState!.validate() &&
+                                _expiryDate != null) {
+                              context.read<DashboardCubit>().addCoupon(
+                                _codeController.text,
+                                _valueController.text,
+                                DateFormat('yyyy-MM-dd').format(_expiryDate!),
+                                _discountType,
+                              );
+                            } else if (_expiryDate == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.selectExpiryDateError,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                    child: Text(
+                      (state.isLoading)
+                          ? AppLocalizations.of(context)!.loading
+                          : AppLocalizations.of(context)!.saveCoupon,
+                    ),
+                  );
+                },
               ),
             ],
           ),

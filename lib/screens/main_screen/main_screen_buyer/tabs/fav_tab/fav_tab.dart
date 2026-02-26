@@ -1,6 +1,13 @@
+import 'package:boo/controllers/fav_cubit/fav_cubit.dart';
+import 'package:boo/controllers/fav_cubit/fav_state.dart';
+import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/services/get_init.dart';
+import '../../../../../core/services/navigation_service.dart';
+import '../../details/product_details.dart';
 import '../home_tab/widgets/product_mixed_widget.dart';
 
 class FavTab extends StatelessWidget {
@@ -28,12 +35,16 @@ class FavTab extends StatelessWidget {
             ],
           ),
         ),
-        body: const SafeArea(
-          child: TabBarView(
-            children: [
-              _FavGrid(ownerType: ProductOwnerType.store),
-              _FavGrid(ownerType: ProductOwnerType.user),
-            ],
+        body: SafeArea(
+          child: BlocBuilder<FavCubit, FavState>(
+            builder: (context, state) {
+              return TabBarView(
+                children: [
+                  _FavGridShop(ownerType: ProductOwnerType.store, productsModel: state.favourites,),
+                  _FavGridUser(ownerType: ProductOwnerType.user, productsModel: state.favourites,),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -41,10 +52,11 @@ class FavTab extends StatelessWidget {
   }
 }
 
-class _FavGrid extends StatelessWidget {
+class _FavGridShop extends StatelessWidget {
   final ProductOwnerType ownerType;
+  final List<ProductsModel> productsModel;
 
-  const _FavGrid({required this.ownerType});
+  const _FavGridShop({required this.ownerType, required this.productsModel});
 
   @override
   Widget build(BuildContext context) {
@@ -56,18 +68,66 @@ class _FavGrid extends StatelessWidget {
         mainAxisSpacing: 8,
         childAspectRatio: ownerType == ProductOwnerType.store ? 0.9 : 0.68,
       ),
-      itemCount: 5,
+      itemCount: productsModel.length,
       itemBuilder: (context, index) {
-        return ProductItem(
-          ownerType: ownerType,
-          image:
-              "https://tse3.mm.bing.net/th/id/OIP.PTrMioI24oEhJ-NRvoTZcwHaE8?rs=1&pid=ImgDetMain&o=7&rm=3",
-          name: "Summer T Shirt",
-          price: 266,
-          oldPrice: 280,
-          rating: 4.2,
-          reviewsCount: 6,
-          isFavorite: true,
+        final item =productsModel[index];
+        return GestureDetector(
+          onTap: () {
+            getIt<NavigationService>().navigatePush(ProductDetails(productsModel: item,));
+          },
+          child: ProductItem(
+            ownerType: ownerType,
+            image:item.image,
+            name: item.name,
+            price: item.newPrice ?? item.price,
+            oldPrice: item.price,
+            rating: 0,
+            reviewsCount: 0,
+            productModel: item,
+          ),
+        );
+      },
+    );
+  }
+}
+class _FavGridUser extends StatelessWidget {
+  final ProductOwnerType ownerType;
+  final List<ProductsModel> productsModel;
+
+  const _FavGridUser({required this.ownerType, required this.productsModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: ownerType == ProductOwnerType.store ? 0.9 : 0.68,
+      ),
+      itemCount: productsModel.length,
+      itemBuilder: (context, index) {
+        final item =productsModel[index];
+        return GestureDetector(
+          onTap: () {
+            getIt<NavigationService>().navigatePush(ProductDetails(productsModel: item,));
+          },
+          child: ProductItem(
+            ownerType: ownerType,
+            image:item.image,
+            name: item.name,
+            price: item.newPrice ?? item.price,
+            oldPrice: item.price,
+            rating: 0,
+            reviewsCount: 0,
+            productModel: item,
+            isUsed: true,
+            sellerName: "User",
+            sellerAvatar: "https://i.pravatar.cc/150",
+            sellerRating: 0,
+            sellerSalesCount: 0,
+          ),
         );
       },
     );

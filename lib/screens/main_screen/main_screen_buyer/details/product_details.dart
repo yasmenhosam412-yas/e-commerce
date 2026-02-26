@@ -7,7 +7,12 @@ import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/details/widgets/size_selector.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/details/widgets/store_info.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../controllers/fav_cubit/fav_cubit.dart';
+import '../../../../controllers/fav_cubit/fav_state.dart';
 
 class ProductDetails extends StatefulWidget {
   final ProductsModel productsModel;
@@ -20,7 +25,7 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   String? selectedSize;
-  int qunatity = 1;
+  int quantity = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +41,30 @@ class _ProductDetailsState extends State<ProductDetails> {
             fontSize: 24,
           ),
         ),
-        automaticallyImplyLeading: false,
         surfaceTintColor: Colors.transparent,
+        actions: [
+          BlocSelector<FavCubit, FavState, bool>(
+            selector: (state) {
+              return state.favourites.contains(product);
+            },
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  context.read<FavCubit>().toggleFav(product);
+                },
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    state ? Icons.favorite : Icons.favorite_border,
+                    size: 28,
+                    color: Colors.redAccent,
+                  ),
+                ),
+              );
+            },
+          )
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -47,13 +74,52 @@ class _ProductDetailsState extends State<ProductDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: AppPadding.medium,
               children: [
-                AspectRatio(
-                  aspectRatio: 1,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppPadding.medium),
-                    child: CachedImageWidget(imagePath: product.image),
-                  ),
-                ),
+                (product.images.isNotEmpty)
+                    ? CarouselSlider(
+                        items: List.generate(product.images.length, (index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                AppPadding.medium,
+                              ),
+                              child: CachedImageWidget(
+                                imagePath: product.images[index],
+                              ),
+                            ),
+                          );
+                        }),
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          enableInfiniteScroll: false,
+                          aspectRatio: 1.2,
+                        ),
+                      )
+                    : CarouselSlider(
+                        items: List.generate(1, (index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                AppPadding.medium,
+                              ),
+                              child: CachedImageWidget(
+                                imagePath: product.image,
+                              ),
+                            ),
+                          );
+                        }),
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          enableInfiniteScroll: false,
+                          aspectRatio: 1.2,
+                        ),
+                      ),
+                SizedBox(height: AppPadding.medium),
                 Text(
                   AppLocalizations.of(context)!.storeInfo,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -114,7 +180,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                       ],
                     ),
                     Spacer(),
-                    if (product.discount != "No Discount" && product.discount != null)
+                    if (product.discount != "No Discount" &&
+                        product.discount != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -186,53 +253,89 @@ class _ProductDetailsState extends State<ProductDetails> {
                     });
                   },
                 ),
+                SizedBox(height: AppPadding.medium),
+                Column(
+                  children: List.generate(
+                    product.attributes.entries
+                        .map((e) => e.key)
+                        .toList()
+                        .length,
+                    (index) {
+                      final attr = product.attributes.entries
+                          .map((e) => e.key)
+                          .toList()[index];
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            attr,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.primaryColor),
+                          ),
+                          SizedBox(height: AppPadding.medium),
+                          SizeSelector(
+                            sizes: product.attributes[attr] ?? [],
+                            onSizeSelected: (size) {
+                              setState(() {
+                                selectedSize = size;
+                              });
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: AppPadding.medium),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.6,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            getIt<NavigationService>().showSnackBar(
+                              Text(AppLocalizations.of(context)!.addedToCart),
+                            );
+                          },
+                          child: Text(AppLocalizations.of(context)!.addToCart),
+                        ),
+                      ),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            quantity++;
+                          });
+                        },
+                        icon: Icon(Icons.add, color: AppColors.primaryColor),
+                      ),
+                      Text(
+                        quantity.toString(),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: (quantity > 1)
+                            ? () {
+                                setState(() {
+                                  quantity--;
+                                });
+                              }
+                            : null,
+                        icon: Icon(Icons.remove, color: AppColors.primaryColor),
+                      ),
+                      Spacer(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ),
-      ),
-      bottomSheet: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width * 0.6,
-              child: ElevatedButton(
-                onPressed: () {
-                  getIt<NavigationService>().showSnackBar(
-                    Text(AppLocalizations.of(context)!.addedToCart),
-                  );
-                },
-                child: Text(AppLocalizations.of(context)!.addToCart),
-              ),
-            ),
-            Spacer(),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  qunatity++;
-                });
-              },
-              icon: Icon(Icons.add, color: AppColors.primaryColor),
-            ),
-            Text(
-              qunatity.toString(),
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: AppColors.primaryColor),
-            ),
-            IconButton(
-              onPressed: (qunatity > 1)
-                  ? () {
-                      setState(() {
-                        qunatity--;
-                      });
-                    }
-                  : null,
-              icon: Icon(Icons.remove, color: AppColors.primaryColor),
-            ),
-            Spacer(),
-          ],
         ),
       ),
     );

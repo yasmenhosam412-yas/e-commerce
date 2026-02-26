@@ -36,32 +36,32 @@ sealed class DashboardState extends Equatable {
 
   @override
   List<Object?> get props => [
-    isLoading,
-    isLoaded,
-    error,
-    products,
-    discounts,
-    ads,
-    collections,
-    coupons,
-  ];
+        isLoading,
+        isLoaded,
+        error,
+        products,
+        discounts,
+        ads,
+        collections,
+        coupons,
+      ];
 }
 
 final class DashboardInitial extends DashboardState {
   const DashboardInitial()
-    : super(
-        isLoading: false,
-        isLoaded: false,
-        error: '',
-        products: null,
-        discounts: null,
-        collections: null,
-        coupons: null,
-        ads: null,
-      );
+      : super(
+          isLoading: false,
+          isLoaded: false,
+          error: '',
+          products: null,
+          discounts: null,
+          collections: null,
+          coupons: null,
+          ads: null,
+        );
 
   @override
-  DashboardInitial copyWith({
+  DashboardState copyWith({
     bool? isLoading,
     bool? isLoaded,
     String? error,
@@ -71,7 +71,16 @@ final class DashboardInitial extends DashboardState {
     List<Map<String, dynamic>>? ads,
     List<Map<String, dynamic>>? coupons,
   }) {
-    return DashboardInitial();
+    return DashboardSuccess(
+      isLoading: isLoading ?? this.isLoading,
+      isLoaded: isLoaded ?? this.isLoaded,
+      error: error ?? this.error,
+      products: products ?? this.products,
+      discounts: discounts ?? this.discounts,
+      collections: collections ?? this.collections,
+      ads: ads ?? this.ads,
+      coupons: coupons ?? this.coupons,
+    );
   }
 }
 

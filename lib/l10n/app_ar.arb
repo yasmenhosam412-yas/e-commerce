@@ -172,5 +172,9 @@
   "off": "خصم",
   "item": "قطع",
   "addToCart": "اضف الي السلة",
-  "addedToCart": "تم الاضافة للسلة"
+  "addedToCart": "تم الاضافة للسلة",
+  "attributes": "الصفات",
+  "attributeName": "اسم الصفة",
+  "attributeValue": "قيمة الصفة"
+
 }

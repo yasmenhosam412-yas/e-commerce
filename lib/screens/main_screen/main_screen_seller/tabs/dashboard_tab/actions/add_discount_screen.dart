@@ -23,8 +23,6 @@ class _AddDiscountScreenState extends State<AddDiscountScreen> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
 
-  DateTime? _startDate;
-  DateTime? _endDate;
 
   Future<void> _pickDate(TextEditingController controller, bool isStart) async {
     DateTime initialDate = DateTime.now();
@@ -59,9 +57,7 @@ class _AddDiscountScreenState extends State<AddDiscountScreen> {
       setState(() {
         controller.text = DateFormat('yyyy-MM-dd').format(picked);
         if (isStart) {
-          _startDate = picked;
         } else {
-          _endDate = picked;
         }
       });
     }
@@ -136,8 +132,6 @@ class _AddDiscountScreenState extends State<AddDiscountScreen> {
                     _valueController.clear();
                     _startDateController.clear();
                     _endDateController.clear();
-                    _startDate = null;
-                    _endDate = null;
                   }
 
                   if (state.error != "") {

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:boo/core/services/error_handler.dart';
@@ -12,32 +11,40 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   DashboardCubit(this.storeService) : super(const DashboardInitial());
 
-  Future<void> addProduct(
-    String image,
-    String name,
-    String desc,
-    String price,
-    String category,
-    String quantity,
-    List<String> sizes,
-  ) async {
-    emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
+  Future<void> addProduct({
+    required List<String> images,
+    required String name,
+    required String desc,
+    required String price,
+    required String category,
+    required String storeImage,
+    required String storeName,
+    required String storeCategory,
+    required String quantity,
+    required Map<String, List<String>> attributes,
+    List<String>? sizes,
+  }) async {
+    emit(state.copyWith(isLoading: true, isLoaded: false, error: ''));
 
     try {
       await storeService.addProduct(
-        image,
-        name,
-        desc,
-        price,
-        category,
-        quantity,
-        sizes,
+        images: images,
+        name: name,
+        desc: desc,
+        price: price,
+        category: category,
+        quantity: quantity,
+        attributes: attributes,
+        sizes: sizes,
+        storeImage: storeImage,
+        storeName: storeName,
+        storeCategory: storeCategory,
       );
 
-      emit(DashboardSuccess(isLoading: false, isLoaded: true, error: ''));
+      emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
     } catch (e) {
       emit(
-        DashboardSuccess(
+        state.copyWith(
           isLoading: false,
           isLoaded: false,
           error: ErrorHandler.fromException(e).message,
@@ -116,6 +123,9 @@ class DashboardCubit extends Cubit<DashboardState> {
     String position,
     String badgeColor,
     String textColor,
+    String storeName,
+    String storeImage,
+    String storeCategory,
   ) async {
     emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
 
@@ -126,6 +136,9 @@ class DashboardCubit extends Cubit<DashboardState> {
         position,
         badgeColor,
         textColor,
+        storeName,
+        storeCategory,
+        storeImage,
       );
 
       emit(DashboardSuccess(isLoading: false, isLoaded: true, error: ''));
@@ -142,13 +155,16 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   Future<void> updateProduct({
     required String productId,
-    String? image,
+
+    List<String>? images, // NEW
     String? name,
     String? desc,
     double? price,
     String? category,
     int? quantity,
-    List<String>? sizes,
+    List<String>? sizes, // legacy
+    Map<String, List<String>>? attributes, // NEW
+
     String? collectionName,
     String? discount,
     double? newPrice,
@@ -159,13 +175,14 @@ class DashboardCubit extends Cubit<DashboardState> {
     try {
       await storeService.updateProduct(
         productId: productId,
-        image: image,
+        images: images,
         name: name,
         desc: desc,
         price: price,
         category: category,
         quantity: quantity,
         sizes: sizes,
+        attributes: attributes,
         collectionName: collectionName,
         discount: discount,
         newPrice: newPrice,
@@ -174,7 +191,6 @@ class DashboardCubit extends Cubit<DashboardState> {
 
       emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
     } catch (e) {
-      print(e);
       emit(
         state.copyWith(
           isLoading: false,
@@ -377,12 +393,12 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
-  Future<void> deleteProduct(String productId) async {
+  Future<void> deleteProduct(String productId, String uid) async {
     emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
 
     try {
       await storeService.deleteProduct(productId: productId);
-      await getProducts();
+      await getProducts(uid);
       emit(state.copyWith(isLoading: false, isLoaded: true, error: ''));
     } catch (e) {
       emit(
@@ -395,11 +411,11 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
-  Future<void> getProducts() async {
+  Future<void> getProducts(String uid) async {
     emit(DashboardSuccess(isLoading: true, isLoaded: false, error: ''));
 
     try {
-      final result = await storeService.getProducts();
+      final result = await storeService.getProducts(uid);
 
       emit(
         state.copyWith(

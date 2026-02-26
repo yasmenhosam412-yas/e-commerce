@@ -1,4 +1,6 @@
+import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/models/action_model.dart';
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/custom_elevated_button.dart';
@@ -11,12 +13,22 @@ import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/ac
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/manage_products_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/services/get_init.dart';
 import '../../../../authentication/auth_screen.dart';
 import 'actions/add_collection_screen.dart';
 
 class DashboardTab extends StatefulWidget {
-  const DashboardTab({super.key});
+  final String name;
+  final String image;
+  final String category;
+
+  const DashboardTab({
+    super.key,
+    required this.name,
+    required this.image,
+    required this.category,
+  });
 
   @override
   State<DashboardTab> createState() => _DashboardTabState();
@@ -26,18 +38,19 @@ class _DashboardTabState extends State<DashboardTab> {
   late List<ActionModel> actions;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     actions = [
       ActionModel(
         title: AppLocalizations.of(context)!.addProduct,
         color: Colors.green,
-        onTab: () {
-          getIt<NavigationService>().navigatePush(AddProductScreen());
+        onTab: () async {
+          getIt<NavigationService>().navigatePush(
+            AddProductScreen(
+              storeImage: widget.image,
+              storeName: widget.name,
+              storeCategory: widget.category,
+            ),
+          );
         },
       ),
       ActionModel(
@@ -57,8 +70,14 @@ class _DashboardTabState extends State<DashboardTab> {
       ActionModel(
         title: AppLocalizations.of(context)!.addAds,
         color: Colors.amber,
-        onTab: () {
-          getIt<NavigationService>().navigatePush(CreateAdsScreen());
+        onTab: () async {
+          getIt<NavigationService>().navigatePush(
+            CreateAdsScreen(
+              name: widget.name,
+              image: widget.image,
+              category: widget.category,
+            ),
+          );
         },
       ),
       ActionModel(
@@ -78,12 +97,21 @@ class _DashboardTabState extends State<DashboardTab> {
       ActionModel(
         title: AppLocalizations.of(context)!.editing,
         color: Colors.brown,
-        onTab: () {
-          getIt<NavigationService>().navigatePush(EditingScreen());
+        onTab: () async {
+          final storeData = await context.read<StoreCreationCubit>().storeData(
+            FirebaseAuth.instance.currentUser!.uid,
+          );
+          getIt<NavigationService>().navigatePush(
+            EditingScreen(
+              storeName: storeData?.selectedName ?? "",
+              storeImage: storeData?.selectedImage ?? "",
+              storeCategory: storeData?.selectedCat ?? "",
+            ),
+          );
         },
       ),
       ActionModel(
-        title:  "Sign out",
+        title: "Sign out",
         color: Colors.red,
         onTab: () {
           FirebaseAuth.instance.signOut();

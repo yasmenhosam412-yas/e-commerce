@@ -23,7 +23,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       emit(AuthLoaded(userType: result.userType ?? ""));
     } catch (e) {
-      print(e);
       final error = ErrorHandler.fromException(e);
       emit(AuthError(error: error.message));
     }
@@ -54,7 +53,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       emit(AuthLoaded(userType: result.userType ?? ""));
     } catch (e) {
-      print(e);
       final error = ErrorHandler.fromException(e);
       emit(AuthError(error: error.message));
     }

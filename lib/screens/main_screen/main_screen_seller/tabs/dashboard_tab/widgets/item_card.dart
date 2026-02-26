@@ -45,7 +45,7 @@ class ItemCard extends StatelessWidget {
                     top: Radius.circular(18),
                   ),
                   child: Image.network(
-                    product.image ?? "",
+                    product.image,
                     height: 140,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -79,7 +79,7 @@ class ItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.name ?? "",
+                    product.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(

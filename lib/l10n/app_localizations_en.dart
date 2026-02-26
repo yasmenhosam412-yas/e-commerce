@@ -526,4 +526,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addedToCart => 'Added to cart';
+
+  @override
+  String get attributes => 'Attributes';
+
+  @override
+  String get attributeName => 'Attribute Name';
+
+  @override
+  String get attributeValue => 'Attribute Value';
 }

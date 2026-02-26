@@ -1,3 +1,4 @@
+import 'package:boo/core/models/products_model.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/home_tab/widgets/product_mixed_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -25,10 +26,21 @@ class MixedList extends StatelessWidget {
                   "https://tse3.mm.bing.net/th/id/OIP.PTrMioI24oEhJ-NRvoTZcwHaE8?rs=1&pid=ImgDetMain&o=7&rm=3",
               name: "Summer T Shirt",
               price: 266,
-              isFavorite: true,
               oldPrice: 280,
               rating: 4.2,
               reviewsCount: 6,
+              productModel: ProductsModel(
+                id: 0,
+                image: "",
+                images: [],
+                name: "",
+                desc: "",
+                price: 0,
+                category: "",
+                quantity: 0,
+                sizes: [],
+                attributes: {},
+              ),
             ),
           );
         },

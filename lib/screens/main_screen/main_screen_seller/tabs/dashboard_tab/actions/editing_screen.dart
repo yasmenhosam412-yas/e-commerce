@@ -6,11 +6,16 @@ import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/add_collection_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/actions/add_product_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditingScreen extends StatefulWidget {
-  const EditingScreen({super.key});
+  final String storeImage;
+  final String storeName;
+  final String storeCategory;
+
+  const EditingScreen({super.key, required this.storeImage, required this.storeName, required this.storeCategory});
 
   @override
   State<EditingScreen> createState() => _EditingScreenState();
@@ -63,7 +68,7 @@ class _EditingScreenState extends State<EditingScreen> {
                       ),
                       onTap: () {
                         if (item == AppLocalizations.of(context)!.products) {
-                          context.read<DashboardCubit>().getProducts();
+                          context.read<DashboardCubit>().getProducts(FirebaseAuth.instance.currentUser!.uid);
                         } else if (item ==
                             AppLocalizations.of(context)!.collections) {
                           context.read<DashboardCubit>().getCollection();
@@ -120,7 +125,7 @@ class _EditingScreenState extends State<EditingScreen> {
                                 context: context,
                                 builder: (context) {
                                   return AddProductScreen(
-                                    productsModel: product,
+                                    productsModel: product, storeImage: widget.storeImage, storeName: widget.storeName, storeCategory: widget.storeCategory,
                                   );
                                 },
                               );
@@ -155,7 +160,7 @@ class _EditingScreenState extends State<EditingScreen> {
                                         context
                                             .read<DashboardCubit>()
                                             .deleteProduct(
-                                              product.id.toString(),
+                                              product.id.toString(),FirebaseAuth.instance.currentUser!.uid
                                             );
                                         Navigator.pop(context);
                                       },

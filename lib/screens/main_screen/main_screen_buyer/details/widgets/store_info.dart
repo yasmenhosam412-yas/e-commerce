@@ -1,3 +1,6 @@
+import 'package:boo/core/services/get_init.dart';
+import 'package:boo/core/services/navigation_service.dart';
+import 'package:boo/screens/main_screen/main_screen_buyer/details/shop_details.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/models/products_model.dart';
@@ -63,7 +66,16 @@ class StoreInfoWidget extends StatelessWidget {
             color: Colors.grey.shade100,
             shape: const CircleBorder(),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                getIt<NavigationService>().navigatePush(
+                  ShopDetails(
+                    shopId: product.storeId ?? "",
+                    shopName: product.storeName ?? "",
+                    shopImage: product.storeImage ?? "",
+                    category: product.storeCategory ?? "",
+                  ),
+                );
+              },
               icon: const Icon(Icons.arrow_forward),
               color: Colors.black87,
             ),

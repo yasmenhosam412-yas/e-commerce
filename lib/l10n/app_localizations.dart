@@ -1132,6 +1132,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added to cart'**
   String get addedToCart;
+
+  /// No description provided for @attributes.
+  ///
+  /// In en, this message translates to:
+  /// **'Attributes'**
+  String get attributes;
+
+  /// No description provided for @attributeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribute Name'**
+  String get attributeName;
+
+  /// No description provided for @attributeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Attribute Value'**
+  String get attributeValue;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

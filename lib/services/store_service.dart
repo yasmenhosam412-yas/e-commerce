@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/services/cloudinary_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,16 +10,31 @@ class StoreService {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  Future<void> addProduct(
-    String image,
-    String name,
-    String desc,
-    String price,
-    String category,
-    String quantity,
-    List<String> sizes,
-  ) async {
-    final imagePath = await CloudinaryService().saveToCloudinary(File(image));
+  Future<void> addProduct({
+    required List<String> images,
+    required String name,
+    required String desc,
+    required String price,
+    required String category,
+    required String quantity,
+    required String storeImage,
+    required String storeName,
+    required String storeCategory,
+    required Map<String, List<String>> attributes,
+    List<String>? sizes,
+  }) async {
+    final List<String> uploadedImages = [];
+
+    for (final path in images) {
+      final imageUrl = await CloudinaryService().saveToCloudinary(File(path));
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        uploadedImages.add(imageUrl);
+      }
+    }
+
+    if (uploadedImages.isEmpty) {
+      throw Exception("At least one image must be uploaded for the product.");
+    }
 
     final counterRef = firebaseFirestore.collection("counters").doc("products");
 
@@ -41,17 +55,26 @@ class StoreService {
           .collection("products")
           .doc(newId.toString());
 
-      transaction.set(productRef, {
+      final productData = {
         "id": newId,
-        "image": imagePath,
+        "image": uploadedImages.first,
+        "images": uploadedImages,
         "name": name,
         "desc": desc,
         "price": double.parse(price),
         "category": category,
         "quantity": int.parse(quantity),
-        "sizes": sizes,
+        "sizes": sizes ?? [],
+        "attributes": attributes,
+        "isFeatured": false,
+        "storeId": firebaseAuth.currentUser!.uid,
+        "storeImage": storeImage,
+        "storeName": storeName,
+        "storeCategory": storeCategory,
         "createdAt": FieldValue.serverTimestamp(),
-      });
+      };
+
+      transaction.set(productRef, productData);
     });
   }
 
@@ -106,6 +129,9 @@ class StoreService {
     String position,
     String badgeColor,
     String textColor,
+    String storeName,
+    String storeCategory,
+    String storeImage,
   ) async {
     final imagePath = await CloudinaryService().saveToCloudinary(image);
 
@@ -131,6 +157,9 @@ class StoreService {
       "badgeColor": badgeColor,
       "textColor": textColor,
       "storeId": FirebaseAuth.instance.currentUser?.uid,
+      "storeName": storeName,
+      "storeImage": storeImage,
+      "storeCategory": storeCategory,
     });
   }
 
@@ -236,29 +265,15 @@ class StoreService {
     }).toList();
   }
 
-  Future<List<ProductsModel>> getProducts() async {
+  Future<List<ProductsModel>> getProducts(String uid) async {
     final snapshot = await firebaseFirestore
         .collection("dashboard")
-        .doc(firebaseAuth.currentUser!.uid)
+        .doc(uid)
         .collection("products")
         .get();
 
     return snapshot.docs.map((doc) {
-      final data = doc.data();
-      return ProductsModel(
-        id: data['id'],
-        image: data['image'] ?? '',
-        name: data['name'] ?? '',
-        desc: data['desc'] ?? '',
-        price: data['price'] ?? 0,
-        category: data['category'] ?? '',
-        quantity: data['quantity'] ?? 0,
-        sizes: List<String>.from(data['sizes'] ?? []),
-        isFeatured: data['isFeatured'],
-        collectionName: data['collectionName'],
-        newPrice: data['newPrice'],
-        discount: data['discount'],
-      );
+      return ProductsModel.fromMap(doc.data(), doc.id);
     }).toList();
   }
 
@@ -286,13 +301,16 @@ class StoreService {
 
   Future<void> updateProduct({
     required String productId,
-    String? image,
+
+    List<String>? images,
     String? name,
     String? desc,
     double? price,
     String? category,
     int? quantity,
     List<String>? sizes,
+    Map<String, List<String>>? attributes,
+
     String? collectionName,
     String? discount,
     double? newPrice,
@@ -300,25 +318,33 @@ class StoreService {
   }) async {
     final Map<String, dynamic> updatedData = {};
 
-    String? imagePath;
+    if (images != null && images.isNotEmpty) {
+      final List<String> uploadedImages = [];
 
-    if (image != null && image.isNotEmpty) {
-      imagePath = await CloudinaryService().saveToCloudinary(File(image));
-      updatedData['image'] = imagePath;
+      for (final path in images) {
+        final imageUrl = await CloudinaryService().saveToCloudinary(File(path));
+        uploadedImages.add(imageUrl ?? "");
+      }
+
+      updatedData['images'] = uploadedImages;
+      updatedData['image'] = uploadedImages.first;
     }
-
     if (name != null) updatedData['name'] = name;
     if (desc != null) updatedData['desc'] = desc;
     if (price != null) updatedData['price'] = price;
     if (category != null) updatedData['category'] = category;
     if (quantity != null) updatedData['quantity'] = quantity;
     if (sizes != null) updatedData['sizes'] = sizes;
+    if (attributes != null) updatedData['attributes'] = attributes;
+
     if (collectionName != null) {
       updatedData['collectionName'] = collectionName;
     }
     if (discount != null) updatedData['discount'] = discount;
     if (newPrice != null) updatedData['newPrice'] = newPrice;
     if (isFeatured != null) updatedData['isFeatured'] = isFeatured;
+
+    if (updatedData.isEmpty) return;
 
     final productRef = firebaseFirestore
         .collection("dashboard")
@@ -328,23 +354,25 @@ class StoreService {
 
     await productRef.update(updatedData);
 
-    if (isFeatured == true) {
-      final productSnapshot = await productRef.get();
-      final productData = productSnapshot.data()!;
+    if (isFeatured != null) {
+      if (isFeatured == true) {
+        final productSnapshot = await productRef.get();
+        final productData = productSnapshot.data()!;
 
-      await firebaseFirestore
-          .collection("featuredProducts")
-          .doc(productId)
-          .set({
-            ...productData,
-            "id": productId,
-            "storeId": FirebaseAuth.instance.currentUser?.uid,
-          });
-    } else if (isFeatured == false) {
-      await firebaseFirestore
-          .collection("featuredProducts")
-          .doc(productId)
-          .delete();
+        await firebaseFirestore
+            .collection("featuredProducts")
+            .doc(productId)
+            .set({
+              ...productData,
+              "id": productId,
+              "storeId": firebaseAuth.currentUser!.uid,
+            });
+      } else {
+        await firebaseFirestore
+            .collection("featuredProducts")
+            .doc(productId)
+            .delete();
+      }
     }
   }
 

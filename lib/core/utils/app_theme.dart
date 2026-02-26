@@ -90,14 +90,14 @@ class AppTheme {
     ),
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(AppColors.whiteColor),
-        foregroundColor: WidgetStatePropertyAll(AppColors.primaryColor),
-        iconColor: WidgetStatePropertyAll(AppColors.whiteColor),
+        // backgroundColor: WidgetStatePropertyAll(AppColors.whiteColor),
+        // foregroundColor: WidgetStatePropertyAll(AppColors.primaryColor),
+        iconColor: WidgetStatePropertyAll(AppColors.darkBlack),
       ),
     ),
     bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: AppColors.whiteColor
-    )
+      backgroundColor: AppColors.whiteColor,
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -184,13 +184,13 @@ class AppTheme {
 
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(AppColors.darkBlack),
-        foregroundColor: WidgetStatePropertyAll(AppColors.primaryColor),
+        // backgroundColor: WidgetStatePropertyAll(AppColors.darkBlack),
+        // foregroundColor: WidgetStatePropertyAll(AppColors.primaryColor),
         iconColor: WidgetStatePropertyAll(AppColors.darkBlack),
       ),
     ),
-      bottomSheetTheme: BottomSheetThemeData(
-          backgroundColor: AppColors.darkBlack
-      )
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: AppColors.darkBlack,
+    ),
   );
 }

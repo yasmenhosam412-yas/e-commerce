@@ -1,6 +1,5 @@
 import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart';
-import 'package:boo/screens/main_screen/main_screen_seller/seller_creation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -34,12 +33,10 @@ class LoginTab extends StatefulWidget {
 class _LoginTabState extends State<LoginTab> {
   bool isBuyerSelected = true;
   FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
-  String? hasStore;
 
   @override
   void initState() {
     super.initState();
-    loadHasStore();
   }
 
   @override
@@ -109,15 +106,9 @@ class _LoginTabState extends State<LoginTab> {
               listener: (context, state) {
                 if (state is AuthLoaded) {
                   if (state.userType == "seller") {
-                    if (hasStore == "true") {
-                      getIt<NavigationService>().navigatePushReplace(
-                        MainScreenSeller(),
-                      );
-                    } else {
-                      getIt<NavigationService>().navigatePushReplace(
-                        SellerCreationScreen(),
-                      );
-                    }
+                    getIt<NavigationService>().navigatePushReplace(
+                      MainScreenSeller(),
+                    );
                   } else {
                     getIt<NavigationService>().navigatePushReplace(
                       MainScreenBuyer(),
@@ -152,12 +143,5 @@ class _LoginTabState extends State<LoginTab> {
         ),
       ),
     );
-  }
-
-  Future<void> loadHasStore() async {
-    final has = await flutterSecureStorage.read(key: "hasStore");
-    setState(() {
-      hasStore = has;
-    });
   }
 }

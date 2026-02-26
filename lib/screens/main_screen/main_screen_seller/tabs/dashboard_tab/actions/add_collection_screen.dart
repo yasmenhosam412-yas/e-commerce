@@ -1,7 +1,6 @@
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
 import 'package:boo/core/utils/app_colors.dart';
-import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/custom_form_field.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';

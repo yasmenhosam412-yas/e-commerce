@@ -22,7 +22,7 @@ class HomeService {
           "storeId": data['storeId'],
           "storeName": store?.selectedName ?? '',
           "storeImage": store?.selectedImage ?? '',
-        });
+        }, doc.id);
       }).toList(),
     );
   }

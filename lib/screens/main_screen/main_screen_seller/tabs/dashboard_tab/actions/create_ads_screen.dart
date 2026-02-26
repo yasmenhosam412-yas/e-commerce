@@ -1,13 +1,16 @@
 import 'dart:io';
 
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
+import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/custom_form_field.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../../../controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
@@ -15,7 +18,10 @@ import '../../../../../../controllers/stores_cubit/dashboard_cubit/dashboard_cub
 enum BadgePosition { topLeft, topRight, bottomLeft, bottomRight }
 
 class CreateAdsScreen extends StatefulWidget {
-  const CreateAdsScreen({super.key});
+  final String name;
+  final String image;
+  final String category;
+  const CreateAdsScreen({super.key, required this.name, required this.image, required this.category});
 
   @override
   State<CreateAdsScreen> createState() => _CreateAdsScreenState();
@@ -30,6 +36,7 @@ class _CreateAdsScreenState extends State<CreateAdsScreen> {
   Color _badgeTextColor = Colors.white;
 
   BadgePosition _badgePosition = BadgePosition.topLeft;
+  FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
 
   Future<void> _pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -73,6 +80,12 @@ class _CreateAdsScreenState extends State<CreateAdsScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<StoreCreationCubit>().storeData(FirebaseAuth.instance.currentUser!.uid);
   }
 
   Positioned _buildBadge() {
@@ -324,6 +337,9 @@ class _CreateAdsScreenState extends State<CreateAdsScreen> {
                               positionStr,
                               _badgeColor.toHexString(),
                               _badgeTextColor.toHexString(),
+                              widget.name,
+                              widget.image,
+                              widget.category
                             );
                           },
                     child: Text(
@@ -340,4 +356,5 @@ class _CreateAdsScreenState extends State<CreateAdsScreen> {
       ),
     );
   }
+
 }

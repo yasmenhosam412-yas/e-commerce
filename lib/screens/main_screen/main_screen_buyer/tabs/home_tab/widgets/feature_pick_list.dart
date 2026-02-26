@@ -33,13 +33,13 @@ class FeaturedPickList extends StatelessWidget {
               child: ProductClothesItem(
                 image: product.image,
                 name: product.name,
+                id: product.id,
                 price: product.newPrice ?? product.price,
-                isFavorite: false,
                 oldPrice: (product.newPrice != product.price)
                     ? product.price
                     : null,
                 rating: 0,
-                ratingCount: 0,
+                ratingCount: 0, productModel: product,
               ),
             ),
           );

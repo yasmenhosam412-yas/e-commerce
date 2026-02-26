@@ -49,10 +49,10 @@ class StoreCreationService {
     return result.exists;
   }
 
-  Future<CreateStoreModel?> getStore() async {
+  Future<CreateStoreModel?> getStore(String uid) async {
     final result = await firebaseFirestore
         .collection('stores')
-        .doc(firebaseAuth.currentUser!.uid)
+        .doc(uid)
         .get();
     final isExist = await hasStore();
 

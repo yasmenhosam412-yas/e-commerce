@@ -3,6 +3,7 @@ import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_images.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/seller_creation_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/dashboard_tab.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,18 +19,27 @@ class MainScreenSeller extends StatefulWidget {
 class _MainScreenSellerState extends State<MainScreenSeller> {
   int _currentIndex = 0;
   FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
-  String? hasStore;
   late List<Widget> screens;
 
   @override
   void initState() {
     super.initState();
-    context.read<StoreCreationCubit>().hasStore();
+    init();
+  }
+
+  Future<void> init() async {
+    final data = await context.read<StoreCreationCubit>().storeData(
+      FirebaseAuth.instance.currentUser!.uid,
+    );
     screens = [
-      const DashboardTab(),
-      const Center(child: Text("data")),
-      const Center(child: Text("data")),
-      const Center(child: Text("data")),
+      DashboardTab(
+        name: data?.selectedName ?? "",
+        image: data?.selectedImage ?? "",
+        category: data?.selectedCat ?? "",
+      ),
+      const Center(child: Text("Orders")),
+      const Center(child: Text("Products")),
+      const Center(child: Text("Profile")),
     ];
   }
 
@@ -37,16 +47,14 @@ class _MainScreenSellerState extends State<MainScreenSeller> {
   Widget build(BuildContext context) {
     return BlocBuilder<StoreCreationCubit, StoreCreationState>(
       builder: (context, state) {
-        if (state.isSuccess) {
-          if (state.hasStore == false) {
-            return SellerCreationScreen();
-          }
-          if (state.isLoading) {
-            return Scaffold(
-              body: Center(child: Lottie.asset(AppImages.loading)),
-            );
-          }
+        if (state.isLoading) {
+          return Scaffold(body: Center(child: Lottie.asset(AppImages.loading)));
         }
+
+        if (state.store == null) {
+          return const SellerCreationScreen();
+        }
+
         return Scaffold(
           body: screens[_currentIndex],
           bottomNavigationBar: CustomBottomNavBar(

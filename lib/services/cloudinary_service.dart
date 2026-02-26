@@ -18,19 +18,15 @@ class CloudinaryService {
         folder: "stores",
         fileName: fileName,
         progressCallback: (count, total) {
-          print("Uploading: ${((count / total) * 100).toStringAsFixed(0)}%");
         },
       );
 
       if (response.isSuccessful) {
-        print('Uploaded successfully: ${response.secureUrl}');
         return response.secureUrl;
       } else {
-        print('Upload failed: ${response.error}');
         return null;
       }
     } catch (e) {
-      print('Upload exception: $e');
       return null;
     }
   }

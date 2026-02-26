@@ -44,7 +44,7 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
         storeData.selectedImage,
       );
 
-      emit(state.copyWith(isLoading: false, isSuccess: true));
+      emit(state.copyWith(isLoading: false, isSuccess: true, store: storeData));
     } catch (e) {
       emit(
         state.copyWith(
@@ -61,6 +61,7 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
     try {
       final result = await storeCreationService.hasStore();
       emit(state.copyWith(isLoading: false, hasStore: result));
+
     } catch (e) {
       emit(
         state.copyWith(
@@ -71,11 +72,11 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
     }
   }
 
-  Future<void> storeData() async {
+  Future<CreateStoreModel?> storeData(String uid) async {
     emit(state.copyWith(isLoading: true, error: null));
 
     try {
-      final result = await storeCreationService.getStore();
+      final result = await storeCreationService.getStore(uid);
 
       if (result != null) {
         await _saveStoreData(
@@ -92,6 +93,7 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
       }
 
       emit(state.copyWith(isLoading: false, store: result));
+      return result;
     } catch (e) {
       emit(
         state.copyWith(
@@ -99,6 +101,7 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
           error: ErrorHandler.fromException(e).message,
         ),
       );
+      return null;
     }
   }
 

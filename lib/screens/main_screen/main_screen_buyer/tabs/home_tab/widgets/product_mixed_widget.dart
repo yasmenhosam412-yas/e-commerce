@@ -1,7 +1,12 @@
+import 'package:boo/core/models/products_model.dart';
 import 'package:flutter/material.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../../controllers/fav_cubit/fav_cubit.dart';
+import '../../../../../../controllers/fav_cubit/fav_state.dart';
 
 enum ProductOwnerType { store, user }
 
@@ -11,7 +16,6 @@ class ProductItem extends StatelessWidget {
   final String image;
   final String name;
   final double price;
-  final bool isFavorite;
 
   final double? oldPrice;
   final double? rating;
@@ -22,6 +26,7 @@ class ProductItem extends StatelessWidget {
   final double? sellerRating;
   final int? sellerSalesCount;
   final bool? isUsed;
+  final ProductsModel productModel;
 
   const ProductItem({
     super.key,
@@ -29,7 +34,6 @@ class ProductItem extends StatelessWidget {
     required this.image,
     required this.name,
     required this.price,
-    this.isFavorite = false,
 
     this.oldPrice,
     this.rating,
@@ -40,6 +44,7 @@ class ProductItem extends StatelessWidget {
     this.sellerRating,
     this.sellerSalesCount,
     this.isUsed,
+    required this.productModel,
   });
 
   @override
@@ -82,18 +87,30 @@ class ProductItem extends StatelessWidget {
             child: CachedImageWidget(imagePath: image),
           ),
 
-          Positioned(
-            top: 6,
-            right: 6,
-            child: CircleAvatar(
-              radius: 14,
-              backgroundColor: Colors.white,
-              child: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                size: 16,
-                color: Colors.redAccent,
-              ),
-            ),
+          BlocSelector<FavCubit, FavState, bool>(
+            selector: (state) {
+              return state.favourites.contains(productModel);
+            },
+            builder: (context, state) {
+              return Positioned(
+                top: 6,
+                right: 6,
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<FavCubit>().toggleFav(productModel);
+                  },
+                  child: CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      state ? Icons.favorite : Icons.favorite_border,
+                      size: 16,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
 
           if (ownerType == ProductOwnerType.user)

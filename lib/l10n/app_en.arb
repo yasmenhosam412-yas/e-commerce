@@ -172,7 +172,10 @@
   "off" : "OFF",
   "item" : "Items",
   "addToCart":  "Add to cart",
-  "addedToCart" : "Added to cart"
+  "addedToCart" : "Added to cart",
+  "attributes" : "Attributes",
+  "attributeName" : "Attribute Name",
+  "attributeValue" : "Attribute Value"
 
 
 

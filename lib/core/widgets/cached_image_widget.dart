@@ -14,10 +14,10 @@ class CachedImageWidget extends StatelessWidget {
       imageUrl: imagePath,
       width: double.infinity,
       fit: BoxFit.cover,
-      placeholder: (_, __) => const Center(
+      placeholder: (_, _) => const Center(
         child: CircularProgressIndicator(color: AppColors.primaryColor),
       ),
-      errorWidget: (_, __, ___) => const Icon(Icons.broken_image),
+      errorWidget: (_, _, _) => const Icon(Icons.broken_image),
     );
   }
 }

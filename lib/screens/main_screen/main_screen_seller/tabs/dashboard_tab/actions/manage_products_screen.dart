@@ -6,6 +6,7 @@ import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/widgets/filters_container.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../core/services/get_init.dart';
@@ -40,7 +41,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   void initState() {
     super.initState();
     search = TextEditingController();
-    context.read<DashboardCubit>().getProducts();
+    context.read<DashboardCubit>().getProducts(FirebaseAuth.instance.currentUser!.uid);
     context.read<DashboardCubit>().getDiscount();
     context.read<DashboardCubit>().getCollection();
   }

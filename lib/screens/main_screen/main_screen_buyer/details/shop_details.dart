@@ -2,13 +2,15 @@ import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dar
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
+import 'package:boo/core/utils/app_images.dart';
 import 'package:boo/core/utils/app_padding.dart';
-import 'package:boo/core/widgets/custom_drop_down.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:boo/screens/authentication/widgets/gredient_button.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/details/product_details.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/home_tab/widgets/product_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/services/get_init.dart';
@@ -214,7 +216,31 @@ class _ShopDetailsState extends State<ShopDetails> {
             final products = state.products ?? [];
 
             if (products.isEmpty) {
-              return Center(child: Text(AppLocalizations.of(context)!.noData));
+              return Center(
+                child: Container(
+                  padding: EdgeInsets.all(AppPadding.medium),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: AppPadding.large,
+                    children: [
+                     Lottie.asset(AppImages.loading2,height: 200),
+                      Text(
+                        AppLocalizations.of(context)!.returnAfterSomeTime,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                      GradientButton(
+                        text: AppLocalizations.of(context)!.exploreAnotherShops,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             final categories = products.map((e) => e.category).toSet().toList();
@@ -382,13 +408,14 @@ class _ShopDetailsState extends State<ShopDetails> {
                           );
                         },
                         child: ProductClothesItem(
-                          image: item.image ?? "",
-                          name: item.name ?? "",
-                          price: item.newPrice ?? item.price ?? 0.0,
+                          image: item.image,
+                          name: item.name,
+                          price: item.newPrice ?? item.price,
                           rating: 0,
                           oldPrice: item.newPrice != item.price
                               ? item.price
-                              : null, productModel: item,
+                              : null,
+                          productModel: item,
                         ),
                       );
                     },

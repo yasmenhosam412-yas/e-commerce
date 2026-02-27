@@ -103,8 +103,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         _descController.text.isEmpty ||
         _priceController.text.isEmpty ||
         _catController.text.isEmpty ||
-        _quantityController.text.isEmpty ||
-        _attributes.isEmpty) {
+        _quantityController.text.isEmpty) {
       getIt<NavigationService>().showToast(
         AppLocalizations.of(context)!.enterAllData,
       );
@@ -113,31 +112,31 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     if (isEditing) {
       context.read<DashboardCubit>().updateProduct(
-            productId: widget.productsModel!.id.toString(),
-            images: _pickedImages.map((e) => e.path).toList(),
-            name: _nameController.text,
-            desc: _descController.text,
-            price: double.parse(_priceController.text),
-            category: _catController.text,
-            quantity: int.parse(_quantityController.text),
-            attributes: _attributes,
-            isFeatured: widget.productsModel!.isFeatured,
-            sizes: _sizes,
-          );
+        productId: widget.productsModel!.id.toString(),
+        images: _pickedImages.map((e) => e.path).toList(),
+        name: _nameController.text,
+        desc: _descController.text,
+        price: double.parse(_priceController.text),
+        category: _catController.text,
+        quantity: int.parse(_quantityController.text),
+        attributes: _attributes,
+        isFeatured: widget.productsModel!.isFeatured,
+        sizes: _sizes,
+      );
     } else {
       context.read<DashboardCubit>().addProduct(
-            images: _pickedImages.map((e) => e.path).toList(),
-            name: _nameController.text,
-            desc: _descController.text,
-            price: _priceController.text,
-            category: _catController.text,
-            quantity: _quantityController.text,
-            attributes: _attributes,
-            sizes: _sizes,
-            storeImage: widget.storeImage,
-            storeName: widget.storeName,
-            storeCategory: widget.storeCategory,
-          );
+        images: _pickedImages.map((e) => e.path).toList(),
+        name: _nameController.text,
+        desc: _descController.text,
+        price: _priceController.text,
+        category: _catController.text,
+        quantity: _quantityController.text,
+        attributes: _attributes,
+        sizes: _sizes,
+        storeImage: widget.storeImage,
+        storeName: widget.storeName,
+        storeCategory: widget.storeCategory,
+      );
     }
   }
 
@@ -294,8 +293,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               Text(
                 AppLocalizations.of(context)!.attributes,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.primaryColor,
-                    ),
+                  color: AppColors.primaryColor,
+                ),
               ),
               const SizedBox(height: 8),
               CustomFormField(
@@ -327,8 +326,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       Text(
                         e.key,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: AppColors.primaryColor,
-                            ),
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                       Wrap(
                         spacing: 8,

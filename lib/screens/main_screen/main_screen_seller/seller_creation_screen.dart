@@ -5,11 +5,12 @@ import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:boo/screens/authentication/auth_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/widgets/business_details.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/widgets/fees_and_delivery.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/widgets/review_publish.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/widgets/store_info.dart';
-import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/widgets/tile_step.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/services/get_init.dart';
@@ -37,53 +38,101 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              spacing: AppPadding.xxlarge,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.createStore,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: AppColors.primaryColor,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
+          padding: const EdgeInsets.all(AppPadding.medium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.createStore,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: AppColors.primaryColor,
+                  fontWeight: FontWeight.bold,
                 ),
-                TileStep(
-                  isFinished: true,
-                  step: AppLocalizations.of(context)!.title1,
-                  onTab: () {
-                    _showStepModal(AppLocalizations.of(context)!.title1);
-                  },
+              ),
+              SizedBox(height: AppPadding.large),
+              Expanded(
+                child: ListView(
+                  children: [
+                    _buildStepTile(
+                      title: AppLocalizations.of(context)!.title1,
+                      isFinished: true,
+                      onTap: () =>
+                          _showStepModal(AppLocalizations.of(context)!.title1),
+                    ),
+                    _buildStepTile(
+                      title: AppLocalizations.of(context)!.title2,
+                      isFinished: true,
+                      onTap: () => _showBusinessDetailsModal(
+                        AppLocalizations.of(context)!.title2,
+                      ),
+                    ),
+                    _buildStepTile(
+                      title: AppLocalizations.of(context)!.title3,
+                      isFinished: true,
+                      onTap: () =>
+                          _showFeesModal(AppLocalizations.of(context)!.title3),
+                    ),
+                    _buildStepTile(
+                      title: AppLocalizations.of(context)!.title4,
+                      isFinished: true,
+                      onTap: _showReviewAndPublishModal,
+                    ),
+                    SizedBox(height: AppPadding.medium),
+                    _buildStepTile(
+                      title: AppLocalizations.of(context)!.signout,
+                      isFinished: false,
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        getIt<NavigationService>().navigatePushRemoveUntil(
+                          AuthScreen(),
+                        );
+                      },
+                      isSignOut: true,
+                    ),
+                  ],
                 ),
-                TileStep(
-                  isFinished: true,
-                  step: AppLocalizations.of(context)!.title2,
-                  onTab: () {
-                    _showBusinessDetailsModal(
-                      AppLocalizations.of(context)!.title2,
-                    );
-                  },
-                ),
-                TileStep(
-                  isFinished: true,
-                  step: AppLocalizations.of(context)!.title3,
-                  onTab: () {
-                    _showFeesModal(AppLocalizations.of(context)!.title3);
-                  },
-                ),
-                TileStep(
-                  isFinished: true,
-                  step: AppLocalizations.of(context)!.title4,
-                  onTab: () {
-                    _showReviewAndPublishModal();
-                  },
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStepTile({
+    required String title,
+    required bool isFinished,
+    required VoidCallback onTap,
+    bool isSignOut = false,
+  }) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: AppPadding.small),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppPadding.small),
+      ),
+      color: isSignOut ? AppColors.errorColor : AppColors.whiteColor,
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppPadding.medium,
+          vertical: AppPadding.small,
+        ),
+        leading: Icon(
+          isFinished ? Icons.check_circle : Icons.circle_outlined,
+          color: isSignOut ? AppColors.whiteColor : AppColors.primaryColor,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: isSignOut ? AppColors.whiteColor : AppColors.primaryColor,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: isSignOut ? AppColors.whiteColor : AppColors.grey500,
+        ),
+        onTap: onTap,
       ),
     );
   }
@@ -154,8 +203,22 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
         businessAddress: selectedAddress,
         fees: "$selectedFees ${AppLocalizations.of(context)!.currency}",
         deliveryPrice:
-        "$selectedDelivery ${AppLocalizations.of(context)!.currency}",
+            "$selectedDelivery ${AppLocalizations.of(context)!.currency}",
         onPublish: () {
+          if (selectedName.isEmpty ||
+              selectedDesc.isEmpty ||
+              selectedCat.isEmpty ||
+              selectedPhone.isEmpty ||
+              selectedEmail.isEmpty ||
+              selectedAddress.isEmpty ||
+              selectedFees.isEmpty ||
+              selectedDelivery.isEmpty ||
+              selectedImage.isEmpty) {
+            getIt<NavigationService>().showToast(
+              AppLocalizations.of(context)!.enterAllData,
+            );
+            return;
+          }
           context.read<StoreCreationCubit>().storeCreation(
             storeData: CreateStoreModel(
               selectedName: selectedName,

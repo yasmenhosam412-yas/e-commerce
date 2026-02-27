@@ -2,6 +2,8 @@ import 'package:boo/core/models/social_auth_result.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../core/models/user_model.dart';
+
 class AuthService {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -61,5 +63,16 @@ class AuthService {
         'createdAt': FieldValue.serverTimestamp(),
       });
     }
+  }
+
+  Future<UserModel?> getUserData() async {
+    final userDoc = await firebaseFirestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    if (!userDoc.exists) return null;
+
+    return UserModel.fromMap(userDoc.data()!);
   }
 }

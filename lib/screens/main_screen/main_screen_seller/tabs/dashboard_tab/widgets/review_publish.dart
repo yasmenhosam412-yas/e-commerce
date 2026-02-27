@@ -67,6 +67,9 @@ class _ReviewAndPublishContentState extends State<ReviewAndPublishContent> {
               height: 120,
               width: 120,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(Icons.error, color: AppColors.primaryColor);
+              },
             ),
           )
         else
@@ -138,9 +141,7 @@ class _ReviewAndPublishContentState extends State<ReviewAndPublishContent> {
             return SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: (state.isLoading)
-                    ? null
-                    : widget.onPublish,
+                onPressed: (state.isLoading) ? null : widget.onPublish,
                 child: Text(
                   (state.isLoading)
                       ? AppLocalizations.of(context)!.loading

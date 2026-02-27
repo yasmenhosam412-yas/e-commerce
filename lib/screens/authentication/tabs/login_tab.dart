@@ -1,4 +1,5 @@
 import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
+import 'package:boo/screens/main_screen/loading_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +11,6 @@ import '../../../core/utils/app_colors.dart';
 import '../../../core/utils/app_padding.dart';
 import '../../../core/widgets/custom_form_field.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../main_screen/main_screen_seller/main_screen_seller.dart';
 import '../widgets/forget_password_widget.dart';
 import '../widgets/gredient_button.dart';
 
@@ -107,7 +107,7 @@ class _LoginTabState extends State<LoginTab> {
                 if (state is AuthLoaded) {
                   if (state.userType == "seller") {
                     getIt<NavigationService>().navigatePushReplace(
-                      MainScreenSeller(),
+                      LoadingScreen(),
                     );
                   } else {
                     getIt<NavigationService>().navigatePushReplace(

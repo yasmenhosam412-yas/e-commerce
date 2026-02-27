@@ -1,16 +1,18 @@
 import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
 import 'package:boo/controllers/buyer_cubits/home_cubit/home_cubit.dart';
+import 'package:boo/controllers/buyer_cubits/sell_cubit/sell_cubit.dart';
 import 'package:boo/controllers/fav_cubit/fav_cubit.dart';
+import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_theme.dart';
-import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart';
-import 'package:boo/screens/main_screen/main_screen_seller/main_screen_seller.dart';
+import 'package:boo/screens/main_screen/loading_screen.dart';
 import 'package:boo/screens/on_boarding/on_boarding_screen.dart';
 import 'package:boo/services/auth_service.dart';
 import 'package:boo/services/buyer_service/fav_service.dart';
 import 'package:boo/services/buyer_service/home_service.dart';
+import 'package:boo/services/buyer_service/sell_servcie.dart';
 import 'package:boo/services/store_creation_service.dart';
 import 'package:boo/services/store_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,9 +29,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupLocator();
-
-  FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
-  final userType = await flutterSecureStorage.read(key: "userType");
   runApp(
     MultiBlocProvider(
       providers: [
@@ -46,18 +45,23 @@ Future<void> main() async {
           ),
         ),
         BlocProvider(create: (context) => DashboardCubit(StoreService())),
-        BlocProvider(create: (context) => HomeCubit(HomeService())),
-        BlocProvider(create: (context) => FavCubit(FavService())..getAllFavourites()),
+        BlocProvider(
+          create: (context) => HomeCubit(HomeService())..getFeaturedPicks(),
+        ),
+        BlocProvider(create: (context) => FavCubit(FavService())),
+        BlocProvider(
+          create: (context) =>
+              ManageCubit(StoreCreationService(), authService: AuthService()),
+        ),
+        BlocProvider(create: (context) => SellCubit(SellService())..getSell()),
       ],
-      child: MainApp(userType: userType),
+      child: MainApp(),
     ),
   );
 }
 
 class MainApp extends StatelessWidget {
-  final String? userType;
-
-  const MainApp({super.key, this.userType});
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +77,9 @@ class MainApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      // locale: Locale("ar"),
       supportedLocales: const [Locale('en'), Locale('ar')],
-      home: (FirebaseAuth.instance.currentUser?.uid != null && userType != null)
-          ? (userType == "buyer")
-                ? MainScreenBuyer()
-                : MainScreenSeller()
+      home: (FirebaseAuth.instance.currentUser?.uid != null)
+          ? LoadingScreen()
           : OnBoardingScreen(),
     );
   }

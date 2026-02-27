@@ -33,6 +33,7 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   equatable: ^2.0.8
   skeletonizer: ^2.1.2
+  url_launcher: ^6.3.2
 
 
 dev_dependencies:

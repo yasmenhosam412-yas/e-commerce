@@ -11,43 +11,45 @@ class ErrorHandler {
   ErrorHandler._(this.message);
 
   factory ErrorHandler.fromException(Object error) {
-    final context = getIt<NavigationService>().navigatorKey.currentContext!;
+    final context = getIt<NavigationService>().navigatorKey.currentContext;
+
+    if (context == null) {
+      return ErrorHandler._("Something went wrong");
+    }
+
     final loc = AppLocalizations.of(context)!;
 
     if (error is PlatformException) {
-      switch (error.code) {
-        case 'network_error':
-          return ErrorHandler._(loc.noInternet);
-
-        case 'sign_in_failed':
-        case 'sign_in_canceled':
-          return ErrorHandler._(loc.somethingWentWrong);
-
-        default:
-          return ErrorHandler._(loc.somethingWentWrong);
+      if (error.code == 'network_error' ||
+          error.message?.contains('unavailable') == true) {
+        return ErrorHandler._(loc.noInternet);
       }
+
+      if (error.code == 'sign_in_failed' || error.code == 'sign_in_canceled') {
+        return ErrorHandler._(loc.somethingWentWrong);
+      }
+
+      return ErrorHandler._(loc.somethingWentWrong);
     }
 
     if (error is FirebaseAuthException) {
       switch (error.code) {
-      case 'user-not-found':
-      return ErrorHandler._(loc.noData);
+        case 'user-not-found':
+        case 'invalid-credential':
+          return ErrorHandler._(loc.noData);
 
-      case 'wrong-password':
-      return ErrorHandler._(loc.somethingWentWrong);
+        case 'wrong-password':
+          return ErrorHandler._(loc.somethingWentWrong);
 
-      case 'invalid-credential':
-      return ErrorHandler._(loc.noData);
+        case 'network-request-failed':
+          return ErrorHandler._(loc.noInternet);
 
-      case 'network-request-failed':
-      return ErrorHandler._(loc.noInternet);
+        case 'account-exists-with-different-credential':
+        case 'email-already-in-use':
+          return ErrorHandler._(loc.userAlreadyExists);
 
-      case 'account-exists-with-different-credential':
-      case 'email-already-in-use':
-      return ErrorHandler._(loc.userAlreadyExists);
-
-      default:
-      return ErrorHandler._(loc.somethingWentWrong);
+        default:
+          return ErrorHandler._(loc.somethingWentWrong);
       }
     }
 

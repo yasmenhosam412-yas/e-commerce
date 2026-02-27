@@ -10,10 +10,8 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthService authService;
   final FlutterSecureStorage flutterSecureStorage;
 
-  AuthCubit({
-    required this.authService,
-    required this.flutterSecureStorage,
-  }) : super(AuthInitial());
+  AuthCubit({required this.authService, required this.flutterSecureStorage})
+    : super(AuthInitial());
 
   Future<void> signInWithEmail(String email, String password) async {
     emit(AuthLoading());

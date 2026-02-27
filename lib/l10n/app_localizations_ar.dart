@@ -535,4 +535,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get attributeValue => 'قيمة الصفة';
+
+  @override
+  String get loading2 => 'جاري التحميل، يرجى الانتظار...';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get signout => 'تسجيل الخروج';
+
+  @override
+  String get or => 'أو';
+
+  @override
+  String get returnAfterSomeTime => 'يرجى العودة بعد بعض الوقت';
+
+  @override
+  String get exploreAnotherShops => 'استكشف متاجر أخرى';
+
+  @override
+  String get sellSomething => 'بع شيئًا';
+
+  @override
+  String get productStatus => 'حالة المنتج';
+
+  @override
+  String get contactNumber => 'رقم التواصل';
+
+  @override
+  String get showInSell => 'عرض المنتج للبيع';
+
+  @override
+  String get nothingFavs => 'لا توجد مفضلات بعد';
 }

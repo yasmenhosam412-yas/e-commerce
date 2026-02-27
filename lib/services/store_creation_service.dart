@@ -44,7 +44,7 @@ class StoreCreationService {
     final result = await firebaseFirestore
         .collection('stores')
         .doc(firebaseAuth.currentUser!.uid)
-        .get();
+        .get(const GetOptions(source: Source.server));
 
     return result.exists;
   }
@@ -53,31 +53,20 @@ class StoreCreationService {
     final result = await firebaseFirestore
         .collection('stores')
         .doc(uid)
-        .get();
-    final isExist = await hasStore();
+        .get(const GetOptions(source: Source.server));
 
-    if (isExist) {
-      final name = result.get("name");
-      final description = result.get("description");
-      final category = result.get("category");
-      final phone = result.get("phone");
-      final email = result.get("email");
-      final address = result.get("address");
-      final fees = result.get("fees");
-      final delivery = result.get("delivery");
-      final image = result.get("image");
-      return CreateStoreModel(
-        selectedName: name,
-        selectedDesc: description,
-        selectedCat: category,
-        selectedPhone: phone,
-        selectedEmail: email,
-        selectedAddress: address,
-        selectedFees: fees,
-        selectedDelivery: delivery,
-        selectedImage: image,
-      );
-    }
-    return null;
+    if (!result.exists) return null;
+
+    return CreateStoreModel(
+      selectedName: result.get("name"),
+      selectedDesc: result.get("description"),
+      selectedCat: result.get("category"),
+      selectedPhone: result.get("phone"),
+      selectedEmail: result.get("email"),
+      selectedAddress: result.get("address"),
+      selectedFees: result.get("fees"),
+      selectedDelivery: result.get("delivery"),
+      selectedImage: result.get("image"),
+    );
   }
 }

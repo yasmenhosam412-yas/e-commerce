@@ -535,4 +535,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attributeValue => 'Attribute Value';
+
+  @override
+  String get loading2 => 'Loading, please wait...';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get signout => 'Sign out';
+
+  @override
+  String get or => 'OR';
+
+  @override
+  String get returnAfterSomeTime => 'Please return after some time';
+
+  @override
+  String get exploreAnotherShops => 'Explore another shops';
+
+  @override
+  String get sellSomething => 'Sell Something';
+
+  @override
+  String get productStatus => 'Product status';
+
+  @override
+  String get contactNumber => 'Contact Number';
+
+  @override
+  String get showInSell => 'Show the product for sale';
+
+  @override
+  String get nothingFavs => 'No favorites yet';
 }

@@ -1,6 +1,6 @@
+import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/models/action_model.dart';
-import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/custom_elevated_button.dart';
@@ -19,16 +19,7 @@ import '../../../../authentication/auth_screen.dart';
 import 'actions/add_collection_screen.dart';
 
 class DashboardTab extends StatefulWidget {
-  final String name;
-  final String image;
-  final String category;
-
-  const DashboardTab({
-    super.key,
-    required this.name,
-    required this.image,
-    required this.category,
-  });
+  const DashboardTab({super.key});
 
   @override
   State<DashboardTab> createState() => _DashboardTabState();
@@ -45,10 +36,17 @@ class _DashboardTabState extends State<DashboardTab> {
         color: Colors.green,
         onTab: () async {
           getIt<NavigationService>().navigatePush(
-            AddProductScreen(
-              storeImage: widget.image,
-              storeName: widget.name,
-              storeCategory: widget.category,
+            BlocBuilder<ManageCubit, ManageState>(
+              builder: (context, state) {
+                if (state is ManageLoaded) {
+                  return AddProductScreen(
+                    storeImage: state.createStoreModel?.selectedImage ?? "",
+                    storeName: state.createStoreModel?.selectedName ?? "",
+                    storeCategory: state.createStoreModel?.selectedCat ?? "",
+                  );
+                }
+                return SizedBox.shrink();
+              },
             ),
           );
         },
@@ -72,10 +70,17 @@ class _DashboardTabState extends State<DashboardTab> {
         color: Colors.amber,
         onTab: () async {
           getIt<NavigationService>().navigatePush(
-            CreateAdsScreen(
-              name: widget.name,
-              image: widget.image,
-              category: widget.category,
+            BlocBuilder<ManageCubit, ManageState>(
+              builder: (context, state) {
+                if (state is ManageLoaded) {
+                  return CreateAdsScreen(
+                    image: state.createStoreModel?.selectedImage ?? "",
+                    name: state.createStoreModel?.selectedName ?? "",
+                    category: state.createStoreModel?.selectedCat ?? "",
+                  );
+                }
+                return SizedBox.shrink();
+              },
             ),
           );
         },

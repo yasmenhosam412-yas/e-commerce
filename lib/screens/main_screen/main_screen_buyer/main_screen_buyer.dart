@@ -1,9 +1,13 @@
+import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/cart_tab/cart_tab.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/fav_tab/fav_tab.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/home_tab/screens/home_tab.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/profile_tab/profile_tab.dart';
+import 'package:boo/screens/main_screen/main_screen_buyer/tabs/sell_something.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/services/get_init.dart';
 
 class MainScreenBuyer extends StatefulWidget {
   const MainScreenBuyer({super.key});
@@ -18,7 +22,7 @@ class _MainScreenBuyerState extends State<MainScreenBuyer> {
   final List<Widget> _screens = const [
     HomeTab(),
     FavTab(),
-   CartTab(),
+    CartTab(),
     ProfileTab(),
   ];
 
@@ -33,6 +37,14 @@ class _MainScreenBuyerState extends State<MainScreenBuyer> {
             _currentIndex = index;
           });
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryColor,
+        shape: CircleBorder(),
+        onPressed: () {
+          getIt<NavigationService>().navigatePush(SellSomething());
+        },
+        label: Icon(Icons.add, color: Colors.white),
       ),
     );
   }

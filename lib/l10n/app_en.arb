@@ -175,9 +175,18 @@
   "addedToCart" : "Added to cart",
   "attributes" : "Attributes",
   "attributeName" : "Attribute Name",
-  "attributeValue" : "Attribute Value"
-
-
+  "attributeValue" : "Attribute Value",
+  "loading2" : "Loading, please wait...",
+  "retry" : "Retry",
+  "signout" : "Sign out",
+  "or" : "OR",
+  "returnAfterSomeTime": "Please return after some time",
+  "exploreAnotherShops": "Explore another shops",
+  "sellSomething" : "Sell Something",
+  "productStatus" : "Product status",
+  "contactNumber" : "Contact Number",
+  "showInSell": "Show the product for sale",
+  "nothingFavs" : "No favorites yet"
 
 }
 

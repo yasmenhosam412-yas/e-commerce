@@ -1150,6 +1150,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Attribute Value'**
   String get attributeValue;
+
+  /// No description provided for @loading2.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading, please wait...'**
+  String get loading2;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @signout.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signout;
+
+  /// No description provided for @or.
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get or;
+
+  /// No description provided for @returnAfterSomeTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Please return after some time'**
+  String get returnAfterSomeTime;
+
+  /// No description provided for @exploreAnotherShops.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore another shops'**
+  String get exploreAnotherShops;
+
+  /// No description provided for @sellSomething.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell Something'**
+  String get sellSomething;
+
+  /// No description provided for @productStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Product status'**
+  String get productStatus;
+
+  /// No description provided for @contactNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Number'**
+  String get contactNumber;
+
+  /// No description provided for @showInSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the product for sale'**
+  String get showInSell;
+
+  /// No description provided for @nothingFavs.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get nothingFavs;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

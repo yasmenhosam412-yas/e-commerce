@@ -69,11 +69,11 @@ class ProductClothesItem extends StatelessWidget {
                           context.read<FavCubit>().toggleFav(productModel);
                         },
                         child: CircleAvatar(
-                          radius: 14,
+                          radius: 16,
                           backgroundColor: Colors.white,
                           child: Icon(
                             state ? Icons.favorite : Icons.favorite_border,
-                            size: 16,
+                            size: 22,
                             color: Colors.redAccent,
                           ),
                         ),

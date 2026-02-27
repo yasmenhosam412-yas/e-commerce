@@ -3,7 +3,7 @@ import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart';
-import 'package:boo/screens/main_screen/main_screen_seller/main_screen_seller.dart';
+import 'package:boo/screens/main_screen/main_screen_seller/seller_creation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../controllers/auth_cubit/auth_cubit.dart';
@@ -167,7 +167,7 @@ class _SignupTabState extends State<SignupTab> {
                     );
                   } else {
                     getIt<NavigationService>().navigatePushReplace(
-                      MainScreenSeller(),
+                      SellerCreationScreen(),
                     );
                   }
                 }

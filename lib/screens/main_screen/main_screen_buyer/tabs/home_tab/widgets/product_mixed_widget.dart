@@ -1,4 +1,5 @@
 import 'package:boo/core/models/products_model.dart';
+import 'package:boo/core/models/user_product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
@@ -26,7 +27,8 @@ class ProductItem extends StatelessWidget {
   final double? sellerRating;
   final int? sellerSalesCount;
   final bool? isUsed;
-  final ProductsModel productModel;
+  final ProductsModel? productModel;
+  final UserProductModel? userProductModel;
 
   const ProductItem({
     super.key,
@@ -44,7 +46,8 @@ class ProductItem extends StatelessWidget {
     this.sellerRating,
     this.sellerSalesCount,
     this.isUsed,
-    required this.productModel,
+    this.productModel,
+    this.userProductModel,
   });
 
   @override
@@ -89,7 +92,13 @@ class ProductItem extends StatelessWidget {
 
           BlocSelector<FavCubit, FavState, bool>(
             selector: (state) {
-              return state.favourites.contains(productModel);
+              if (ownerType == ProductOwnerType.store) {
+                if (productModel == null) return false;
+                return state.favourites.any((e) => e.id == productModel!.id);
+              } else {
+                if (userProductModel == null) return false;
+                return state.favouritesUsers.any((e) => e.id == userProductModel!.id);
+              }
             },
             builder: (context, state) {
               return Positioned(
@@ -97,14 +106,22 @@ class ProductItem extends StatelessWidget {
                 right: 6,
                 child: GestureDetector(
                   onTap: () {
-                    context.read<FavCubit>().toggleFav(productModel);
+                    if (ownerType == ProductOwnerType.store) {
+                      if (productModel != null) {
+                        context.read<FavCubit>().toggleFav(productModel!);
+                      }
+                    } else {
+                      if (userProductModel != null) {
+                        context.read<FavCubit>().toggleUserFav(userProductModel!);
+                      }
+                    }
                   },
                   child: CircleAvatar(
-                    radius: 14,
+                    radius: 16,
                     backgroundColor: Colors.white,
                     child: Icon(
                       state ? Icons.favorite : Icons.favorite_border,
-                      size: 16,
+                      size: 22,
                       color: Colors.redAccent,
                     ),
                   ),
@@ -221,12 +238,20 @@ class ProductItem extends StatelessWidget {
   Widget _sellerInfo(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 10,
-          backgroundImage: NetworkImage(
-            sellerAvatar ?? "https://i.pravatar.cc/150",
-          ),
-        ),
+        (sellerAvatar?.isNotEmpty ?? false)
+            ? CircleAvatar(
+                radius: 10,
+                backgroundImage: NetworkImage(sellerAvatar!),
+              )
+            : CircleAvatar(
+                backgroundColor: AppColors.grey200,
+                radius: 10,
+                child: Icon(
+                  Icons.person,
+                  size: 13,
+                  color: AppColors.primaryColor,
+                ),
+              ),
         const SizedBox(width: 6),
         Expanded(
           child: Text(

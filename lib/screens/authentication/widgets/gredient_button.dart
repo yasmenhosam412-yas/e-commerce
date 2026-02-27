@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-
 import '../../../core/utils/app_colors.dart';
 
 class GradientButton extends StatelessWidget {
@@ -21,25 +19,17 @@ class GradientButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero,
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: AppColors.whiteColor,
+          disabledBackgroundColor: Colors.grey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        child: Ink(
-          decoration: BoxDecoration(
-            color: AppColors.primaryColor,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.whiteColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+        child: Text(
+          text,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

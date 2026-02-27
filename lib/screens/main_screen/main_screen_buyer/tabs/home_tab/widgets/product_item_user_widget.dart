@@ -1,18 +1,23 @@
+import 'package:boo/controllers/fav_cubit/fav_cubit.dart';
+import 'package:boo/controllers/fav_cubit/fav_state.dart';
+import 'package:boo/core/models/user_product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProductClothesItem extends StatelessWidget {
   final String image;
   final String name;
-  final double price;
+  final String price;
 
   final String sellerName;
   final String sellerAvatar;
 
   final bool isUsed;
-  final bool isFavorite;
+  final UserProductModel userProduct;
 
   const UserProductClothesItem({
     super.key,
@@ -22,7 +27,7 @@ class UserProductClothesItem extends StatelessWidget {
     required this.sellerName,
     required this.sellerAvatar,
     this.isUsed = true,
-    this.isFavorite = false,
+    required this.userProduct,
   });
 
   @override
@@ -77,18 +82,30 @@ class UserProductClothesItem extends StatelessWidget {
                   ),
                 ),
 
-                Positioned(
-                  top: 6,
-                  right: 6,
-                  child: CircleAvatar(
-                    radius: 14,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      size: 16,
-                      color: Colors.redAccent,
-                    ),
-                  ),
+                BlocSelector<FavCubit, FavState, bool>(
+                  selector: (state) {
+                    return state.favouritesUsers.contains(userProduct);
+                  },
+                  builder: (context, state) {
+                    return Positioned(
+                      top: 6,
+                      right: 6,
+                      child: GestureDetector(
+                        onTap: () {
+                          context.read<FavCubit>().toggleUserFav(userProduct);
+                        },
+                        child: CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            state ? Icons.favorite : Icons.favorite_border,
+                            size: 22,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -103,7 +120,11 @@ class UserProductClothesItem extends StatelessWidget {
                   name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primaryColor,
@@ -114,9 +135,16 @@ class UserProductClothesItem extends StatelessWidget {
 
                 Row(
                   children: [
-                    CircleAvatar(
+                    (sellerAvatar.isNotEmpty)
+                        ? CircleAvatar(
                       radius: 10,
                       backgroundImage: NetworkImage(sellerAvatar),
+                    )
+                        : CircleAvatar(
+                      backgroundColor: AppColors.grey200,
+                      radius: 10,
+                      child: Icon(
+                        Icons.person, size: 13, color: AppColors.primaryColor,),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -124,7 +152,11 @@ class UserProductClothesItem extends StatelessWidget {
                         sellerName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(
                           fontSize: 12,
                           color: Colors.grey,
                         ),
@@ -136,8 +168,12 @@ class UserProductClothesItem extends StatelessWidget {
                 const SizedBox(height: 6),
 
                 Text(
-                  "${price.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  "$price ${AppLocalizations.of(context)!.currency}",
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryColor,
@@ -150,7 +186,18 @@ class UserProductClothesItem extends StatelessWidget {
                   width: double.infinity,
                   height: 34,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final Uri phoneUri = Uri(
+                        scheme: 'tel',
+                        path: userProduct.contactNumber,
+                      );
+
+                      if (await canLaunchUrl (phoneUri)
+                      ) {
+                      await launchUrl(phoneUri);
+                      }
+
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
@@ -158,7 +205,7 @@ class UserProductClothesItem extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      "Chat with seller",
+                      "Contact seller",
                       style: TextStyle(fontSize: 13),
                     ),
                   ),

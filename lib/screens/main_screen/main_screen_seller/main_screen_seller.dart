@@ -1,13 +1,7 @@
-import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/utils/app_colors.dart';
-import 'package:boo/core/utils/app_images.dart';
-import 'package:boo/screens/main_screen/main_screen_seller/seller_creation_screen.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/dashboard_tab.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:lottie/lottie.dart';
 
 class MainScreenSeller extends StatefulWidget {
   const MainScreenSeller({super.key});
@@ -24,19 +18,8 @@ class _MainScreenSellerState extends State<MainScreenSeller> {
   @override
   void initState() {
     super.initState();
-    init();
-  }
-
-  Future<void> init() async {
-    final data = await context.read<StoreCreationCubit>().storeData(
-      FirebaseAuth.instance.currentUser!.uid,
-    );
     screens = [
-      DashboardTab(
-        name: data?.selectedName ?? "",
-        image: data?.selectedImage ?? "",
-        category: data?.selectedCat ?? "",
-      ),
+      DashboardTab(),
       const Center(child: Text("Orders")),
       const Center(child: Text("Products")),
       const Center(child: Text("Profile")),
@@ -45,28 +28,16 @@ class _MainScreenSellerState extends State<MainScreenSeller> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StoreCreationCubit, StoreCreationState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return Scaffold(body: Center(child: Lottie.asset(AppImages.loading)));
-        }
-
-        if (state.store == null) {
-          return const SellerCreationScreen();
-        }
-
-        return Scaffold(
-          body: screens[_currentIndex],
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-          ),
-        );
-      },
+    return Scaffold(
+      body: screens[_currentIndex],
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
     );
   }
 }

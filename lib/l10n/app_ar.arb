@@ -175,6 +175,17 @@
   "addedToCart": "تم الاضافة للسلة",
   "attributes": "الصفات",
   "attributeName": "اسم الصفة",
-  "attributeValue": "قيمة الصفة"
-
+  "attributeValue": "قيمة الصفة",
+  "loading2": "جاري التحميل، يرجى الانتظار...",
+  "retry": "إعادة المحاولة",
+  "signout": "تسجيل الخروج",
+  "or": "أو",
+  "returnAfterSomeTime": "يرجى العودة بعد بعض الوقت",
+  "exploreAnotherShops": "استكشف متاجر أخرى",
+  "sellSomething": "بع شيئًا",
+  "productStatus": "حالة المنتج",
+  "contactNumber": "رقم التواصل",
+  "showInSell":  "عرض المنتج للبيع",
+  "nothingFavs": "لا توجد مفضلات بعد"
 }
+

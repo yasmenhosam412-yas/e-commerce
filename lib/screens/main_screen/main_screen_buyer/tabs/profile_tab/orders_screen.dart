@@ -1,0 +1,362 @@
+import 'package:boo/controllers/buyer_cubits/checkout_cubit/checkout_cubit.dart';
+import 'package:boo/core/models/order_model.dart';
+import 'package:boo/core/utils/app_colors.dart';
+import 'package:boo/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../../core/services/get_init.dart';
+import '../../../../../core/services/navigation_service.dart';
+
+class OrdersScreen extends StatefulWidget {
+  const OrdersScreen({super.key});
+
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  List<OrderModel>? _orders;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<CheckoutCubit>().getUserOrders();
+  }
+
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return Colors.orange;
+      case 'completed':
+        return Colors.green;
+      case 'canceled':
+        return Colors.red;
+      case 'shipped':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+    final locale = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(locale.myOrders, style: TextStyle(color: primaryColor)),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: primaryColor),
+      ),
+      body: BlocConsumer<CheckoutCubit, CheckoutState>(
+        listener: (context, state) {
+          if (state is CheckoutLoaded) {
+            getIt<NavigationService>().showToast(
+              AppLocalizations.of(context)!.canceled,
+            );
+            context.read<CheckoutCubit>().getUserOrders();
+          }
+          if (state is CheckoutError) {
+            getIt<NavigationService>().showToast(
+              state.error,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is CheckoutLoadedOrders) {
+            _orders = state.orders;
+          }
+
+          if (_orders == null) {
+            if (state is CheckoutLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is CheckoutError) {
+              return Center(
+                child: Text(state.error, style: TextStyle(color: primaryColor)),
+              );
+            }
+          }
+
+          if (_orders == null || _orders!.isEmpty) {
+            return Center(
+              child: Text(
+                locale.noOrdersFound,
+                style: TextStyle(color: primaryColor),
+              ),
+            );
+          }
+
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: _orders!.length,
+            itemBuilder: (context, index) {
+              final order = _orders![index];
+
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${locale.order} #${order.orderId.substring(0, 8).toUpperCase()}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: primaryColor,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: getStatusColor(
+                              order.status,
+                            ).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            order.status.toUpperCase(),
+                            style: TextStyle(
+                              color: getStatusColor(order.status),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+                    if (order.createdAt != null)
+                      Text(
+                        DateFormat(
+                          'dd MMM yyyy, hh:mm a',
+                        ).format(order.createdAt!),
+                        style: TextStyle(
+                          color: primaryColor.withOpacity(0.6),
+                          fontSize: 13,
+                        ),
+                      ),
+
+                    const Divider(height: 20, thickness: 1),
+                    ...order.products.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                item.productsModel.images.first,
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.broken_image, size: 60),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.productsModel.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: primaryColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${locale.qty}: ${item.quantity}',
+                                    style: TextStyle(
+                                      color: primaryColor.withOpacity(0.7),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '${item.productsModel.price} ${locale.currency}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const Divider(height: 20, thickness: 1),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          locale.fees,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                        Text(
+                          '${order.products.first.createStoreModel.selectedFees} ${locale.currency}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          locale.deliveryPrice,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                        Text(
+                          '${order.products.first.createStoreModel.selectedDelivery} ${locale.currency}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Divider(height: 20, thickness: 1),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          locale.total,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                        ),
+                        Text(
+                          '${order.totalPrice} ${locale.currency}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (order.status.toLowerCase() == 'pending')
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: BlocBuilder<CheckoutCubit, CheckoutState>(
+                            builder: (context, state) {
+                              final bool isThisOrderLoading =
+                                  state is CancelOrderLoading &&
+                                      state.orderId == order.orderId;
+                              final bool isLoading =
+                                  state is CheckoutLoading ||
+                                      isThisOrderLoading;
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            backgroundColor: Colors.white,
+                                            title: Text(
+                                              locale.cancelOrder,
+                                              style: const TextStyle(
+                                                color: AppColors.primaryColor,
+                                              ),
+                                            ),
+                                            content: Text(
+                                              locale.areYouSureCancel,
+                                              style: TextStyle(
+                                                color: primaryColor,
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(ctx).pop(),
+                                                child: Text(locale.no),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(ctx).pop();
+                                                  context
+                                                      .read<CheckoutCubit>()
+                                                      .cancelOrder(
+                                                        order.storeId,
+                                                        order.orderId,
+                                                      );
+                                                },
+                                                child: Text(
+                                                  locale.yes,
+                                                  style: const TextStyle(
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                child: Text(
+                                  isLoading
+                                      ? locale.loading
+                                      : locale.cancelOrder,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Divider(color: primaryColor, thickness: 1);
+            },
+          );
+        },
+      ),
+    );
+  }
+}

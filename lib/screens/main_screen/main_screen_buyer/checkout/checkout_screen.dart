@@ -1,3 +1,6 @@
+import 'package:boo/controllers/buyer_cubits/cart_cubit/cart_cubit.dart';
+import 'package:boo/controllers/buyer_cubits/checkout_cubit/checkout_cubit.dart';
+import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
@@ -5,9 +8,11 @@ import 'package:boo/core/widgets/custom_drop_down.dart';
 import 'package:boo/core/widgets/custom_form_field.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../../core/models/cart_model.dart';
+import '../../../../core/services/get_init.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartModel> cardModel;
@@ -71,32 +76,75 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 10),
           ],
         ),
-        child: SizedBox(
-          height: 55,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
-            onPressed: validateAndCheckout,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.lock, color: Colors.white),
-                const SizedBox(width: 10),
-                Text(
-                  "${AppLocalizations.of(context)!.checkout} • ${widget.delivery + widget.fees + widget.subtotal} ${AppLocalizations.of(context)!.currency}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white,
+        child: BlocConsumer<CheckoutCubit, CheckoutState>(
+          listener: (context, state) {
+            if (state is CheckoutLoaded) {
+              getIt<NavigationService>().showToast(
+                AppLocalizations.of(context)!.orderPlaced,
+              );
+              Navigator.pop(context);
+              context.read<CartCubit>().deleteItem(widget.cardModel.first.id);
+            }
+
+            if (state is CheckoutError) {
+              getIt<NavigationService>().showToast(state.error);
+            }
+          },
+          builder: (context, state) {
+            return SizedBox(
+              height: 55,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-              ],
-            ),
-          ),
+                onPressed: (state is CheckoutLoading)
+                    ? null
+                    : () async {
+                        if (nameController.text.isEmpty ||
+                            phoneController.text.isEmpty ||
+                            addressController.text.isEmpty ||
+                            locationController.text.isEmpty ||
+                            selectedGov == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!.enterAllData,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        await context.read<CheckoutCubit>().createOrder(
+                          widget.cardModel,
+                          (widget.delivery + widget.subtotal + widget.fees)
+                              .toStringAsFixed(0),
+                        );
+                      },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.lock, color: Colors.white),
+                    const SizedBox(width: 10),
+                    Text(
+                      (state is CheckoutLoading)
+                          ? AppLocalizations.of(context)!.loading
+                          : "${AppLocalizations.of(context)!.checkout} • ${widget.delivery + widget.fees + widget.subtotal} ${AppLocalizations.of(context)!.currency}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
 
@@ -275,33 +323,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 16),
           child,
         ],
-      ),
-    );
-  }
-
-  void validateAndCheckout() {
-    if (nameController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        addressController.text.isEmpty ||
-        locationController.text.isEmpty ||
-        selectedGov == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.enterAllData,
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      );
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)!.orderPlaced,
-          style: TextStyle(color: Colors.white),
-        ),
       ),
     );
   }

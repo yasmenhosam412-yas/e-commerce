@@ -201,6 +201,18 @@
   "orderItems": "Order Items",
   "deliveryInformation": "Delivery Information",
   "paymentSummary": "Payment Summary",
-  "orderPlaced": "Order Placed Successfully ✅"
+  "orderPlaced": "Order Placed Successfully ✅",
+  "myOrders": "My Orders",
+  "noOrdersFound": "No orders found.",
+  "order": "Order",
+  "cancelOrder": "Cancel Order",
+  "areYouSureCancel": "Are you sure you want to cancel this order?",
+  "no": "No",
+  "yes": "Yes",
+  "qty": "Qty",
+  "pending": "Pending",
+  "canceled": "Canceled",
+  "shipped": "Shipped"
+
 
 }

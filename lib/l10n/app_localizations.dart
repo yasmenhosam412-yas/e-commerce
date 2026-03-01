@@ -1306,6 +1306,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order Placed Successfully ✅'**
   String get orderPlaced;
+
+  /// No description provided for @myOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'My Orders'**
+  String get myOrders;
+
+  /// No description provided for @noOrdersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders found.'**
+  String get noOrdersFound;
+
+  /// No description provided for @order.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get order;
+
+  /// No description provided for @cancelOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Order'**
+  String get cancelOrder;
+
+  /// No description provided for @areYouSureCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this order?'**
+  String get areYouSureCancel;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @qty.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty'**
+  String get qty;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// No description provided for @canceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get canceled;
+
+  /// No description provided for @shipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipped'**
+  String get shipped;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

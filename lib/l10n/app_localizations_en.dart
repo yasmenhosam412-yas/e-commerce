@@ -613,4 +613,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderPlaced => 'Order Placed Successfully ✅';
+
+  @override
+  String get myOrders => 'My Orders';
+
+  @override
+  String get noOrdersFound => 'No orders found.';
+
+  @override
+  String get order => 'Order';
+
+  @override
+  String get cancelOrder => 'Cancel Order';
+
+  @override
+  String get areYouSureCancel => 'Are you sure you want to cancel this order?';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get qty => 'Qty';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get canceled => 'Canceled';
+
+  @override
+  String get shipped => 'Shipped';
 }

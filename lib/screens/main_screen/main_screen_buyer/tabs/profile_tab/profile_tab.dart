@@ -1,5 +1,9 @@
+import 'package:boo/core/services/navigation_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../../core/services/get_init.dart';
+import 'orders_screen.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
@@ -46,7 +50,9 @@ class _ProfileTabState extends State<ProfileTab> {
           _profileItem(
             icon: Icons.local_shipping_outlined,
             title: "Orders",
-            onTap: () {},
+            onTap: () {
+              getIt<NavigationService>().navigatePush(OrdersScreen());
+            },
           ),
           _profileItem(
             icon: Icons.data_array,

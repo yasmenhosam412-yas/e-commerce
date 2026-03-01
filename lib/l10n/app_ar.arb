@@ -201,6 +201,19 @@
   "orderItems": "عناصر الطلب",
   "deliveryInformation": "معلومات التوصيل",
   "paymentSummary": "ملخص الدفع",
-  "orderPlaced": "تم تقديم الطلب بنجاح ✅"
+  "orderPlaced": "تم تقديم الطلب بنجاح ✅",
+
+  "myOrders": "طلباتي",
+  "noOrdersFound": "لا توجد طلبات.",
+  "order": "طلب",
+  "cancelOrder": "إلغاء الطلب",
+  "areYouSureCancel": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+  "no": "لا",
+  "yes": "نعم",
+  "qty": "الكمية",
+  "pending": "قيد الانتظار",
+  "canceled": "ملغى",
+  "shipped": "تم الشحن"
+
 }
 

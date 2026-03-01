@@ -613,4 +613,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get orderPlaced => 'تم تقديم الطلب بنجاح ✅';
+
+  @override
+  String get myOrders => 'طلباتي';
+
+  @override
+  String get noOrdersFound => 'لا توجد طلبات.';
+
+  @override
+  String get order => 'طلب';
+
+  @override
+  String get cancelOrder => 'إلغاء الطلب';
+
+  @override
+  String get areYouSureCancel => 'هل أنت متأكد أنك تريد إلغاء هذا الطلب؟';
+
+  @override
+  String get no => 'لا';
+
+  @override
+  String get yes => 'نعم';
+
+  @override
+  String get qty => 'الكمية';
+
+  @override
+  String get pending => 'قيد الانتظار';
+
+  @override
+  String get canceled => 'ملغى';
+
+  @override
+  String get shipped => 'تم الشحن';
 }

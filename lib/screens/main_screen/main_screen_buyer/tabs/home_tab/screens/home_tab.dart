@@ -35,7 +35,7 @@ class _HomeTabState extends State<HomeTab> {
   List<UserProductModel> filteredUserProducts = [];
 
   double selectedMinBudget = 0;
-  double selectedMaxBudget = 1500;
+  double selectedMaxBudget = 10000;
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _HomeTabState extends State<HomeTab> {
     context.read<HomeCubit>().getFeaturedPicks();
     context.read<HomeCubit>().getAds();
     context.read<HomeCubit>().getStores();
-    
+
     final homeState = context.read<HomeCubit>().state;
     if (homeState.featuredProducts != null) {
       products = homeState.featuredProducts!;
@@ -57,16 +57,16 @@ class _HomeTabState extends State<HomeTab> {
 
   void _filterByBudget() {
     setState(() {
-      filteredProducts = products
-          .where((p) => p.price >= selectedMinBudget && p.price <= selectedMaxBudget)
-          .toList();
+      filteredProducts = products.where((p) {
+        final effectivePrice = p.newPrice ?? p.price;
+        return effectivePrice >= selectedMinBudget &&
+            effectivePrice <= selectedMaxBudget;
+      }).toList();
 
-      filteredUserProducts = userProducts
-          .where((p) {
-            final price = double.tryParse(p.price) ?? 0;
-            return price >= selectedMinBudget && price <= selectedMaxBudget;
-          })
-          .toList();
+      filteredUserProducts = userProducts.where((p) {
+        final price = double.tryParse(p.price) ?? 0;
+        return price >= selectedMinBudget && price <= selectedMaxBudget;
+      }).toList();
     });
   }
 
@@ -110,9 +110,7 @@ class _HomeTabState extends State<HomeTab> {
                                 getIt<NavigationService>().navigatePush(
                                   ShopDetails(
                                     shopId: banner['storeId'],
-                                    shopName: banner['storeName'],
-                                    shopImage: banner['storeImage'],
-                                    category: banner['storeCategory'],
+                                    createStoreModel: CreateStoreModel.fromJson(banner['store']),
                                   ),
                                 );
                               },
@@ -147,9 +145,9 @@ class _HomeTabState extends State<HomeTab> {
                   Text(
                     AppLocalizations.of(context)!.shops,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   BlocBuilder<HomeCubit, HomeState>(
                     builder: (context, state) {
@@ -179,9 +177,8 @@ class _HomeTabState extends State<HomeTab> {
                       return Center(
                         child: Text(
                           state.errorS ?? "",
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: AppColors.primaryColor,
-                              ),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(color: AppColors.primaryColor),
                         ),
                       );
                     },
@@ -190,9 +187,9 @@ class _HomeTabState extends State<HomeTab> {
                   Text(
                     AppLocalizations.of(context)!.samples,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   BlocBuilder<HomeCubit, HomeState>(
                     builder: (context, state) {
@@ -212,6 +209,19 @@ class _HomeTabState extends State<HomeTab> {
                                 sizes: const [],
                                 images: const [],
                                 attributes: const {},
+                                createStoreModel: CreateStoreModel(
+                                  selectedName: '',
+                                  selectedDesc: '',
+                                  selectedCat: '',
+                                  selectedPhone: '',
+                                  selectedEmail: '',
+                                  selectedAddress: '',
+                                  selectedFees: '',
+                                  selectedDelivery: '',
+                                  selectedImage:
+                                      'https://picsum.photos/400/300',
+                                ),
+                                storeId: '',
                               ),
                             ),
                           ),
@@ -226,9 +236,9 @@ class _HomeTabState extends State<HomeTab> {
                   Text(
                     AppLocalizations.of(context)!.usersWantToSell,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   WantToSellList(),
                   const SizedBox(height: AppPadding.large),

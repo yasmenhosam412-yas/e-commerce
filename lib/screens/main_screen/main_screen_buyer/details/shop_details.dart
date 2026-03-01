@@ -1,11 +1,13 @@
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_images.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/authentication/widgets/gredient_button.dart';
+import 'package:boo/screens/main_screen/main_screen_buyer/details/helpers/store_helper.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/details/product_details.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/home_tab/widgets/product_item_widget.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +20,11 @@ import '../../../../core/services/navigation_service.dart';
 
 class ShopDetails extends StatefulWidget {
   final String shopId;
-  final String shopName;
-  final String shopImage;
-  final String category;
+  final CreateStoreModel createStoreModel;
 
   const ShopDetails({
     super.key,
-    required this.shopId,
-    required this.shopName,
-    required this.shopImage,
-    required this.category,
+    required this.shopId, required this.createStoreModel,
   });
 
   @override
@@ -54,29 +51,31 @@ class _ShopDetailsState extends State<ShopDetails> {
               return Skeletonizer(
                 child: Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(AppPadding.medium),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(24),
+                    GestureDetector(
+                      child: Container(
+                        padding: const EdgeInsets.all(AppPadding.medium),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(24),
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 32,
-                            backgroundImage: NetworkImage(widget.shopImage),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              "${widget.shopName} - ${widget.category}",
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(color: Colors.white),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 32,
+                              backgroundImage: NetworkImage(widget.createStoreModel.selectedImage),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                "${widget.createStoreModel.selectedName} - ${widget.createStoreModel.selectedCat}",
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -88,7 +87,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         scrollDirection: Axis.horizontal,
                         itemCount: 5,
-                        separatorBuilder: (_, __) => const SizedBox(width: 10),
+                        separatorBuilder: (_, _) => const SizedBox(width: 10),
                         itemBuilder: (context, index) {
                           final isSelected = selectedIndex == index;
 
@@ -203,6 +202,17 @@ class _ShopDetailsState extends State<ShopDetails> {
                               quantity: 0,
                               sizes: [],
                               attributes: {},
+                              createStoreModel: CreateStoreModel(
+                                selectedName: "",
+                                selectedDesc: "",
+                                selectedCat: "",
+                                selectedPhone: "",
+                                selectedEmail: "",
+                                selectedAddress: "",
+                                selectedFees: "",
+                                selectedDelivery: "",
+                                selectedImage: "",
+                              ), storeId: '',
                             ),
                           );
                         },
@@ -224,7 +234,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: AppPadding.large,
                     children: [
-                     Lottie.asset(AppImages.loading2,height: 200),
+                      Lottie.asset(AppImages.loading2, height: 200),
                       Text(
                         AppLocalizations.of(context)!.returnAfterSomeTime,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -260,30 +270,35 @@ class _ShopDetailsState extends State<ShopDetails> {
 
             return Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(AppPadding.medium),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(24),
+                GestureDetector(
+                  onTap: () {
+                    StoreHelper().showStoreDetails(context, widget.createStoreModel);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(AppPadding.medium),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(24),
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 32,
-                        backgroundImage: NetworkImage(widget.shopImage),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          "${widget.shopName} - ${widget.category}",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleLarge?.copyWith(color: Colors.white),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 32,
+                          backgroundImage: NetworkImage(widget.createStoreModel.selectedImage),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            "${widget.createStoreModel.selectedName} - ${widget.createStoreModel.selectedCat}",
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -400,10 +415,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                         onTap: () {
                           getIt<NavigationService>().navigatePush(
                             ProductDetails(
-                              productsModel: item.copyWith(
-                                storeImage: widget.shopImage,
-                                storeName: widget.shopName,
-                              ),
+                              productsModel: item
                             ),
                           );
                         },

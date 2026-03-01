@@ -1216,6 +1216,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No favorites yet'**
   String get nothingFavs;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @isDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers Delivery'**
+  String get isDelivery;
+
+  /// No description provided for @deliveryGovernorates.
+  ///
+  /// In en, this message translates to:
+  /// **'Governorates to deliver to'**
+  String get deliveryGovernorates;
+
+  /// No description provided for @deliveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Time'**
+  String get deliveryTime;
+
+  /// No description provided for @deliveryInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Delivery Info'**
+  String get deliveryInfo;
+
+  /// No description provided for @enterDeliveryGovernorates.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter governorates (e.g. Cairo, Giza)'**
+  String get enterDeliveryGovernorates;
+
+  /// No description provided for @enterDeliveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 2-3 days'**
+  String get enterDeliveryTime;
+
+  /// No description provided for @enterDeliveryInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Any more info about delivery'**
+  String get enterDeliveryInfo;
+
+  /// No description provided for @noDeliveryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery is not available for this shop'**
+  String get noDeliveryAvailable;
+
+  /// No description provided for @showDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Shop Details'**
+  String get showDetails;
+
+  /// No description provided for @governorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Governorate'**
+  String get governorate;
+
+  /// No description provided for @orderItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Items'**
+  String get orderItems;
+
+  /// No description provided for @deliveryInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Information'**
+  String get deliveryInformation;
+
+  /// No description provided for @paymentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Summary'**
+  String get paymentSummary;
+
+  /// No description provided for @orderPlaced.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Placed Successfully ✅'**
+  String get orderPlaced;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

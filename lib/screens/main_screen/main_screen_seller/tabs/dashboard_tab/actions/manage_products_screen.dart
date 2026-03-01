@@ -41,9 +41,19 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
   void initState() {
     super.initState();
     search = TextEditingController();
-    context.read<DashboardCubit>().getProducts(FirebaseAuth.instance.currentUser!.uid);
-    context.read<DashboardCubit>().getDiscount();
-    context.read<DashboardCubit>().getCollection();
+    final cubit = context.read<DashboardCubit>();
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    
+    // Trigger fetches
+    cubit.getProducts(uid);
+    cubit.getDiscount();
+    cubit.getCollection();
+  }
+
+  @override
+  void dispose() {
+    search.dispose();
+    super.dispose();
   }
 
   bool _isFeaturedNow(ProductsModel product) =>
@@ -116,6 +126,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -124,7 +135,12 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -179,7 +195,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                     },
                   ),
 
-                  SizedBox(height: AppPadding.xlarge),
+                  const SizedBox(height: AppPadding.xlarge),
 
                   BlocConsumer<DashboardCubit, DashboardState>(
                     listener: (context, state) {
@@ -197,7 +213,7 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                       return SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: state.isLoading
+                          onPressed: state.isLoadingAction
                               ? null
                               : () {
                                   context.read<DashboardCubit>().updateProduct(
@@ -214,15 +230,21 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                                     ),
                                   );
                                 },
-                          child: Text(
-                            state.isLoading
-                                ? AppLocalizations.of(context)!.loading
-                                : AppLocalizations.of(context)!.save,
-                          ),
+                          child: state.isLoadingAction
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(AppLocalizations.of(context)!.save),
                         ),
                       );
                     },
                   ),
+                  const SizedBox(height: 16),
                 ],
               ),
             );
@@ -278,10 +300,6 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
                 matchesFeatured;
           }).toList();
 
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
           return Column(
             children: [
               FiltersContainer(
@@ -300,43 +318,47 @@ class _ManageProductsScreenState extends State<ManageProductsScreen> {
               ),
 
               Expanded(
-                child: filteredProducts.isEmpty
-                    ? Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.nothing,
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                      )
-                    : GridView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                        itemCount: filteredProducts.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: .6,
-                              crossAxisSpacing: 14,
-                              mainAxisSpacing: 14,
+                child: state.isLoadingProducts && products.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredProducts.isEmpty
+                        ? Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.nothing,
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
-                        itemBuilder: (_, i) {
-                          final product = filteredProducts[i];
-                          return ItemCard(
-                            product: product,
-                            discount:
-                                _productDiscounts[product.id] ??
-                                product.discount,
-                            collection:
-                                _productCollections[product.id] ??
-                                product.collectionName,
-                            isFeatured: _isFeaturedNow(product),
-                            onProductClick: () => _openProductActions(
-                              product,
-                              discounts,
-                              collections,
-                            ),
-                          );
-                        },
-                      ),
+                          )
+                        : GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                            itemCount: filteredProducts.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: .6,
+                                  crossAxisSpacing: 14,
+                                  mainAxisSpacing: 14,
+                                ),
+                            itemBuilder: (_, i) {
+                              final product = filteredProducts[i];
+                              return ItemCard(
+                                product: product,
+                                discount:
+                                    _productDiscounts[product.id] ??
+                                    product.discount,
+                                collection:
+                                    _productCollections[product.id] ??
+                                    product.collectionName,
+                                isFeatured: _isFeaturedNow(product),
+                                onProductClick: () => _openProductActions(
+                                  product,
+                                  discounts,
+                                  collections,
+                                ),
+                              );
+                            },
+                          ),
               ),
+              if (state.isLoadingProducts && products.isNotEmpty)
+                const LinearProgressIndicator(),
             ],
           );
         },

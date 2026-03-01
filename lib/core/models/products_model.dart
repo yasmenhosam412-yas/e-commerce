@@ -1,3 +1,4 @@
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:equatable/equatable.dart';
 
 class ProductsModel extends Equatable {
@@ -16,10 +17,8 @@ class ProductsModel extends Equatable {
   final bool? isFeatured;
   final String? collectionName;
   final String? discount;
-  final String? storeId;
-  final String? storeName;
-  final String? storeImage;
-  final String? storeCategory;
+  final CreateStoreModel createStoreModel;
+  final String storeId;
 
   const ProductsModel({
     required this.id,
@@ -36,37 +35,35 @@ class ProductsModel extends Equatable {
     this.isFeatured,
     this.collectionName,
     this.discount,
-    this.storeId,
-    this.storeName,
-    this.storeImage,
-    this.storeCategory,
+    required this.createStoreModel, required this.storeId,
   });
 
   @override
   List<Object?> get props => [
-        id,
-        image,
-        images,
-        name,
-        desc,
-        price,
-        newPrice,
-        category,
-        quantity,
-        sizes,
-        attributes,
-        isFeatured,
-        collectionName,
-        discount,
-        storeId,
-        storeName,
-        storeImage,
-        storeCategory,
-      ];
+    id,
+    image,
+    images,
+    name,
+    desc,
+    price,
+    newPrice,
+    category,
+    quantity,
+    sizes,
+    attributes,
+    isFeatured,
+    collectionName,
+    discount,
+    createStoreModel,
+  ];
 
   factory ProductsModel.fromMap(Map<String, dynamic> map, String docId) {
     return ProductsModel(
-      id: int.tryParse(docId) ?? (map['id'] is int ? map['id'] : int.tryParse(map['id']?.toString() ?? '0') ?? 0),
+      id:
+          int.tryParse(docId) ??
+          (map['id'] is int
+              ? map['id']
+              : int.tryParse(map['id']?.toString() ?? '0') ?? 0),
       image: map['image'] ?? '',
       images: map['images'] != null ? List<String>.from(map['images']) : [],
       name: map['name'] ?? '',
@@ -74,7 +71,9 @@ class ProductsModel extends Equatable {
       price: (map['price'] is int)
           ? (map['price'] as int).toDouble()
           : (map['price'] as num?)?.toDouble() ?? 0.0,
-      newPrice: map['newPrice'] != null ? (map['newPrice'] as num).toDouble() : null,
+      newPrice: map['newPrice'] != null
+          ? (map['newPrice'] as num).toDouble()
+          : null,
       category: map['category'] ?? '',
       quantity: (map['quantity'] is int)
           ? map['quantity']
@@ -83,17 +82,16 @@ class ProductsModel extends Equatable {
       attributes: map['attributes'] != null
           ? Map<String, List<String>>.from(
               (map['attributes'] as Map).map(
-                (key, value) => MapEntry(key.toString(), List<String>.from(value)),
+                (key, value) =>
+                    MapEntry(key.toString(), List<String>.from(value)),
               ),
             )
           : {},
       isFeatured: map['isFeatured'],
       collectionName: map['collectionName'],
       discount: map['discount'],
-      storeId: map['storeId'],
-      storeName: map['storeName'],
-      storeImage: map['storeImage'],
-      storeCategory: map['storeCategory'],
+      createStoreModel: CreateStoreModel.fromJson(map['store']),
+      storeId: map['storeId']
     );
   }
 
@@ -113,9 +111,7 @@ class ProductsModel extends Equatable {
     String? collectionName,
     String? discount,
     String? storeId,
-    String? storeName,
-    String? storeImage,
-    String? storeCategory,
+    CreateStoreModel? createStoreModel
   }) {
     return ProductsModel(
       id: id ?? this.id,
@@ -131,11 +127,9 @@ class ProductsModel extends Equatable {
       attributes: attributes ?? this.attributes,
       isFeatured: isFeatured ?? this.isFeatured,
       collectionName: collectionName ?? this.collectionName,
-      discount: discount ?? this.discount,
-      storeId: storeId ?? this.storeId,
-      storeName: storeName ?? this.storeName,
-      storeImage: storeImage ?? this.storeImage,
-      storeCategory: storeCategory ?? this.storeCategory,
+      discount: discount ?? this.discount, createStoreModel: createStoreModel ?? this.createStoreModel,
+      storeId: storeId ?? this
+        .storeId
     );
   }
 
@@ -155,10 +149,8 @@ class ProductsModel extends Equatable {
       'isFeatured': isFeatured,
       'collectionName': collectionName,
       'discount': discount,
-      'storeId': storeId,
-      'storeName': storeName,
-      'storeImage': storeImage,
-      'storeCategory': storeCategory,
+      'store': createStoreModel.toJson(),
+      'storeId':storeId,
     };
   }
 }

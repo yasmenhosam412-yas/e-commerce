@@ -32,6 +32,10 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
   String selectedFees = '';
   String selectedDelivery = '';
   String selectedImage = '';
+  bool isDelivery = false;
+  List<String>? deliveryGovernorates;
+  String? deliveryTime;
+  String? deliveryInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -178,15 +182,30 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
   void _showFeesModal(String title) {
     getIt<NavigationService>().showCustomBottomDialog(
       content: FeesAndDelivery(
-        onClick: (String fees, String delivery) {
+        onClick: (
+          String fees,
+          String delivery,
+          bool deliveryEnabled,
+          List<String>? governorates,
+          String? time,
+          String? info,
+        ) {
           setState(() {
             selectedFees = fees;
             selectedDelivery = delivery;
+            isDelivery = deliveryEnabled;
+            deliveryGovernorates = governorates;
+            deliveryTime = time;
+            deliveryInfo = info;
           });
           Navigator.pop(context);
         },
         fees: selectedFees,
         deliveryPrice: selectedDelivery,
+        isDelivery: isDelivery,
+        governorates: deliveryGovernorates,
+        time: deliveryTime,
+        info: deliveryInfo,
       ),
     );
   }
@@ -204,6 +223,10 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
         fees: "$selectedFees ${AppLocalizations.of(context)!.currency}",
         deliveryPrice:
             "$selectedDelivery ${AppLocalizations.of(context)!.currency}",
+        isDelivery: isDelivery,
+        deliveryGovernorates: deliveryGovernorates,
+        deliveryTime: deliveryTime,
+        deliveryInfo: deliveryInfo,
         onPublish: () {
           if (selectedName.isEmpty ||
               selectedDesc.isEmpty ||
@@ -212,7 +235,7 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
               selectedEmail.isEmpty ||
               selectedAddress.isEmpty ||
               selectedFees.isEmpty ||
-              selectedDelivery.isEmpty ||
+              (isDelivery && selectedDelivery.isEmpty) ||
               selectedImage.isEmpty) {
             getIt<NavigationService>().showToast(
               AppLocalizations.of(context)!.enterAllData,
@@ -230,6 +253,10 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
               selectedFees: selectedFees,
               selectedDelivery: selectedDelivery,
               selectedImage: selectedImage,
+              isDelivery: isDelivery,
+              deliveryGovernorates: deliveryGovernorates,
+              deliveryTime: deliveryTime,
+              deliveryInfo: deliveryInfo,
             ),
           );
         },

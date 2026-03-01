@@ -40,9 +40,7 @@ class _DashboardTabState extends State<DashboardTab> {
               builder: (context, state) {
                 if (state is ManageLoaded) {
                   return AddProductScreen(
-                    storeImage: state.createStoreModel?.selectedImage ?? "",
-                    storeName: state.createStoreModel?.selectedName ?? "",
-                    storeCategory: state.createStoreModel?.selectedCat ?? "",
+                    createStoreModel: state.createStoreModel,
                   );
                 }
                 return SizedBox.shrink();
@@ -74,9 +72,7 @@ class _DashboardTabState extends State<DashboardTab> {
               builder: (context, state) {
                 if (state is ManageLoaded) {
                   return CreateAdsScreen(
-                    image: state.createStoreModel?.selectedImage ?? "",
-                    name: state.createStoreModel?.selectedName ?? "",
-                    category: state.createStoreModel?.selectedCat ?? "",
+                    createStoreModel: state.createStoreModel!,
                   );
                 }
                 return SizedBox.shrink();
@@ -116,7 +112,7 @@ class _DashboardTabState extends State<DashboardTab> {
         },
       ),
       ActionModel(
-        title: "Sign out",
+        title: AppLocalizations.of(context)!.signout,
         color: Colors.red,
         onTab: () {
           FirebaseAuth.instance.signOut();

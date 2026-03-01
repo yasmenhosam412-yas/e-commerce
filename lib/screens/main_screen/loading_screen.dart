@@ -1,11 +1,15 @@
 import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
+import 'package:boo/core/services/get_init.dart';
+import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_images.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:boo/screens/authentication/auth_screen.dart';
 import 'package:boo/screens/authentication/widgets/gredient_button.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/main_screen_seller.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/seller_creation_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -103,6 +107,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
                     text: AppLocalizations.of(context)!.retry,
                     onPressed: () {
                       context.read<ManageCubit>().userTypeAndStore();
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  GradientButton(
+                    text: AppLocalizations.of(context)!.signout,
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      getIt<NavigationService>().navigatePushRemoveUntil(
+                        AuthScreen(),
+                      );
                     },
                   ),
                 ],

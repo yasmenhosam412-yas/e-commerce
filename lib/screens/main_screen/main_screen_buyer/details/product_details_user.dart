@@ -4,7 +4,11 @@ import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/authentication/widgets/gredient_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
+import '../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
 
 class ProductDetailsUser extends StatefulWidget {
   final UserProductModel userProductModel;
@@ -32,16 +36,41 @@ class _ProductDetailsUserState extends State<ProductDetailsUser> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
+        surfaceTintColor: Colors.transparent,
         title: Text(
           product.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold,color: AppColors.primaryColor),
         ),
+        actions: [
+          BlocSelector<FavCubit, FavState, bool>(
+            selector: (state) {
+              return state.favouritesUsers.any((e) => e.id == product.id);
+            },
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<FavCubit>().toggleUserFav(product);
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      state ? Icons.favorite : Icons.favorite_border,
+                      size: 24,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 🔥 Image Carousel
             SizedBox(
               height: 300,
               child: PageView.builder(

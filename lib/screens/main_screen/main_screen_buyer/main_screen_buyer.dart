@@ -1,5 +1,6 @@
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
+import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/cart_tab/cart_tab.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/fav_tab/fav_tab.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/tabs/home_tab/screens/home_tab.dart';
@@ -29,7 +30,21 @@ class _MainScreenBuyerState extends State<MainScreenBuyer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: _screens[_currentIndex],
+
+      floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(
+          side: BorderSide(color: AppColors.whiteColor, width: AppPadding.small),
+        ),
+        backgroundColor: AppColors.redColor,
+        onPressed: () {
+          getIt<NavigationService>().navigatePush(SellSomething());
+        },
+        child: const Icon(Icons.add, color: AppColors.whiteColor),
+      ),
+
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -37,14 +52,6 @@ class _MainScreenBuyerState extends State<MainScreenBuyer> {
             _currentIndex = index;
           });
         },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppColors.primaryColor,
-        shape: CircleBorder(),
-        onPressed: () {
-          getIt<NavigationService>().navigatePush(SellSomething());
-        },
-        label: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -62,24 +69,29 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 80,
-      child: Stack(
-        children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, 80),
-            painter: BottomNavPainter(),
+    return BottomAppBar(
+      color: AppColors.primaryColor,
+      shape: const AutomaticNotchedShape(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(AppPadding.xxxlarge),
+            topLeft: Radius.circular(AppPadding.xxxlarge),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _navItem(Icons.home, 0),
-              _navItem(Icons.favorite, 1),
-              _navItem(Icons.shopping_bag, 2),
-              _navItem(Icons.person, 3),
-            ],
-          ),
-        ],
+        ),
+      ),
+      notchMargin: 8,
+      child: SizedBox(
+        height: 70,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _navItem(Icons.home, 0),
+            _navItem(Icons.favorite, 1),
+            const SizedBox(width: 40),
+            _navItem(Icons.shopping_bag, 2),
+            _navItem(Icons.person, 3),
+          ],
+        ),
       ),
     );
   }
@@ -89,24 +101,10 @@ class CustomBottomNavBar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => onTap(index),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 26,
-            color: isSelected ? AppColors.whiteColor : Colors.grey,
-          ),
-          const SizedBox(height: 4),
-          Container(
-            height: 4,
-            width: isSelected ? 25 : 0,
-            decoration: BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ],
+      child: Icon(
+        icon,
+        size: 26,
+        color: isSelected ? Colors.white : Colors.white70,
       ),
     );
   }

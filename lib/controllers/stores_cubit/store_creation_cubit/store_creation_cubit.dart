@@ -30,6 +30,10 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
         selectedFees: storeData.selectedFees,
         selectedDelivery: storeData.selectedDelivery,
         selectedImage: storeData.selectedImage,
+        isDelivery: storeData.isDelivery,
+        deliveryGovernorates: storeData.deliveryGovernorates,
+        deliveryTime: storeData.deliveryTime,
+        deliveryInfo: storeData.deliveryInfo,
       );
 
       await _saveStoreData(
@@ -42,6 +46,10 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
         storeData.selectedFees,
         storeData.selectedDelivery,
         storeData.selectedImage,
+        storeData.isDelivery,
+        storeData.deliveryGovernorates,
+        storeData.deliveryTime,
+        storeData.deliveryInfo,
       );
 
       emit(state.copyWith(isLoading: false, isSuccess: true, store: storeData));
@@ -61,7 +69,6 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
     try {
       final result = await storeCreationService.hasStore();
       emit(state.copyWith(isLoading: false, hasStore: result));
-
     } catch (e) {
       emit(
         state.copyWith(
@@ -89,6 +96,10 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
           result.selectedFees,
           result.selectedDelivery,
           result.selectedImage,
+          result.isDelivery,
+          result.deliveryGovernorates,
+          result.deliveryTime,
+          result.deliveryInfo,
         );
       }
 
@@ -115,6 +126,10 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
     String selectedFees,
     String selectedDelivery,
     String selectedImage,
+    bool isDelivery,
+    List<String>? deliveryGovernorates,
+    String? deliveryTime,
+    String? deliveryInfo,
   ) async {
     await flutterSecureStorage.write(key: "name", value: selectedName);
     await flutterSecureStorage.write(key: "desc", value: selectedDesc);
@@ -125,6 +140,28 @@ class StoreCreationCubit extends Cubit<StoreCreationState> {
     await flutterSecureStorage.write(key: "fees", value: selectedFees);
     await flutterSecureStorage.write(key: "delivery", value: selectedDelivery);
     await flutterSecureStorage.write(key: "image", value: selectedImage);
+    await flutterSecureStorage.write(
+      key: "is_delivery",
+      value: isDelivery.toString(),
+    );
+    if (deliveryGovernorates != null) {
+      await flutterSecureStorage.write(
+        key: "delivery_governorates",
+        value: deliveryGovernorates.join(' , '),
+      );
+    }
+    if (deliveryTime != null) {
+      await flutterSecureStorage.write(
+        key: "delivery_time",
+        value: deliveryTime,
+      );
+    }
+    if (deliveryInfo != null) {
+      await flutterSecureStorage.write(
+        key: "delivery_info",
+        value: deliveryInfo,
+      );
+    }
     await flutterSecureStorage.write(key: "hasStore", value: "true");
   }
 }

@@ -47,8 +47,10 @@ class ManageCubit extends Cubit<ManageState> {
         emit(ManageLoaded(userType: "buyer", userModel: user));
       }
     } on FirebaseException catch (e) {
+      print(e);
       emit(ManageError(error: ErrorHandler.fromException(e).message));
     } catch (e) {
+      print(e);
       emit(ManageError(error: ErrorHandler.fromException(e).message));
     }
   }

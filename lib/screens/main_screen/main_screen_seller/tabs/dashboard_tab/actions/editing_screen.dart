@@ -15,49 +15,76 @@ class EditingScreen extends StatefulWidget {
   final String storeName;
   final String storeCategory;
 
-  const EditingScreen({super.key, required this.storeImage, required this.storeName, required this.storeCategory});
+  const EditingScreen({
+    super.key,
+    required this.storeImage,
+    required this.storeName,
+    required this.storeCategory,
+  });
 
   @override
   State<EditingScreen> createState() => _EditingScreenState();
 }
 
+enum EditingCategory { products, collections, ads, coupons, discounts, none }
+
 class _EditingScreenState extends State<EditingScreen> {
+  EditingCategory _selectedCategory = EditingCategory.none;
+
+  void _onCategoryTap(String item) {
+    final local = AppLocalizations.of(context)!;
+    if (item == local.products) {
+      _selectedCategory = EditingCategory.products;
+      context
+          .read<DashboardCubit>()
+          .getProducts(FirebaseAuth.instance.currentUser!.uid);
+    } else if (item == local.collections) {
+      _selectedCategory = EditingCategory.collections;
+      context.read<DashboardCubit>().getCollection();
+    } else if (item == local.ads) {
+      _selectedCategory = EditingCategory.ads;
+      context.read<DashboardCubit>().getAds();
+    } else if (item == local.coupons) {
+      _selectedCategory = EditingCategory.coupons;
+      context.read<DashboardCubit>().getCoupons();
+    } else if (item == local.discounts) {
+      _selectedCategory = EditingCategory.discounts;
+      context.read<DashboardCubit>().getDiscount();
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    final local = AppLocalizations.of(context)!;
     final List<String> editingItems = [
-      AppLocalizations.of(context)!.products,
-      AppLocalizations.of(context)!.collections,
-      AppLocalizations.of(context)!.ads,
-      AppLocalizations.of(context)!.coupons,
-      AppLocalizations.of(context)!.discounts,
+      local.products,
+      local.collections,
+      local.ads,
+      local.coupons,
+      local.discounts,
     ];
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(AppLocalizations.of(context)!.editing),
+        title: Text(local.editing),
         backgroundColor: AppColors.primaryColor,
       ),
       body: SafeArea(
         child: BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, state) {
-            final products = state.products ?? [];
-            final collections = state.collections ?? [];
-            final ads = state.ads ?? [];
-            final discounts = state.discounts ?? [];
-            final coupons = state.coupons ?? [];
-
             return ListView(
               padding: const EdgeInsets.all(AppPadding.medium),
               children: [
                 ExpansionTile(
                   title: Text(
-                    AppLocalizations.of(context)!.options,
+                    local.options,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  initiallyExpanded: true,
+                  initiallyExpanded: _selectedCategory == EditingCategory.none,
                   children: editingItems.map((item) {
                     return ListTile(
                       title: Text(
@@ -66,420 +93,339 @@ class _EditingScreenState extends State<EditingScreen> {
                           color: AppColors.primaryColor,
                         ),
                       ),
-                      onTap: () {
-                        if (item == AppLocalizations.of(context)!.products) {
-                          context.read<DashboardCubit>().getProducts(FirebaseAuth.instance.currentUser!.uid);
-                        } else if (item ==
-                            AppLocalizations.of(context)!.collections) {
-                          context.read<DashboardCubit>().getCollection();
-                        } else if (item == AppLocalizations.of(context)!.ads) {
-                          context.read<DashboardCubit>().getAds();
-                        } else if (item ==
-                            AppLocalizations.of(context)!.coupons) {
-                          context.read<DashboardCubit>().getCoupons();
-                        } else if (item ==
-                            AppLocalizations.of(context)!.discounts) {
-                          context.read<DashboardCubit>().getDiscount();
-                        }
-                      },
+                      onTap: () => _onCategoryTap(item),
                     );
                   }).toList(),
                 ),
 
                 const SizedBox(height: AppPadding.large),
 
-                if (products.isNotEmpty) ...[
-                  Text(
-                    AppLocalizations.of(context)!.products,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppPadding.medium),
-                  ...products.map(
-                    (product) => ListTile(
-                      leading: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            AppPadding.medium,
-                          ),
-                          child: CachedImageWidget(imagePath: product.image),
-                        ),
-                      ),
-                      title: Text(
-                        product.name,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              color: AppColors.primaryColor,
-                            ),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return AddProductScreen(
-                                    productsModel: product, storeImage: widget.storeImage, storeName: widget.storeName, storeCategory: widget.storeCategory,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppColors.whiteColor,
-                                  title: Text(
-                                    AppLocalizations.of(context)!.deleteProduct,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  content: Text(
-                                    "${AppLocalizations.of(context)!.deleteConfirmation} ${product.name}?",
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context
-                                            .read<DashboardCubit>()
-                                            .deleteProduct(
-                                              product.id.toString(),FirebaseAuth.instance.currentUser!.uid
-                                            );
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)!.delete,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ] else if (collections.isNotEmpty) ...[
-                  Text(
-                    AppLocalizations.of(context)!.collections,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppPadding.medium),
-                  ...collections.map(
-                    (collection) => ListTile(
-                      title: Text(
-                        collection['name'],
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              color: AppColors.primaryColor,
-                            ),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return AddCollectionScreen(
-                                    collection: collection,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppColors.whiteColor,
-                                  title: Text(
-                                    AppLocalizations.of(context)!.deleteProduct,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  content: Text(
-                                    "${AppLocalizations.of(context)!.deleteConfirmation} ${collection['name']}?",
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context
-                                            .read<DashboardCubit>()
-                                            .deleteCollection(collection['id']);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)!.delete,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ] else if (ads.isNotEmpty) ...[
-                  Text(
-                    AppLocalizations.of(context)!.ads,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppPadding.medium),
-                  ...ads.map(
-                    (ad) => ListTile(
-                      title: Text(
-                        ad['badgeText'],
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-                      leading: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            AppPadding.medium,
-                          ),
-                          child: CachedImageWidget(imagePath: ad['image']),
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppColors.whiteColor,
-                                  title: Text(
-                                    AppLocalizations.of(context)!.deleteProduct,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  content: Text(
-                                    "${AppLocalizations.of(context)!.deleteConfirmation} ${ad['badgeText']}?",
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context
-                                            .read<DashboardCubit>()
-                                            .deleteAds(ad['id']);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)!.delete,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ] else if (discounts.isNotEmpty) ...[
-                  Text(
-                    AppLocalizations.of(context)!.discounts,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppPadding.medium),
-                  ...discounts.map(
-                    (disc) => ListTile(
-                      title: Text(
-                        disc.name,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-                      subtitle: Text(
-                        disc.value,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppColors.whiteColor,
-                                  title: Text(
-                                    AppLocalizations.of(context)!.deleteProduct,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  content: Text(
-                                    "${AppLocalizations.of(context)!.deleteConfirmation} ${disc.name}?",
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context
-                                            .read<DashboardCubit>()
-                                            .deleteDiscount(disc.id);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)!.delete,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ] else if (coupons.isNotEmpty) ...[
-                  Text(
-                    AppLocalizations.of(context)!.coupons,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppPadding.medium),
-                  ...coupons.map(
-                    (cou) => ListTile(
-                      title: Text(
-                        cou['code'],
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-                      subtitle: Text(
-                        cou['type'] + cou['value'],
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.black),
-                      ),
-
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppColors.whiteColor,
-                                  title: Text(
-                                    AppLocalizations.of(context)!.deleteProduct,
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  content: Text(
-                                    "${AppLocalizations.of(context)!.deleteConfirmation} ${cou['code']}?",
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(color: Colors.black),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context
-                                            .read<DashboardCubit>()
-                                            .deleteCoupon(cou['id']);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)!.delete,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ] else ...[
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.noAnyData,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                ],
+                _buildContent(state),
               ],
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildContent(DashboardState state) {
+
+    bool isLoading = false;
+    switch (_selectedCategory) {
+      case EditingCategory.products:
+        isLoading = state.isLoadingProducts;
+        break;
+      case EditingCategory.collections:
+        isLoading = state.isLoadingCollections;
+        break;
+      case EditingCategory.ads:
+        isLoading = state.isLoadingAds;
+        break;
+      case EditingCategory.coupons:
+        isLoading = state.isLoadingCoupons;
+        break;
+      case EditingCategory.discounts:
+        isLoading = state.isLoadingDiscounts;
+        break;
+      case EditingCategory.none:
+        return const SizedBox.shrink();
+    }
+
+    if (isLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    switch (_selectedCategory) {
+      case EditingCategory.products:
+        return _buildProductsList(state.products ?? []);
+      case EditingCategory.collections:
+        return _buildCollectionsList(state.collections ?? []);
+      case EditingCategory.ads:
+        return _buildAdsList(state.ads ?? []);
+      case EditingCategory.coupons:
+        return _buildCouponsList(state.coupons ?? []);
+      case EditingCategory.discounts:
+        return _buildDiscountsList(state.discounts ?? []);
+      case EditingCategory.none:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 40.0),
+        child: Text(
+          AppLocalizations.of(context)!.noAnyData,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: AppColors.primaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductsList(List products) {
+    if (products.isEmpty) return _buildEmptyState();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.products,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: AppPadding.medium),
+        ...products.map(
+          (product) => ListTile(
+            leading: SizedBox(
+              width: 50,
+              height: 50,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppPadding.medium),
+                child: CachedImageWidget(imagePath: product.image),
+              ),
+            ),
+            title: Text(
+              product.name,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: AppColors.primaryColor),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return AddProductScreen(
+                          productsModel: product,
+                        );
+                      },
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _showDeleteDialog(
+                    product.name,
+                    () => context.read<DashboardCubit>().deleteProduct(
+                      product.id.toString(),
+                      FirebaseAuth.instance.currentUser!.uid,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCollectionsList(List collections) {
+    if (collections.isEmpty) return _buildEmptyState();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.collections,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: AppPadding.medium),
+        ...collections.map(
+          (collection) => ListTile(
+            title: Text(
+              collection['name'],
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: AppColors.primaryColor),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return AddCollectionScreen(collection: collection);
+                      },
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _showDeleteDialog(
+                    collection['name'],
+                    () => context
+                        .read<DashboardCubit>()
+                        .deleteCollection(collection['id']),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdsList(List ads) {
+    if (ads.isEmpty) return _buildEmptyState();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.ads,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: AppPadding.medium),
+        ...ads.map(
+          (ad) => ListTile(
+            title: Text(
+              ad['badgeText'],
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            leading: SizedBox(
+              width: 50,
+              height: 50,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppPadding.medium),
+                child: CachedImageWidget(imagePath: ad['image']),
+              ),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _showDeleteDialog(
+                ad['badgeText'],
+                () => context.read<DashboardCubit>().deleteAds(ad['id']),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCouponsList(List coupons) {
+    if (coupons.isEmpty) return _buildEmptyState();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.coupons,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: AppPadding.medium),
+        ...coupons.map(
+          (cou) => ListTile(
+            title: Text(
+              cou['code'],
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            subtitle: Text(
+              "${cou['type']}${cou['value']}",
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _showDeleteDialog(
+                cou['code'],
+                () => context.read<DashboardCubit>().deleteCoupon(cou['id']),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDiscountsList(List discounts) {
+    if (discounts.isEmpty) return _buildEmptyState();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.discounts,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: AppPadding.medium),
+        ...discounts.map(
+          (disc) => ListTile(
+            title: Text(
+              disc.name,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            subtitle: Text(
+              disc.value,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.black),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _showDeleteDialog(
+                disc.name,
+                () => context.read<DashboardCubit>().deleteDiscount(disc.id),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showDeleteDialog(String itemName, VoidCallback onDelete) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.whiteColor,
+        title: Text(
+          AppLocalizations.of(context)!.deleteProduct,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.black),
+        ),
+        content: Text(
+          "${AppLocalizations.of(context)!.deleteConfirmation} $itemName?",
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.black),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              onDelete();
+              Navigator.pop(context);
+            },
+            child: Text(
+              AppLocalizations.of(context)!.delete,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

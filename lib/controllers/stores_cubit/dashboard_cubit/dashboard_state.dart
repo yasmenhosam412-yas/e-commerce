@@ -3,7 +3,13 @@ import 'package:boo/core/models/products_model.dart';
 import 'package:equatable/equatable.dart';
 
 sealed class DashboardState extends Equatable {
-  final bool isLoading;
+  final bool isLoadingProducts;
+  final bool isLoadingDiscounts;
+  final bool isLoadingCollections;
+  final bool isLoadingAds;
+  final bool isLoadingCoupons;
+  final bool isLoadingAction;
+  
   final bool isLoaded;
   final String error;
   final List<ProductsModel>? products;
@@ -12,8 +18,21 @@ sealed class DashboardState extends Equatable {
   final List<Map<String, dynamic>>? ads;
   final List<Map<String, dynamic>>? coupons;
 
+  bool get isLoading =>
+      isLoadingProducts ||
+      isLoadingDiscounts ||
+      isLoadingCollections ||
+      isLoadingAds ||
+      isLoadingCoupons ||
+      isLoadingAction;
+
   const DashboardState({
-    required this.isLoading,
+    this.isLoadingProducts = false,
+    this.isLoadingDiscounts = false,
+    this.isLoadingCollections = false,
+    this.isLoadingAds = false,
+    this.isLoadingCoupons = false,
+    this.isLoadingAction = false,
     required this.isLoaded,
     required this.error,
     this.products,
@@ -24,7 +43,12 @@ sealed class DashboardState extends Equatable {
   });
 
   DashboardState copyWith({
-    bool? isLoading,
+    bool? isLoadingProducts,
+    bool? isLoadingDiscounts,
+    bool? isLoadingCollections,
+    bool? isLoadingAds,
+    bool? isLoadingCoupons,
+    bool? isLoadingAction,
     bool? isLoaded,
     String? error,
     List<ProductsModel>? products,
@@ -36,7 +60,12 @@ sealed class DashboardState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
+        isLoadingProducts,
+        isLoadingDiscounts,
+        isLoadingCollections,
+        isLoadingAds,
+        isLoadingCoupons,
+        isLoadingAction,
         isLoaded,
         error,
         products,
@@ -50,19 +79,18 @@ sealed class DashboardState extends Equatable {
 final class DashboardInitial extends DashboardState {
   const DashboardInitial()
       : super(
-          isLoading: false,
           isLoaded: false,
           error: '',
-          products: null,
-          discounts: null,
-          collections: null,
-          coupons: null,
-          ads: null,
         );
 
   @override
   DashboardState copyWith({
-    bool? isLoading,
+    bool? isLoadingProducts,
+    bool? isLoadingDiscounts,
+    bool? isLoadingCollections,
+    bool? isLoadingAds,
+    bool? isLoadingCoupons,
+    bool? isLoadingAction,
     bool? isLoaded,
     String? error,
     List<ProductsModel>? products,
@@ -72,7 +100,12 @@ final class DashboardInitial extends DashboardState {
     List<Map<String, dynamic>>? coupons,
   }) {
     return DashboardSuccess(
-      isLoading: isLoading ?? this.isLoading,
+      isLoadingProducts: isLoadingProducts ?? this.isLoadingProducts,
+      isLoadingDiscounts: isLoadingDiscounts ?? this.isLoadingDiscounts,
+      isLoadingCollections: isLoadingCollections ?? this.isLoadingCollections,
+      isLoadingAds: isLoadingAds ?? this.isLoadingAds,
+      isLoadingCoupons: isLoadingCoupons ?? this.isLoadingCoupons,
+      isLoadingAction: isLoadingAction ?? this.isLoadingAction,
       isLoaded: isLoaded ?? this.isLoaded,
       error: error ?? this.error,
       products: products ?? this.products,
@@ -86,7 +119,12 @@ final class DashboardInitial extends DashboardState {
 
 final class DashboardSuccess extends DashboardState {
   const DashboardSuccess({
-    required super.isLoading,
+    super.isLoadingProducts,
+    super.isLoadingDiscounts,
+    super.isLoadingCollections,
+    super.isLoadingAds,
+    super.isLoadingCoupons,
+    super.isLoadingAction,
     required super.isLoaded,
     required super.error,
     super.products,
@@ -98,7 +136,12 @@ final class DashboardSuccess extends DashboardState {
 
   @override
   DashboardSuccess copyWith({
-    bool? isLoading,
+    bool? isLoadingProducts,
+    bool? isLoadingDiscounts,
+    bool? isLoadingCollections,
+    bool? isLoadingAds,
+    bool? isLoadingCoupons,
+    bool? isLoadingAction,
     bool? isLoaded,
     String? error,
     List<ProductsModel>? products,
@@ -108,7 +151,12 @@ final class DashboardSuccess extends DashboardState {
     List<Map<String, dynamic>>? coupons,
   }) {
     return DashboardSuccess(
-      isLoading: isLoading ?? this.isLoading,
+      isLoadingProducts: isLoadingProducts ?? this.isLoadingProducts,
+      isLoadingDiscounts: isLoadingDiscounts ?? this.isLoadingDiscounts,
+      isLoadingCollections: isLoadingCollections ?? this.isLoadingCollections,
+      isLoadingAds: isLoadingAds ?? this.isLoadingAds,
+      isLoadingCoupons: isLoadingCoupons ?? this.isLoadingCoupons,
+      isLoadingAction: isLoadingAction ?? this.isLoadingAction,
       isLoaded: isLoaded ?? this.isLoaded,
       error: error ?? this.error,
       products: products ?? this.products,

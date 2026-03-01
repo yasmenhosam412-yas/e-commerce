@@ -186,7 +186,21 @@
   "productStatus" : "Product status",
   "contactNumber" : "Contact Number",
   "showInSell": "Show the product for sale",
-  "nothingFavs" : "No favorites yet"
+  "nothingFavs" : "No favorites yet",
+  "location"  : "Location",
+  "isDelivery": "Offers Delivery",
+  "deliveryGovernorates": "Governorates to deliver to",
+  "deliveryTime": "Delivery Time",
+  "deliveryInfo": "Additional Delivery Info",
+  "enterDeliveryGovernorates": "Enter governorates (e.g. Cairo, Giza)",
+  "enterDeliveryTime": "e.g. 2-3 days",
+  "enterDeliveryInfo": "Any more info about delivery",
+  "noDeliveryAvailable" : "Delivery is not available for this shop",
+  "showDetails" : "View Shop Details",
+  "governorate" : "Governorate",
+  "orderItems": "Order Items",
+  "deliveryInformation": "Delivery Information",
+  "paymentSummary": "Payment Summary",
+  "orderPlaced": "Order Placed Successfully ✅"
 
 }
-

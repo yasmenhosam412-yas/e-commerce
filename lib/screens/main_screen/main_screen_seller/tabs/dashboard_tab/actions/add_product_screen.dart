@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/services/get_init.dart';
 import 'package:boo/core/services/navigation_service.dart';
@@ -15,16 +16,12 @@ import 'package:image_picker/image_picker.dart';
 
 class AddProductScreen extends StatefulWidget {
   final ProductsModel? productsModel;
-  final String storeImage;
-  final String storeName;
-  final String storeCategory;
+  final CreateStoreModel? createStoreModel;
 
   const AddProductScreen({
     super.key,
     this.productsModel,
-    required this.storeImage,
-    required this.storeName,
-    required this.storeCategory,
+    this.createStoreModel,
   });
 
   @override
@@ -133,9 +130,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
         quantity: _quantityController.text,
         attributes: _attributes,
         sizes: _sizes,
-        storeImage: widget.storeImage,
-        storeName: widget.storeName,
-        storeCategory: widget.storeCategory,
+        store:
+            widget.createStoreModel ??
+            CreateStoreModel(
+              selectedName: "",
+              selectedDesc: "",
+              selectedCat: "",
+              selectedPhone: "",
+              selectedEmail: "",
+              selectedAddress: "",
+              selectedFees: "",
+              selectedDelivery: "",
+              selectedImage: "",
+            ),
       );
     }
   }

@@ -185,7 +185,22 @@
   "sellSomething": "بع شيئًا",
   "productStatus": "حالة المنتج",
   "contactNumber": "رقم التواصل",
-  "showInSell":  "عرض المنتج للبيع",
-  "nothingFavs": "لا توجد مفضلات بعد"
+  "showInSell": "عرض المنتج للبيع",
+  "nothingFavs": "لا توجد مفضلات بعد",
+  "location": "الموقع",
+  "isDelivery": "يقدم خدمة التوصيل",
+  "deliveryGovernorates": "المحافظات المتاحة للتوصيل",
+  "deliveryTime": "مدة التوصيل",
+  "deliveryInfo": "معلومات إضافية عن التوصيل",
+  "enterDeliveryGovernorates": "أدخل المحافظات (مثل القاهرة، الجيزة)",
+  "enterDeliveryTime": "مثال: 2-3 أيام",
+  "enterDeliveryInfo": "أي معلومات إضافية عن التوصيل",
+  "noDeliveryAvailable": "التوصيل غير متاح لهذا المتجر",
+  "showDetails": "عرض تفاضيل المتجر",
+  "governorate": "المحافظة",
+  "orderItems": "عناصر الطلب",
+  "deliveryInformation": "معلومات التوصيل",
+  "paymentSummary": "ملخص الدفع",
+  "orderPlaced": "تم تقديم الطلب بنجاح ✅"
 }
 

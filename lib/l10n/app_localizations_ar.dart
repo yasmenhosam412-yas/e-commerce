@@ -568,4 +568,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get nothingFavs => 'لا توجد مفضلات بعد';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get isDelivery => 'يقدم خدمة التوصيل';
+
+  @override
+  String get deliveryGovernorates => 'المحافظات المتاحة للتوصيل';
+
+  @override
+  String get deliveryTime => 'مدة التوصيل';
+
+  @override
+  String get deliveryInfo => 'معلومات إضافية عن التوصيل';
+
+  @override
+  String get enterDeliveryGovernorates => 'أدخل المحافظات (مثل القاهرة، الجيزة)';
+
+  @override
+  String get enterDeliveryTime => 'مثال: 2-3 أيام';
+
+  @override
+  String get enterDeliveryInfo => 'أي معلومات إضافية عن التوصيل';
+
+  @override
+  String get noDeliveryAvailable => 'التوصيل غير متاح لهذا المتجر';
+
+  @override
+  String get showDetails => 'عرض تفاضيل المتجر';
+
+  @override
+  String get governorate => 'المحافظة';
+
+  @override
+  String get orderItems => 'عناصر الطلب';
+
+  @override
+  String get deliveryInformation => 'معلومات التوصيل';
+
+  @override
+  String get paymentSummary => 'ملخص الدفع';
+
+  @override
+  String get orderPlaced => 'تم تقديم الطلب بنجاح ✅';
 }

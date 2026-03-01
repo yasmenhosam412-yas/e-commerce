@@ -9,4 +9,5 @@ class AppColors {
   static final Color grey500 = Colors.grey.shade500;
   static final Color beg = Color(0xffF9F3EF);
   static final Color errorColor = Color(0xffd00d0d);
+  static final Color redColor = Color(0xff122d5e);
 }

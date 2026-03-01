@@ -1,11 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="MyShopy">
+        android:label="Shopping">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="1781584436100354" />

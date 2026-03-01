@@ -3,7 +3,7 @@ import 'package:boo/core/utils/app_padding.dart';
 import 'package:flutter/material.dart';
 
 class CustomFormField extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final TextInputType? textInputType;
   final String? label;
   final String? hint;
@@ -18,7 +18,7 @@ class CustomFormField extends StatelessWidget {
 
   const CustomFormField({
     super.key,
-    required this.controller,
+    this.controller,
     this.textInputType,
     this.hint,
     this.validator,

@@ -27,7 +27,7 @@ class ShopListWidget extends StatelessWidget {
               getIt<NavigationService>().navigatePush(
                 ShopDetails(
                   shopId: store.id ?? "",
-                  shopName: store.selectedName, shopImage: store.selectedImage, category: store.selectedCat,
+                  createStoreModel: store,
                 ),
               );
             },

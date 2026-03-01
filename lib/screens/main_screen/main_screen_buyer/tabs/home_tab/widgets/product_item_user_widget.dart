@@ -1,5 +1,3 @@
-import 'package:boo/controllers/fav_cubit/fav_cubit.dart';
-import 'package:boo/controllers/fav_cubit/fav_state.dart';
 import 'package:boo/core/models/user_product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:boo/core/utils/app_colors.dart';
@@ -7,6 +5,9 @@ import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
+import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
 
 class UserProductClothesItem extends StatelessWidget {
   final String image;

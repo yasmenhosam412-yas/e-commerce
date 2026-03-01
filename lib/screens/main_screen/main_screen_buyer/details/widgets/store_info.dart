@@ -36,7 +36,7 @@ class StoreInfoWidget extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: ClipOval(
-              child: CachedImageWidget(imagePath: product.storeImage ?? ""),
+              child: CachedImageWidget(imagePath: product.createStoreModel.selectedImage),
             ),
           ),
 
@@ -46,7 +46,7 @@ class StoreInfoWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product.storeName ?? "",
+                  product.createStoreModel.selectedName,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -69,10 +69,8 @@ class StoreInfoWidget extends StatelessWidget {
               onPressed: () {
                 getIt<NavigationService>().navigatePush(
                   ShopDetails(
-                    shopId: product.storeId ?? "",
-                    shopName: product.storeName ?? "",
-                    shopImage: product.storeImage ?? "",
-                    category: product.storeCategory ?? "",
+                    shopId: product.storeId,
+                    createStoreModel: product.createStoreModel,
                   ),
                 );
               },

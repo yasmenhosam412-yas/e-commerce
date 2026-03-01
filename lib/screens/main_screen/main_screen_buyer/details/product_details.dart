@@ -1,3 +1,6 @@
+import 'package:boo/controllers/buyer_cubits/cart_cubit/cart_cubit.dart';
+import 'package:boo/controllers/buyer_cubits/cart_cubit/cart_state.dart';
+import 'package:boo/core/models/cart_model.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/services/get_init.dart';
 import 'package:boo/core/services/navigation_service.dart';
@@ -5,14 +8,16 @@ import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:boo/screens/authentication/widgets/gredient_button.dart';
+import 'package:boo/screens/main_screen/main_screen_buyer/details/helpers/store_helper.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/details/widgets/size_selector.dart';
 import 'package:boo/screens/main_screen/main_screen_buyer/details/widgets/store_info.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../controllers/fav_cubit/fav_cubit.dart';
-import '../../../../controllers/fav_cubit/fav_state.dart';
+import '../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
+import '../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
 
 class ProductDetails extends StatefulWidget {
   final ProductsModel productsModel;
@@ -25,6 +30,7 @@ class ProductDetails extends StatefulWidget {
 
 class _ProductDetailsState extends State<ProductDetails> {
   String? selectedSize;
+  Map<String, String> selectedAttributes = {};
   int quantity = 1;
 
   @override
@@ -45,25 +51,28 @@ class _ProductDetailsState extends State<ProductDetails> {
         actions: [
           BlocSelector<FavCubit, FavState, bool>(
             selector: (state) {
-              return state.favourites.contains(product);
+              return state.favourites.any((e) => e.id == product.id);
             },
             builder: (context, state) {
-              return GestureDetector(
-                onTap: () {
-                  context.read<FavCubit>().toggleFav(product);
-                },
-                child: CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    state ? Icons.favorite : Icons.favorite_border,
-                    size: 28,
-                    color: Colors.redAccent,
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    context.read<FavCubit>().toggleFav(product);
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      state ? Icons.favorite : Icons.favorite_border,
+                      size: 24,
+                      color: Colors.redAccent,
+                    ),
                   ),
                 ),
               );
             },
-          )
+          ),
         ],
       ),
       body: SafeArea(
@@ -217,122 +226,218 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                 ),
                 Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.inventory_2_outlined,
-                      color: (product.quantity < 3)
-                          ? Colors.redAccent.shade700
-                          : AppColors.primaryColor,
-                      size: 20,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          color: (product.quantity < 3)
+                              ? Colors.redAccent.shade700
+                              : AppColors.primaryColor,
+                          size: 20,
+                        ),
+                        SizedBox(width: AppPadding.medium),
+                        Text(
+                          "${product.quantity} ${AppLocalizations.of(context)!.item}",
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: (product.quantity < 3)
+                                    ? Colors.redAccent.shade700
+                                    : AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: AppPadding.medium),
-                    Text(
-                      "${product.quantity} ${AppLocalizations.of(context)!.item}",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: (product.quantity < 3)
-                            ? Colors.redAccent.shade700
-                            : AppColors.primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Spacer(),
+                    (widget.productsModel.createStoreModel.isDelivery)
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    if (quantity > 1) {
+                                      setState(() {
+                                        quantity--;
+                                      });
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.remove,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                                Text(
+                                  quantity.toString(),
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    if (quantity < product.quantity) {
+                                      setState(() {
+                                        quantity++;
+                                      });
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
-                SizedBox(height: AppPadding.medium),
-                Text(
-                  AppLocalizations.of(context)!.productSizes,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primaryColor,
+                if (product.sizes.isNotEmpty) ...[
+                  SizedBox(height: AppPadding.medium),
+                  Text(
+                    AppLocalizations.of(context)!.productSizes,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.primaryColor,
+                    ),
                   ),
-                ),
-                SizeSelector(
-                  sizes: product.sizes,
-                  onSizeSelected: (size) {
-                    setState(() {
-                      selectedSize = size;
-                    });
-                  },
-                ),
-                SizedBox(height: AppPadding.medium),
-                Column(
-                  children: List.generate(
-                    product.attributes.entries
-                        .map((e) => e.key)
-                        .toList()
-                        .length,
-                    (index) {
-                      final attr = product.attributes.entries
-                          .map((e) => e.key)
-                          .toList()[index];
-
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            attr,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: AppColors.primaryColor),
-                          ),
-                          SizedBox(height: AppPadding.medium),
-                          SizeSelector(
-                            sizes: product.attributes[attr] ?? [],
-                            onSizeSelected: (size) {
-                              setState(() {
-                                selectedSize = size;
-                              });
-                            },
-                          ),
-                        ],
-                      );
+                  SizeSelector(
+                    sizes: product.sizes,
+                    onSizeSelected: (size) {
+                      setState(() {
+                        selectedSize = size;
+                      });
                     },
                   ),
-                ),
-                SizedBox(height: AppPadding.medium),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
+                ],
+                ...product.attributes.entries.map((entry) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width * 0.6,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            getIt<NavigationService>().showSnackBar(
-                              Text(AppLocalizations.of(context)!.addedToCart),
-                            );
-                          },
-                          child: Text(AppLocalizations.of(context)!.addToCart),
-                        ),
-                      ),
-                      Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            quantity++;
-                          });
-                        },
-                        icon: Icon(Icons.add, color: AppColors.primaryColor),
-                      ),
+                      SizedBox(height: AppPadding.medium),
                       Text(
-                        quantity.toString(),
+                        entry.key,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.primaryColor,
                         ),
                       ),
-                      IconButton(
-                        onPressed: (quantity > 1)
-                            ? () {
-                                setState(() {
-                                  quantity--;
-                                });
-                              }
-                            : null,
-                        icon: Icon(Icons.remove, color: AppColors.primaryColor),
+                      const SizedBox(height: 8),
+                      SizeSelector(
+                        sizes: entry.value,
+                        onSizeSelected: (value) {
+                          setState(() {
+                            selectedAttributes[entry.key] = value;
+                          });
+                        },
                       ),
-                      Spacer(),
                     ],
-                  ),
-                ),
+                  );
+                }),
+                SizedBox(height: AppPadding.medium),
+                (widget.productsModel.createStoreModel.isDelivery == true)
+                    ? BlocConsumer<CartCubit, CartState>(
+                        listener: (context, state) {
+                          if (state is CartLoaded) {
+                            getIt<NavigationService>().showSnackBar(
+                              Text(AppLocalizations.of(context)!.addedToCart),
+                            );
+                          }
+                          if (state is CartError) {
+                            getIt<NavigationService>().showSnackBar(
+                              Text(state.message),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.9,
+                                child: GradientButton(
+                                  onPressed: (state is CartLoading)
+                                      ? null
+                                      : () async {
+                                          final cartId =
+                                              "${product.id}_${selectedSize ?? ""}_${selectedAttributes.values.join('_')}";
+                                          context.read<CartCubit>().addItem(
+                                            CartModel(
+                                              productsModel:
+                                                  widget.productsModel,
+                                              createStoreModel: widget
+                                                  .productsModel
+                                                  .createStoreModel,
+                                              id: cartId,
+                                              selectedSize: selectedSize,
+                                              selectedOptions:
+                                                  selectedAttributes,
+                                              quantity: quantity,
+                                            ),
+                                          );
+                                        },
+                                  text: (state is CartLoading)
+                                      ? AppLocalizations.of(context)!.loading
+                                      : AppLocalizations.of(context)!.addToCart,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.primaryColor.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.local_shipping_outlined,
+                                size: 40,
+                                color: AppColors.primaryColor,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.noDeliveryAvailable,
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: AppPadding.large),
+                              GradientButton(
+                                text: AppLocalizations.of(context)!.showDetails,
+                                onPressed: () {
+                                  StoreHelper().showStoreDetails(
+                                    context,
+                                    widget.productsModel.createStoreModel,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),

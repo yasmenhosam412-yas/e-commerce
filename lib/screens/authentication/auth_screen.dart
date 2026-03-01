@@ -76,7 +76,7 @@ class _AuthScreenState extends State<AuthScreen>
                 ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: 10),
 
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,

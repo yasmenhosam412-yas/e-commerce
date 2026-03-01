@@ -568,4 +568,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nothingFavs => 'No favorites yet';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get isDelivery => 'Offers Delivery';
+
+  @override
+  String get deliveryGovernorates => 'Governorates to deliver to';
+
+  @override
+  String get deliveryTime => 'Delivery Time';
+
+  @override
+  String get deliveryInfo => 'Additional Delivery Info';
+
+  @override
+  String get enterDeliveryGovernorates => 'Enter governorates (e.g. Cairo, Giza)';
+
+  @override
+  String get enterDeliveryTime => 'e.g. 2-3 days';
+
+  @override
+  String get enterDeliveryInfo => 'Any more info about delivery';
+
+  @override
+  String get noDeliveryAvailable => 'Delivery is not available for this shop';
+
+  @override
+  String get showDetails => 'View Shop Details';
+
+  @override
+  String get governorate => 'Governorate';
+
+  @override
+  String get orderItems => 'Order Items';
+
+  @override
+  String get deliveryInformation => 'Delivery Information';
+
+  @override
+  String get paymentSummary => 'Payment Summary';
+
+  @override
+  String get orderPlaced => 'Order Placed Successfully ✅';
 }

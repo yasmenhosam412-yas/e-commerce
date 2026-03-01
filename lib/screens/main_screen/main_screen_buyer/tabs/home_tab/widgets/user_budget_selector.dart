@@ -18,9 +18,9 @@ class BudgetFilter extends StatefulWidget {
 
 class _BudgetFilterState extends State<BudgetFilter> {
   double minBudget = 0;
-  double maxBudget = 1500;
+  double maxBudget = 10000;
 
-  RangeValues rangeValues = const RangeValues(0, 1500);
+  RangeValues rangeValues = const RangeValues(0, 10000);
 
   @override
   Widget build(BuildContext context) {

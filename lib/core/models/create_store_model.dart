@@ -9,6 +9,10 @@ class CreateStoreModel {
   final String selectedDelivery;
   final String selectedImage;
   final String? id;
+  final bool isDelivery;
+  final List<String>? deliveryGovernorates;
+  final String? deliveryTime;
+  final String? deliveryInfo;
 
   CreateStoreModel({
     required this.selectedName,
@@ -21,6 +25,10 @@ class CreateStoreModel {
     required this.selectedDelivery,
     required this.selectedImage,
     this.id,
+    this.isDelivery = false,
+    this.deliveryGovernorates,
+    this.deliveryTime,
+    this.deliveryInfo,
   });
 
   factory CreateStoreModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,12 @@ class CreateStoreModel {
       selectedDelivery: json['delivery'] ?? '',
       selectedImage: json['image'] ?? '',
       id: json['id'],
+      isDelivery: json['is_delivery'] ?? false,
+      deliveryGovernorates: json['delivery_governorates'] != null
+          ? List<String>.from(json['delivery_governorates'].map((e) => e.toString()))
+          : null,
+      deliveryTime: json['delivery_time'],
+      deliveryInfo: json['delivery_info'],
     );
   }
 
@@ -50,6 +64,10 @@ class CreateStoreModel {
       'delivery': selectedDelivery,
       'image': selectedImage,
       "id": id,
+      'is_delivery': isDelivery,
+      'delivery_governorates': deliveryGovernorates,
+      'delivery_time': deliveryTime,
+      'delivery_info': deliveryInfo,
     };
   }
 }

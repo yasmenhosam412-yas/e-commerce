@@ -9,6 +9,10 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.whiteColor,
     primaryColor: AppColors.primaryColor,
     fontFamily: "ABeeZee",
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: AppColors.primaryColor,
+      refreshBackgroundColor: AppColors.whiteColor
+    ),
     iconTheme: IconThemeData(color: AppColors.whiteColor),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.whiteColor,

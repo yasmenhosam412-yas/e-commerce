@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/services/cloudinary_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,11 +18,10 @@ class StoreService {
     required String price,
     required String category,
     required String quantity,
-    required String storeImage,
-    required String storeName,
-    required String storeCategory,
+    required CreateStoreModel store,
     required Map<String, List<String>> attributes,
     List<String>? sizes,
+    bool isFeatured = false,
   }) async {
     final List<String> uploadedImages = [];
 
@@ -49,9 +49,19 @@ class StoreService {
 
       transaction.set(counterRef, {"lastId": newId});
 
-      final productRef = firebaseFirestore
-          .collection("dashboard")
-          .doc(firebaseAuth.currentUser!.uid)
+      final String uid = firebaseAuth.currentUser!.uid;
+      final dashboardRef = firebaseFirestore.collection("dashboard").doc(uid);
+
+      final storeData = store.toJson();
+      storeData['id'] = uid;
+
+      transaction.set(dashboardRef, {
+        "store": storeData,
+        "uid": uid,
+        "lastUpdated": FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      final productRef = dashboardRef
           .collection("products")
           .doc(newId.toString());
 
@@ -66,15 +76,20 @@ class StoreService {
         "quantity": int.parse(quantity),
         "sizes": sizes ?? [],
         "attributes": attributes,
-        "isFeatured": false,
-        "storeId": firebaseAuth.currentUser!.uid,
-        "storeImage": storeImage,
-        "storeName": storeName,
-        "storeCategory": storeCategory,
+        "isFeatured": isFeatured,
+        "storeId": uid,
+        "store": storeData,
         "createdAt": FieldValue.serverTimestamp(),
       };
 
       transaction.set(productRef, productData);
+
+      if (isFeatured) {
+        final featuredRef = firebaseFirestore
+            .collection("featuredProducts")
+            .doc(newId.toString());
+        transaction.set(featuredRef, productData);
+      }
     });
   }
 
@@ -110,8 +125,9 @@ class StoreService {
     final Map<String, dynamic> updatedData = {};
 
     if (name != null && name.isNotEmpty) updatedData['name'] = name;
-    if (description != null && description.isNotEmpty)
+    if (description != null && description.isNotEmpty) {
       updatedData['desc'] = description;
+    }
 
     if (updatedData.isEmpty) return;
 
@@ -129,9 +145,7 @@ class StoreService {
     String position,
     String badgeColor,
     String textColor,
-    String storeName,
-    String storeCategory,
-    String storeImage,
+    CreateStoreModel store,
   ) async {
     final imagePath = await CloudinaryService().saveToCloudinary(image);
 
@@ -157,9 +171,7 @@ class StoreService {
       "badgeColor": badgeColor,
       "textColor": textColor,
       "storeId": FirebaseAuth.instance.currentUser?.uid,
-      "storeName": storeName,
-      "storeImage": storeImage,
-      "storeCategory": storeCategory,
+      "store": store.toJson(),
     });
   }
 
@@ -301,7 +313,6 @@ class StoreService {
 
   Future<void> updateProduct({
     required String productId,
-
     List<String>? images,
     String? name,
     String? desc,
@@ -310,7 +321,6 @@ class StoreService {
     int? quantity,
     List<String>? sizes,
     Map<String, List<String>>? attributes,
-
     String? collectionName,
     String? discount,
     double? newPrice,
@@ -344,30 +354,32 @@ class StoreService {
     if (newPrice != null) updatedData['newPrice'] = newPrice;
     if (isFeatured != null) updatedData['isFeatured'] = isFeatured;
 
-    if (updatedData.isEmpty) return;
+    if (updatedData.isEmpty && isFeatured == null) return;
 
+    final String uid = firebaseAuth.currentUser!.uid;
     final productRef = firebaseFirestore
         .collection("dashboard")
-        .doc(firebaseAuth.currentUser!.uid)
+        .doc(uid)
         .collection("products")
         .doc(productId);
 
-    await productRef.update(updatedData);
+    if (updatedData.isNotEmpty) {
+      await productRef.update(updatedData);
+    }
 
-    if (isFeatured != null) {
-      if (isFeatured == true) {
-        final productSnapshot = await productRef.get();
-        final productData = productSnapshot.data()!;
+    // Fetch the updated data to sync with featuredProducts
+    final productSnapshot = await productRef.get();
+    if (productSnapshot.exists) {
+      final productData = productSnapshot.data()!;
+      final bool currentlyFeatured = productData['isFeatured'] ?? false;
 
+      if (currentlyFeatured) {
         await firebaseFirestore
             .collection("featuredProducts")
             .doc(productId)
-            .set({
-              ...productData,
-              "id": productId,
-              "storeId": firebaseAuth.currentUser!.uid,
-            });
+            .set({...productData, "id": productId, "storeId": uid});
       } else {
+        // If it was featured before but isFeatured is now false, remove it
         await firebaseFirestore
             .collection("featuredProducts")
             .doc(productId)

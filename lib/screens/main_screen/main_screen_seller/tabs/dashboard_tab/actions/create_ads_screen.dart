@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_state.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
+import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
 import 'package:boo/core/widgets/custom_form_field.dart';
@@ -18,10 +19,8 @@ import '../../../../../../controllers/stores_cubit/dashboard_cubit/dashboard_cub
 enum BadgePosition { topLeft, topRight, bottomLeft, bottomRight }
 
 class CreateAdsScreen extends StatefulWidget {
-  final String name;
-  final String image;
-  final String category;
-  const CreateAdsScreen({super.key, required this.name, required this.image, required this.category});
+  final CreateStoreModel createStoreModel;
+  const CreateAdsScreen({super.key, required this.createStoreModel});
 
   @override
   State<CreateAdsScreen> createState() => _CreateAdsScreenState();
@@ -337,9 +336,7 @@ class _CreateAdsScreenState extends State<CreateAdsScreen> {
                               positionStr,
                               _badgeColor.toHexString(),
                               _badgeTextColor.toHexString(),
-                              widget.name,
-                              widget.image,
-                              widget.category
+                              widget.createStoreModel
                             );
                           },
                     child: Text(

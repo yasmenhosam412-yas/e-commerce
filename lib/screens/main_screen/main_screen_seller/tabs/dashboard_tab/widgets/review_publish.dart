@@ -1,8 +1,6 @@
 import 'dart:io';
-import 'dart:ui';
-
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
-import 'package:boo/screens/main_screen/main_screen_seller/main_screen_seller.dart';
+import 'package:boo/screens/main_screen/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,6 +20,10 @@ class ReviewAndPublishContent extends StatefulWidget {
   final String businessAddress;
   final String fees;
   final String deliveryPrice;
+  final bool isDelivery;
+  final List<String>? deliveryGovernorates;
+  final String? deliveryTime;
+  final String? deliveryInfo;
   final VoidCallback onPublish;
 
   const ReviewAndPublishContent({
@@ -35,6 +37,10 @@ class ReviewAndPublishContent extends StatefulWidget {
     required this.businessAddress,
     required this.fees,
     required this.deliveryPrice,
+    required this.isDelivery,
+    this.deliveryGovernorates,
+    this.deliveryTime,
+    this.deliveryInfo,
     required this.onPublish,
   });
 
@@ -116,9 +122,27 @@ class _ReviewAndPublishContentState extends State<ReviewAndPublishContent> {
 
         _buildReviewRow(AppLocalizations.of(context)!.fees, widget.fees),
         _buildReviewRow(
-          AppLocalizations.of(context)!.deliveryPrice,
-          widget.deliveryPrice,
+          AppLocalizations.of(context)!.isDelivery,
+          widget.isDelivery ? "Yes" : "No",
         ),
+        if (widget.isDelivery) ...[
+          _buildReviewRow(
+            AppLocalizations.of(context)!.deliveryPrice,
+            widget.deliveryPrice,
+          ),
+          _buildReviewRow(
+            AppLocalizations.of(context)!.deliveryGovernorates,
+            widget.deliveryGovernorates?.join(' , ') ?? "",
+          ),
+          _buildReviewRow(
+            AppLocalizations.of(context)!.deliveryTime,
+            widget.deliveryTime ?? "-",
+          ),
+          _buildReviewRow(
+            AppLocalizations.of(context)!.deliveryInfo,
+            widget.deliveryInfo ?? "-",
+          ),
+        ],
 
         const SizedBox(height: AppPadding.xxlarge),
 
@@ -128,8 +152,8 @@ class _ReviewAndPublishContentState extends State<ReviewAndPublishContent> {
               getIt<NavigationService>().showToast(
                 AppLocalizations.of(context)!.storeCreated,
               );
-              getIt<NavigationService>().navigatePushReplace(
-                MainScreenSeller(),
+              getIt<NavigationService>().navigatePushRemoveUntil(
+                const LoadingScreen(),
               );
             }
 

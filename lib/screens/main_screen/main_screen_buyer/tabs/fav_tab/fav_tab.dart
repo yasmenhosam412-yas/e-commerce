@@ -1,11 +1,11 @@
-import 'package:boo/controllers/fav_cubit/fav_cubit.dart';
-import 'package:boo/controllers/fav_cubit/fav_state.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/models/user_product_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
+import '../../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
 import '../../../../../core/services/get_init.dart';
 import '../../../../../core/services/navigation_service.dart';
 import '../../details/product_details.dart';
@@ -111,7 +111,7 @@ class _FavGridShop extends StatelessWidget {
                   image: item.image,
                   name: item.name,
                   price: item.newPrice ?? item.price,
-                  oldPrice: item.newPrice != null ? item.price : null,
+                  oldPrice: item.newPrice != item.price ? item.price : null,
                   rating: 0,
                   reviewsCount: 0,
                   productModel: item,

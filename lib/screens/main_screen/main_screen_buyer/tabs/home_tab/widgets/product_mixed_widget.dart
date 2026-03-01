@@ -6,8 +6,9 @@ import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../../controllers/fav_cubit/fav_cubit.dart';
-import '../../../../../../controllers/fav_cubit/fav_state.dart';
+import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
+import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
+
 
 enum ProductOwnerType { store, user }
 

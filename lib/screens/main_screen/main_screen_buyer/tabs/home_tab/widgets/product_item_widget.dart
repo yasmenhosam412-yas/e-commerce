@@ -1,11 +1,12 @@
-import 'package:boo/controllers/fav_cubit/fav_cubit.dart';
-import 'package:boo/controllers/fav_cubit/fav_state.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
+import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
 
 class ProductClothesItem extends StatelessWidget {
   final String image;
@@ -58,7 +59,7 @@ class ProductClothesItem extends StatelessWidget {
 
                 BlocSelector<FavCubit, FavState, bool>(
                   selector: (state) {
-                    return state.favourites.contains(productModel);
+                    return state.favourites.any((e) => e.id == productModel.id);
                   },
                   builder: (context, state) {
                     return Positioned(

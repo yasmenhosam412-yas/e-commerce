@@ -10,15 +10,19 @@ class StoreCreationService {
   CloudinaryService cloudinaryService = CloudinaryService();
 
   Future<void> createSteps({
-    String selectedName = '',
-    String selectedDesc = '',
-    String selectedCat = '',
-    String selectedPhone = '',
-    String selectedEmail = '',
-    String selectedAddress = '',
-    String selectedFees = '',
-    String selectedDelivery = '',
-    String selectedImage = '',
+    required String selectedName,
+    required String selectedDesc,
+    required String selectedCat,
+    required String selectedPhone,
+    required String selectedEmail,
+    required String selectedAddress,
+    required String selectedFees,
+    required String selectedDelivery,
+    required String selectedImage,
+    required bool isDelivery,
+    List<String>? deliveryGovernorates,
+    String? deliveryTime,
+    String? deliveryInfo,
   }) async {
     final imagePath = await cloudinaryService.saveToCloudinary(
       File(selectedImage),
@@ -37,6 +41,10 @@ class StoreCreationService {
           'fees': selectedFees,
           'delivery': selectedDelivery,
           'image': imagePath,
+          'is_delivery': isDelivery,
+          'delivery_governorates': deliveryGovernorates,
+          'delivery_time': deliveryTime,
+          'delivery_info': deliveryInfo,
         });
   }
 
@@ -57,16 +65,9 @@ class StoreCreationService {
 
     if (!result.exists) return null;
 
-    return CreateStoreModel(
-      selectedName: result.get("name"),
-      selectedDesc: result.get("description"),
-      selectedCat: result.get("category"),
-      selectedPhone: result.get("phone"),
-      selectedEmail: result.get("email"),
-      selectedAddress: result.get("address"),
-      selectedFees: result.get("fees"),
-      selectedDelivery: result.get("delivery"),
-      selectedImage: result.get("image"),
-    );
+    final data = result.data();
+    if (data == null) return null;
+
+    return CreateStoreModel.fromJson(data);
   }
 }

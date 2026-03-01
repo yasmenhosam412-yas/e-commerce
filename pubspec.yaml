@@ -34,6 +34,8 @@ dependencies:
   equatable: ^2.0.8
   skeletonizer: ^2.1.2
   url_launcher: ^6.3.2
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
 
 
 dev_dependencies:
@@ -62,7 +64,7 @@ flutter_intl:
   output_dir: lib/generated
 
 flutter_native_splash:
-  image: "assets/icons/logo.png"
+  image: "assets/icons/logo2.png"
   color: "#ffffff"
   color_dark: "#000000"
 

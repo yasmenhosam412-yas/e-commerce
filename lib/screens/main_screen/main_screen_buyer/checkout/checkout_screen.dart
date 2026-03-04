@@ -1,5 +1,7 @@
 import 'package:boo/controllers/buyer_cubits/cart_cubit/cart_cubit.dart';
 import 'package:boo/controllers/buyer_cubits/checkout_cubit/checkout_cubit.dart';
+import 'package:boo/core/models/coupon_code.dart';
+import 'package:boo/core/models/user_model.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_padding.dart';
@@ -16,6 +18,7 @@ import '../../../../core/services/get_init.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartModel> cardModel;
+  final UserModel? userModel;
   final double delivery;
   final double subtotal;
   final double fees;
@@ -26,6 +29,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.delivery,
     required this.subtotal,
     required this.fees,
+    required this.userModel,
   });
 
   @override
@@ -37,18 +41,26 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
+  final TextEditingController couponController = TextEditingController();
+
   String? selectedGov;
 
-  TextStyle primaryStyle({
-    double size = 14,
-    FontWeight weight = FontWeight.normal,
-  }) {
-    return TextStyle(
-      color: AppColors.primaryColor,
-      fontSize: size,
-      fontWeight: weight,
-    );
+  double discount = 0;
+  bool couponApplied = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.text = widget.userModel?.displayName ?? "";
+    phoneController.text = widget.userModel?.phone ?? "";
+    addressController.text = widget.userModel?.address ?? "";
+    locationController.text = widget.userModel?.location ?? "";
+    selectedGov = widget.userModel?.governorate ?? "";
   }
+
+  double get total =>
+      widget.delivery + widget.fees + widget.subtotal - discount;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +79,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         centerTitle: true,
       ),
-
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -121,8 +132,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
                         await context.read<CheckoutCubit>().createOrder(
                           widget.cardModel,
-                          (widget.delivery + widget.subtotal + widget.fees)
-                              .toStringAsFixed(0),
+                          total.toStringAsFixed(0),
+                          couponApplied,
                         );
                       },
                 child: Row(
@@ -133,7 +144,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Text(
                       (state is CheckoutLoading)
                           ? AppLocalizations.of(context)!.loading
-                          : "${AppLocalizations.of(context)!.checkout} • ${widget.delivery + widget.fees + widget.subtotal} ${AppLocalizations.of(context)!.currency}",
+                          : "${AppLocalizations.of(context)!.checkout} • ${total.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -259,6 +270,72 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 20),
 
             _buildSectionCard(
+              title: "Coupon",
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomFormField(
+                          controller: couponController,
+                          hint: "Enter coupon code",
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      BlocConsumer<CheckoutCubit, CheckoutState>(
+                        listener: (context, state) {
+                          if (state is CheckoutCouponApplied) {
+                            applyCoupon(state.couponCode);
+                          }
+
+                          if (state is CheckoutError) {
+                            getIt<NavigationService>().showToast(state.error);
+                          }
+                        },
+                        builder: (context, state) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (couponController.text.isEmpty) return;
+
+                              context.read<CheckoutCubit>().applyCoupon(
+                                couponController.text,
+                                widget.cardModel.first.createStoreModel.id ??
+                                    "",
+                              );
+                            },
+                            child: const Text(
+                              "Apply",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  if (couponApplied)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Coupon applied! -${discount.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            _buildSectionCard(
               title: AppLocalizations.of(context)!.paymentSummary,
               child: Column(
                 children: [
@@ -266,38 +343,70 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     AppLocalizations.of(context)!.subtotal,
                     "${widget.subtotal} ${AppLocalizations.of(context)!.currency}",
                   ),
-
                   const SizedBox(height: 10),
-
                   _buildSummaryRow(
                     AppLocalizations.of(context)!.deliveryPrice,
                     "${widget.delivery} ${AppLocalizations.of(context)!.currency}",
                   ),
-
                   const SizedBox(height: 10),
-
                   _buildSummaryRow(
                     AppLocalizations.of(context)!.fees,
                     "${widget.fees} ${AppLocalizations.of(context)!.currency}",
                   ),
-
+                  if (discount > 0) ...[
+                    const SizedBox(height: 10),
+                    _buildSummaryRow(
+                      "Discount",
+                      "-${discount.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
+                    ),
+                  ],
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 14),
                     child: Divider(thickness: 1),
                   ),
-
                   _buildSummaryRow(
                     AppLocalizations.of(context)!.total,
-                    "${widget.delivery + widget.fees + widget.subtotal} ${AppLocalizations.of(context)!.currency}",
+                    "${total.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
                     isTotal: true,
                   ),
                 ],
               ),
             ),
+
             const SizedBox(height: 100),
           ],
         ),
       ),
+    );
+  }
+
+  void applyCoupon(CouponCode? coupon) {
+    if (coupon == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid or expired coupon")),
+      );
+      return;
+    }
+
+    double calculatedDiscount = 0;
+
+    if (coupon.type == "Fixed Amount") {
+      calculatedDiscount = coupon.value;
+    } else if (coupon.type == "Percentage") {
+      calculatedDiscount = widget.subtotal * (coupon.value / 100);
+    }
+
+    if (calculatedDiscount > widget.subtotal) {
+      calculatedDiscount = widget.subtotal;
+    }
+
+    setState(() {
+      discount = calculatedDiscount;
+      couponApplied = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Coupon applied successfully")),
     );
   }
 
@@ -356,24 +465,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location services are disabled.')),
-      );
-      return;
-    }
+    if (!serviceEnabled) return;
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
+    if (permission == LocationPermission.deniedForever) return;
 
     final position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
@@ -387,17 +487,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       if (placemarks.isNotEmpty) {
         final placemark = placemarks.first;
-        String address =
-            "${placemark.street}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}";
-
-        locationController.text = address;
-      } else {
         locationController.text =
-            "${position.latitude.toStringAsFixed(6)}, ${position.longitude.toStringAsFixed(6)}";
+            "${placemark.street}, ${placemark.locality}, ${placemark.country}";
       }
-    } catch (e) {
-      locationController.text =
-          "${position.latitude.toStringAsFixed(6)}, ${position.longitude.toStringAsFixed(6)}";
+    } catch (_) {
+      locationController.text = "${position.latitude}, ${position.longitude}";
     }
   }
 }

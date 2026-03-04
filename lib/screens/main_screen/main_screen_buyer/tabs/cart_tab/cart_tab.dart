@@ -1,5 +1,6 @@
 import 'package:boo/controllers/buyer_cubits/cart_cubit/cart_cubit.dart';
 import 'package:boo/controllers/buyer_cubits/cart_cubit/cart_state.dart';
+import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/core/models/cart_model.dart';
 import 'package:boo/core/services/get_init.dart';
 import 'package:boo/core/services/navigation_service.dart';
@@ -341,11 +342,19 @@ class ShopCartSection extends StatelessWidget {
                     ),
                     onPressed: () {
                       getIt<NavigationService>().navigatePush(
-                        CheckoutScreen(
-                          cardModel: items,
-                          delivery: deliveryFees,
-                          subtotal: subtotal,
-                          fees: shopFees,
+                        BlocBuilder<ManageCubit, ManageState>(
+                          builder: (context, state) {
+                            if (state is ManageLoaded) {
+                              return CheckoutScreen(
+                                cardModel: items,
+                                delivery: deliveryFees,
+                                subtotal: subtotal,
+                                fees: shopFees,
+                                userModel: state.userModel,
+                              );
+                            }
+                            return SizedBox.shrink();
+                          },
                         ),
                       );
                     },

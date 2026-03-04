@@ -15,6 +15,12 @@ final class CancelOrderLoading extends CheckoutState {
 
 final class CheckoutLoaded extends CheckoutState {}
 
+final class CheckoutCouponApplied extends CheckoutState {
+  final CouponCode? couponCode;
+
+  CheckoutCouponApplied({required this.couponCode});
+}
+
 final class CheckoutLoadedOrders extends CheckoutState {
   final List<OrderModel> orders;
 

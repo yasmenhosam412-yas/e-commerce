@@ -47,10 +47,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         title: Text(locale.myOrders, style: TextStyle(color: primaryColor)),
         backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: primaryColor),
       ),
       body: BlocConsumer<CheckoutCubit, CheckoutState>(
         listener: (context, state) {
@@ -61,9 +60,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             context.read<CheckoutCubit>().getUserOrders();
           }
           if (state is CheckoutError) {
-            getIt<NavigationService>().showToast(
-              state.error,
-            );
+            getIt<NavigationService>().showToast(state.error);
           }
         },
         builder: (context, state) {
@@ -91,7 +88,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             itemCount: _orders!.length,
             itemBuilder: (context, index) {
               final order = _orders![index];
@@ -189,7 +186,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ),
                             ),
                             Text(
-                              '${item.productsModel.price} ${locale.currency}',
+                              '${item.productsModel.newPrice ?? item.productsModel.price} ${locale.currency}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: primaryColor,
@@ -242,6 +239,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       ],
                     ),
 
+                    if (order.withCoupon)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          "Coupon applied!",
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
                     const Divider(height: 20, thickness: 1),
 
                     Row(
@@ -273,10 +282,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             builder: (context, state) {
                               final bool isThisOrderLoading =
                                   state is CancelOrderLoading &&
-                                      state.orderId == order.orderId;
+                                  state.orderId == order.orderId;
                               final bool isLoading =
                                   state is CheckoutLoading ||
-                                      isThisOrderLoading;
+                                  isThisOrderLoading;
                               return ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
@@ -325,8 +334,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                                 child: Text(
                                                   locale.yes,
                                                   style: const TextStyle(
-                                                    color:
-                                                        AppColors.primaryColor,
+                                                    color: AppColors.whiteColor,
                                                   ),
                                                 ),
                                               ),

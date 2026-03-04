@@ -8,6 +8,7 @@ class OrderModel {
   final List<CartModel> products;
   final String status;
   final DateTime? createdAt;
+  final bool withCoupon;
 
   OrderModel({
     required this.orderId,
@@ -15,7 +16,7 @@ class OrderModel {
     required this.totalPrice,
     required this.products,
     required this.status,
-    this.createdAt,
+    this.createdAt, required this.withCoupon,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,6 +29,7 @@ class OrderModel {
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
           : FieldValue.serverTimestamp(),
+      "withCoupon" : withCoupon
     };
   }
 
@@ -46,7 +48,7 @@ class OrderModel {
       status: map['status'] ?? 'pending',
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
-          : null,
+          : null, withCoupon: map['withCoupon'] ?? false,
     );
   }
 }

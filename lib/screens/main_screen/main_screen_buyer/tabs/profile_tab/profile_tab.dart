@@ -1,8 +1,13 @@
+import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/core/services/navigation_service.dart';
+import 'package:boo/core/utils/app_colors.dart';
+import 'package:boo/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/services/get_init.dart';
+import 'info_screen.dart';
 import 'orders_screen.dart';
 
 class ProfileTab extends StatefulWidget {
@@ -20,36 +25,56 @@ class _ProfileTabState extends State<ProfileTab> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Column(
-            children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundImage: NetworkImage("https://i.pravatar.cc/150"),
-              ),
-              SizedBox(height: 12),
-              Text(
-                "User Name",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 18,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                "user@email.com",
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-              ),
-            ],
+          BlocBuilder<ManageCubit, ManageState>(
+            builder: (context, state) {
+              if (state is ManageLoaded) {
+                return Column(
+                  children: [
+                    (state.userModel?.photoURL.isNotEmpty == true)
+                        ? CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                              state.userModel?.photoURL ?? "",
+                            ),
+                          )
+                        : CircleAvatar(
+                            backgroundColor: AppColors.primaryColor.withValues(
+                              alpha: 0.24,
+                            ),
+                            radius: 40,
+                            child: Icon(
+                              Icons.person,
+                              color: AppColors.whiteColor,
+                            ),
+                          ),
+                    SizedBox(height: 12),
+                    Text(
+                      state.userModel?.displayName ?? "",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      state.userModel?.email ?? "",
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                    ),
+                  ],
+                );
+              }
+              return SizedBox.shrink();
+            },
           ),
 
           const SizedBox(height: 24),
 
           _profileItem(
             icon: Icons.local_shipping_outlined,
-            title: "Orders",
+            title: AppLocalizations.of(context)!.myOrders,
             onTap: () {
               getIt<NavigationService>().navigatePush(OrdersScreen());
             },
@@ -57,7 +82,18 @@ class _ProfileTabState extends State<ProfileTab> {
           _profileItem(
             icon: Icons.data_array,
             title: "My Info",
-            onTap: () {},
+            onTap: () {
+              getIt<NavigationService>().navigatePush(
+                BlocBuilder<ManageCubit, ManageState>(
+                  builder: (context, state) {
+                  if(state is ManageLoaded) {
+                    return InfoScreen(userModel: state.userModel);
+                  }
+                  return SizedBox.shrink();
+                  },
+                ),
+              );
+            },
           ),
           _profileItem(
             icon: Icons.person_outline,

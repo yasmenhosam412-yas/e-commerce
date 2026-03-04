@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:boo/core/models/coupon_code.dart' show CouponCode;
 import 'package:boo/core/models/order_model.dart';
 import 'package:boo/core/services/error_handler.dart';
 import 'package:boo/services/buyer_service/checkout_service.dart';
@@ -13,10 +14,10 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
   CheckoutCubit(this.checkoutService) : super(CheckoutInitial());
 
-  Future<void> createOrder(List<CartModel> cart, String total) async {
+  Future<void> createOrder(List<CartModel> cart, String total,bool withCoupon) async {
     emit(CheckoutLoading());
     try {
-      await checkoutService.createOrder(cart, total);
+      await checkoutService.createOrder(cart, total,withCoupon);
       emit(CheckoutLoaded());
     } catch (e) {
       emit(CheckoutError(error: ErrorHandler.fromException(e).message));
@@ -50,7 +51,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   Future<void> getStoreOrders(String storeId) async {
     emit(CheckoutLoading());
     try {
-      final orders =await checkoutService.getStoreOrdersOnce(storeId);
+      final orders = await checkoutService.getStoreOrdersOnce(storeId);
       emit(CheckoutLoadedOrders(orders: orders));
     } catch (e) {
       emit(CheckoutError(error: ErrorHandler.fromException(e).message));
@@ -60,8 +61,18 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   Future<void> getUserOrders() async {
     emit(CheckoutLoading());
     try {
-      final orders =await checkoutService.getUserOrdersOnce();
+      final orders = await checkoutService.getUserOrdersOnce();
       emit(CheckoutLoadedOrders(orders: orders));
+    } catch (e) {
+      emit(CheckoutError(error: ErrorHandler.fromException(e).message));
+    }
+  }
+
+  Future<void> applyCoupon(String code, String storeId) async {
+    emit(CheckoutLoading());
+    try {
+      final result = await checkoutService.applyCoupon(code, storeId);
+      emit(CheckoutCouponApplied(couponCode: result));
     } catch (e) {
       emit(CheckoutError(error: ErrorHandler.fromException(e).message));
     }

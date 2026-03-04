@@ -35,7 +35,10 @@ class _MainScreenBuyerState extends State<MainScreenBuyer> {
 
       floatingActionButton: FloatingActionButton(
         shape: CircleBorder(
-          side: BorderSide(color: AppColors.whiteColor, width: AppPadding.small),
+          side: BorderSide(
+            color: AppColors.whiteColor,
+            width: AppPadding.small,
+          ),
         ),
         backgroundColor: AppColors.redColor,
         onPressed: () {

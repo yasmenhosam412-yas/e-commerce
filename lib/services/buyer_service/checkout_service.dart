@@ -4,10 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/models/coupon_code.dart';
+
 class CheckoutService {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  Future<void> createOrder(List<CartModel> cart, String total) async {
+  Future<void> createOrder(List<CartModel> cart, String total,bool withCoupon) async {
     if (cart.isEmpty) return;
 
     final storeId = cart.first.createStoreModel.id;
@@ -18,7 +20,7 @@ class CheckoutService {
       storeId: storeId ?? "",
       totalPrice: total,
       products: cart,
-      status: 'pending',
+      status: 'pending', withCoupon: withCoupon,
     );
 
     await firebaseFirestore
@@ -36,7 +38,11 @@ class CheckoutService {
         .set(order.toMap());
   }
 
-  Future<void> updateOrderStatus(String storeId, String orderId, String status) async {
+  Future<void> updateOrderStatus(
+    String storeId,
+    String orderId,
+    String status,
+  ) async {
     final data = {'status': status};
 
     await firebaseFirestore
@@ -79,4 +85,27 @@ class CheckoutService {
         .get();
 
     return snapshot.docs.map((doc) => OrderModel.fromMap(doc.data())).toList();
-  }}
+  }
+
+  Future<CouponCode?> applyCoupon(String code, String storeId) async {
+    final query = await firebaseFirestore
+        .collection('dashboard')
+        .doc(storeId)
+        .collection("coupons")
+        .where("code", isEqualTo: code)
+        .limit(1)
+        .get();
+
+    if (query.docs.isEmpty) return null;
+
+    final data = query.docs.first.data();
+
+    final expiryDate = DateTime.parse(data["expiryDate"]);
+
+    if (expiryDate.isBefore(DateTime.now())) {
+      return null;
+    }
+
+    return CouponCode.fromMap(data);
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:boo/core/models/cart_model.dart';
 import 'package:boo/core/models/order_model.dart';
+import 'package:boo/core/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -9,7 +10,12 @@ import '../../core/models/coupon_code.dart';
 class CheckoutService {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  Future<void> createOrder(List<CartModel> cart, String total,bool withCoupon) async {
+  Future<void> createOrder(
+    List<CartModel> cart,
+    String total,
+    bool withCoupon,
+    UserModel userModel,
+  ) async {
     if (cart.isEmpty) return;
 
     final storeId = cart.first.createStoreModel.id;
@@ -20,7 +26,9 @@ class CheckoutService {
       storeId: storeId ?? "",
       totalPrice: total,
       products: cart,
-      status: 'pending', withCoupon: withCoupon,
+      status: 'pending',
+      withCoupon: withCoupon,
+      userModel: userModel,
     );
 
     await firebaseFirestore
@@ -41,6 +49,7 @@ class CheckoutService {
   Future<void> updateOrderStatus(
     String storeId,
     String orderId,
+    String userId,
     String status,
   ) async {
     final data = {'status': status};
@@ -54,14 +63,19 @@ class CheckoutService {
 
     await firebaseFirestore
         .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(userId)
         .collection("orders")
         .doc(orderId)
         .update(data);
   }
 
   Future<void> cancelOrder(String storeId, String orderId) async {
-    await updateOrderStatus(storeId, orderId, 'canceled');
+    await updateOrderStatus(
+      storeId,
+      orderId,
+      FirebaseAuth.instance.currentUser!.uid,
+      'canceled',
+    );
   }
 
   Future<List<OrderModel>> getUserOrdersOnce() async {

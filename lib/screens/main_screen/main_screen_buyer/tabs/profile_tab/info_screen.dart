@@ -52,16 +52,14 @@ class _InfoScreenState extends State<InfoScreen> {
     locationController = TextEditingController(
       text: widget.userModel?.location ?? '',
     );
-    selectedGovernorate = widget.userModel?.governorate;
+    if (AppConstants.egyptGovernorates
+        .contains(widget.userModel?.governorate)) {
+      selectedGovernorate = widget.userModel?.governorate;
+    } else {
+      selectedGovernorate = null;
+    }
   }
 
-  final List<String> governorates = [
-    "Cairo",
-    "Giza",
-    "Alexandria",
-    "Dakahlia",
-    "Sharqia",
-  ];
 
   Future<void> pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -100,10 +98,13 @@ class _InfoScreenState extends State<InfoScreen> {
                 backgroundColor: AppColors.primaryColor.withOpacity(.1),
                 backgroundImage: selectedImage != null
                     ? FileImage(selectedImage!)
-                    : (widget.userModel?.photoURL != null && widget.userModel?.photoURL.isNotEmpty == true
+                    : (widget.userModel?.photoURL != null &&
+                    widget.userModel?.photoURL.isNotEmpty == true
                     ? NetworkImage(widget.userModel!.photoURL) as ImageProvider
                     : null),
-                child: (selectedImage == null && (widget.userModel?.photoURL == null || widget.userModel?.photoURL.isEmpty == true))
+                child: (selectedImage == null &&
+                    (widget.userModel?.photoURL == null ||
+                        widget.userModel?.photoURL.isEmpty == true))
                     ? Icon(
                   Icons.camera_alt,
                   size: 35,
@@ -132,7 +133,9 @@ class _InfoScreenState extends State<InfoScreen> {
             const SizedBox(height: 15),
 
             CustomDropdown(
-              value: selectedGovernorate,
+              value: AppConstants.egyptGovernorates.contains(selectedGovernorate)
+                  ? selectedGovernorate
+                  : null,
               label: AppLocalizations.of(context)!.governorate,
               items: AppConstants.egyptGovernorates,
               onChanged: (value) {
@@ -179,30 +182,30 @@ class _InfoScreenState extends State<InfoScreen> {
                   onPressed: (state is InfoLoading)
                       ? null
                       : () async {
-                          if (nameController.text.isEmpty ||
-                              phoneController.text.isEmpty ||
-                              addressController.text.isEmpty ||
-                              locationController.text.isEmpty ||
-                              selectedGovernorate == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(context)!.enterAllData,
-                                ),
-                              ),
-                            );
-                            return;
-                          }
+                    if (nameController.text.isEmpty ||
+                        phoneController.text.isEmpty ||
+                        addressController.text.isEmpty ||
+                        locationController.text.isEmpty ||
+                        selectedGovernorate == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context)!.enterAllData,
+                          ),
+                        ),
+                      );
+                      return;
+                    }
 
-                          await context.read<InfoCubit>().updateUserInfo(
-                            selectedImage?.path ?? "",
-                            nameController.text,
-                            phoneController.text,
-                            addressController.text,
-                            locationController.text,
-                            selectedGovernorate ?? "",
-                          );
-                        },
+                    await context.read<InfoCubit>().updateUserInfo(
+                      selectedImage?.path ?? "",
+                      nameController.text,
+                      phoneController.text,
+                      addressController.text,
+                      locationController.text,
+                      selectedGovernorate ?? "",
+                    );
+                  },
                   text: (state is InfoLoading)
                       ? AppLocalizations.of(context)!.loading
                       : AppLocalizations.of(context)!.save,
@@ -231,19 +234,6 @@ class _InfoScreenState extends State<InfoScreen> {
     );
   }
 
-  InputDecoration _inputDecoration(String hint, IconData icon) {
-    return InputDecoration(
-      hintText: hint,
-      prefixIcon: Icon(icon, color: AppColors.primaryColor),
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(vertical: 18),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-    );
-  }
 
   Future<void> getLocation() async {
     bool serviceEnabled;
@@ -273,7 +263,7 @@ class _InfoScreenState extends State<InfoScreen> {
       if (placemarks.isNotEmpty) {
         final placemark = placemarks.first;
         locationController.text =
-            "${placemark.street}, ${placemark.locality}, ${placemark.country}";
+        "${placemark.street}, ${placemark.locality}, ${placemark.country}";
       }
     } catch (_) {
       locationController.text = "${position.latitude}, ${position.longitude}";

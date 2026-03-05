@@ -2,6 +2,7 @@ import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/l10n/app_localizations.dart';
+import 'package:boo/screens/on_boarding/on_boarding_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,34 +82,39 @@ class _ProfileTabState extends State<ProfileTab> {
           ),
           _profileItem(
             icon: Icons.data_array,
-            title: "My Info",
+            title: "My Information",
             onTap: () {
               getIt<NavigationService>().navigatePush(
                 BlocBuilder<ManageCubit, ManageState>(
                   builder: (context, state) {
-                  if(state is ManageLoaded) {
-                    return InfoScreen(userModel: state.userModel);
-                  }
-                  return SizedBox.shrink();
+                    if (state is ManageLoaded) {
+                      return InfoScreen(userModel: state.userModel);
+                    }
+                    return SizedBox.shrink();
                   },
                 ),
               );
             },
           ),
-          _profileItem(
-            icon: Icons.person_outline,
-            title: "Account",
-            onTap: () {},
-          ),
 
+          // _profileItem(
+          //   icon: Icons.person_outline,
+          //   title: "My Account",
+          //   onTap: () {
+          //     getIt<NavigationService>().navigatePush(MyAccount());
+          //   },
+          // ),
           const Divider(height: 32),
 
           _profileItem(
             icon: Icons.logout,
-            title: "Logout",
+            title: AppLocalizations.of(context)!.signout,
             color: Colors.red,
-            onTap: () {
-              FirebaseAuth.instance.signOut();
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              getIt<NavigationService>().navigatePushRemoveUntil(
+                OnBoardingScreen(),
+              );
             },
           ),
         ],

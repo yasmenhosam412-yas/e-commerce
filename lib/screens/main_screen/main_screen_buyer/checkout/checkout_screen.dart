@@ -94,7 +94,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 AppLocalizations.of(context)!.orderPlaced,
               );
               Navigator.pop(context);
-              context.read<CartCubit>().deleteItem(widget.cardModel.first.id);
+              context.read<CartCubit>().clearCart(widget.cardModel.first.id);
             }
 
             if (state is CheckoutError) {
@@ -134,6 +134,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           widget.cardModel,
                           total.toStringAsFixed(0),
                           couponApplied,
+                          widget.userModel ??
+                              UserModel(
+                                uid: "",
+                                email: "",
+                                displayName: "",
+                                photoURL: "",
+                                userType: "",
+                                phone: "",
+                                address: "",
+                                location: "",
+                                governorate: "",
+                              ),
                         );
                       },
                 child: Row(

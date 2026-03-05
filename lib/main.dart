@@ -5,6 +5,7 @@ import 'package:boo/controllers/buyer_cubits/home_cubit/home_cubit.dart';
 import 'package:boo/controllers/buyer_cubits/info_cubit/info_cubit.dart';
 import 'package:boo/controllers/buyer_cubits/sell_cubit/sell_cubit.dart';
 import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
+import 'package:boo/controllers/orders_cubit/orders_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/services/navigation_service.dart';
@@ -18,6 +19,7 @@ import 'package:boo/services/buyer_service/fav_service.dart';
 import 'package:boo/services/buyer_service/home_service.dart';
 import 'package:boo/services/buyer_service/info_service.dart';
 import 'package:boo/services/buyer_service/sell_servcie.dart';
+import 'package:boo/services/orders_service.dart';
 import 'package:boo/services/store_creation_service.dart';
 import 'package:boo/services/store_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -68,6 +70,7 @@ Future<void> main() async {
         BlocProvider(create: (context) => CartCubit(CartService())),
         BlocProvider(create: (context) => CheckoutCubit(CheckoutService())),
         BlocProvider(create: (context) => InfoCubit(InfoService())),
+        BlocProvider(create: (context) => OrdersCubit(OrdersService())),
       ],
       child: MainApp(),
     ),

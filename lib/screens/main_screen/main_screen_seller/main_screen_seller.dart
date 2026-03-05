@@ -1,5 +1,6 @@
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/dashboard_tab.dart';
+import 'package:boo/screens/main_screen/main_screen_seller/tabs/orders_tab/orders_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -20,7 +21,7 @@ class _MainScreenSellerState extends State<MainScreenSeller> {
     super.initState();
     screens = [
       DashboardTab(),
-      const Center(child: Text("Orders")),
+      OrdersTab(),
       const Center(child: Text("Products")),
       const Center(child: Text("Profile")),
     ];

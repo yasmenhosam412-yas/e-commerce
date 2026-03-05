@@ -36,24 +36,24 @@ class CartCubit extends Cubit<CartState> {
     final index = cartItems.indexWhere((item) => item.id == cartItemId);
     if (index != -1) {
       final oldItem = cartItems[index];
-      
-      // Optimistic update: Update UI immediately
+
       cartItems[index] = oldItem.copyWith(quantity: quantity);
       emit(CartLoaded(items: List.from(cartItems)));
 
-      // Debounce network call to avoid spamming the server
       _debounceTimers[cartItemId]?.cancel();
-      _debounceTimers[cartItemId] = Timer(const Duration(milliseconds: 500), () async {
-        try {
-          await cartService.updateItemQuantity(cartItemId, quantity);
-        } catch (e) {
-          // In case of error, revert and show error message
-          emit(CartError(ErrorHandler.fromException(e).message));
-          await loadCart(showLoading: false);
-        } finally {
-          _debounceTimers.remove(cartItemId);
-        }
-      });
+      _debounceTimers[cartItemId] = Timer(
+        const Duration(milliseconds: 500),
+        () async {
+          try {
+            await cartService.updateItemQuantity(cartItemId, quantity);
+          } catch (e) {
+            emit(CartError(ErrorHandler.fromException(e).message));
+            await loadCart(showLoading: false);
+          } finally {
+            _debounceTimers.remove(cartItemId);
+          }
+        },
+      );
     }
   }
 
@@ -73,9 +73,9 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  Future<void> clearCart() async {
+  Future<void> clearCart(String cartId) async {
     final oldItems = List<CartModel>.from(cartItems);
-    cartItems.clear();
+    cartItems.where((e) => e.id == cartId).toList().clear();
     emit(CartLoaded(items: []));
 
     try {

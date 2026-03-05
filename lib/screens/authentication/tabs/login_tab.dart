@@ -1,6 +1,5 @@
 import 'package:boo/controllers/auth_cubit/auth_cubit.dart';
 import 'package:boo/screens/main_screen/loading_screen.dart';
-import 'package:boo/screens/main_screen/main_screen_buyer/main_screen_buyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -105,15 +104,9 @@ class _LoginTabState extends State<LoginTab> {
             BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is AuthLoaded) {
-                  if (state.userType == "seller") {
-                    getIt<NavigationService>().navigatePushReplace(
-                      LoadingScreen(),
-                    );
-                  } else {
-                    getIt<NavigationService>().navigatePushReplace(
-                      MainScreenBuyer(),
-                    );
-                  }
+                  getIt<NavigationService>().navigatePushReplace(
+                    LoadingScreen(),
+                  );
                 }
 
                 if (state is AuthError) {

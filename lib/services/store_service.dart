@@ -367,7 +367,6 @@ class StoreService {
       await productRef.update(updatedData);
     }
 
-    // Fetch the updated data to sync with featuredProducts
     final productSnapshot = await productRef.get();
     if (productSnapshot.exists) {
       final productData = productSnapshot.data()!;
@@ -379,7 +378,6 @@ class StoreService {
             .doc(productId)
             .set({...productData, "id": productId, "storeId": uid});
       } else {
-        // If it was featured before but isFeatured is now false, remove it
         await firebaseFirestore
             .collection("featuredProducts")
             .doc(productId)

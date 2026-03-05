@@ -1,4 +1,5 @@
 import 'package:boo/core/models/cart_model.dart';
+import 'package:boo/core/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
@@ -9,6 +10,7 @@ class OrderModel {
   final String status;
   final DateTime? createdAt;
   final bool withCoupon;
+  final UserModel userModel;
 
   OrderModel({
     required this.orderId,
@@ -16,7 +18,9 @@ class OrderModel {
     required this.totalPrice,
     required this.products,
     required this.status,
-    this.createdAt, required this.withCoupon,
+    this.createdAt,
+    required this.withCoupon,
+    required this.userModel,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,7 +33,8 @@ class OrderModel {
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
           : FieldValue.serverTimestamp(),
-      "withCoupon" : withCoupon
+      "withCoupon": withCoupon,
+      "user": userModel.toMap(),
     };
   }
 
@@ -48,7 +53,9 @@ class OrderModel {
       status: map['status'] ?? 'pending',
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
-          : null, withCoupon: map['withCoupon'] ?? false,
+          : null,
+      withCoupon: map['withCoupon'] ?? false,
+      userModel: UserModel.fromMap(map['user'] ?? {}),
     );
   }
 }

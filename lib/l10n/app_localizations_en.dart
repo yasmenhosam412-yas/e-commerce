@@ -237,6 +237,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createStore => 'Create Store';
 
   @override
+  String get myStore => 'My Store';
+
+  @override
   String get title1 => 'Store Information';
 
   @override
@@ -646,4 +649,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shipped => 'Shipped';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get totalEarnings => 'Total Earnings';
+
+  @override
+  String get comingEarnings => 'Coming Earnings';
+
+  @override
+  String get lossCancelled => 'Loss (Cancelled)';
+
+  @override
+  String get totalOrders => 'Total Orders';
+
+  @override
+  String get revenueBreakdown => 'Revenue Breakdown';
+
+  @override
+  String get topSellingProducts => 'Top Selling Products';
+
+  @override
+  String get sold => 'sold';
 }

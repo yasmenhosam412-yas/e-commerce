@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
+import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/screens/main_screen/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +12,7 @@ import '../../../../../../core/utils/app_padding.dart';
 import '../../../../../../l10n/app_localizations.dart';
 
 class ReviewAndPublishContent extends StatefulWidget {
-  final File? selectedImage;
+  final String selectedImage;
   final String storeName;
   final String storeDesc;
   final String storeCategory;
@@ -65,29 +66,33 @@ class _ReviewAndPublishContentState extends State<ReviewAndPublishContent> {
         ),
         const SizedBox(height: AppPadding.medium),
 
-        if (widget.selectedImage != null)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.file(
-              widget.selectedImage!,
-              height: 120,
-              width: 120,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Icon(Icons.error, color: AppColors.primaryColor);
-              },
-            ),
-          )
-        else
-          Container(
-            height: 120,
-            width: 120,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.store, color: Colors.grey, size: 50),
-          ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: widget.selectedImage.startsWith('http')
+              ? SizedBox(
+              width: 105,
+              height: 105,
+              child: CachedImageWidget(imagePath: widget.selectedImage))
+              : widget.selectedImage.isNotEmpty
+                  ? Image.file(
+                      File(widget.selectedImage),
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error, color: AppColors.primaryColor);
+                      },
+                    )
+                  : Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.store, color: Colors.grey, size: 50),
+                    ),
+        ),
         const SizedBox(height: AppPadding.medium),
 
         _buildReviewRow(

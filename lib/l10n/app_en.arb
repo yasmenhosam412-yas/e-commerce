@@ -76,6 +76,7 @@
   "userDoesNotExist": "User does not exist",
   "loginSuccessful": "Login successful",
   "createStore": "Create Store",
+  "myStore": "My Store",
   "title1": "Store Information",
   "description1": "Enter the store name, description, and add the logo and cover image.",
   "title2": "Business Details",
@@ -212,7 +213,13 @@
   "qty": "Qty",
   "pending": "Pending",
   "canceled": "Canceled",
-  "shipped": "Shipped"
-
-
+  "shipped": "Shipped",
+  "statistics": "Statistics",
+  "totalEarnings": "Total Earnings",
+  "comingEarnings": "Coming Earnings",
+  "lossCancelled": "Loss (Cancelled)",
+  "totalOrders": "Total Orders",
+  "revenueBreakdown": "Revenue Breakdown",
+  "topSellingProducts": "Top Selling Products",
+  "sold": "sold"
 }

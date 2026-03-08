@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
 import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/services/navigation_service.dart';
@@ -38,6 +39,28 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
   String? deliveryInfo;
 
   @override
+  void initState() {
+    super.initState();
+    final state = context.read<ManageCubit>().state;
+    if (state is ManageLoaded && state.createStoreModel != null) {
+      final store = state.createStoreModel!;
+      selectedName = store.selectedName;
+      selectedDesc = store.selectedDesc;
+      selectedCat = store.selectedCat;
+      selectedPhone = store.selectedPhone;
+      selectedEmail = store.selectedEmail;
+      selectedAddress = store.selectedAddress;
+      selectedFees = store.selectedFees;
+      selectedDelivery = store.selectedDelivery;
+      selectedImage = store.selectedImage;
+      isDelivery = store.isDelivery;
+      deliveryGovernorates = store.deliveryGovernorates;
+      deliveryTime = store.deliveryTime;
+      deliveryInfo = store.deliveryInfo;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -46,11 +69,16 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                AppLocalizations.of(context)!.createStore,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.bold,
+              Center(
+                child: Text(
+                  (selectedName.isNotEmpty)
+                      ? AppLocalizations.of(context)!.myStore
+                      : AppLocalizations.of(context)!.createStore,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                  ),
                 ),
               ),
               SizedBox(height: AppPadding.large),
@@ -59,20 +87,29 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
                   children: [
                     _buildStepTile(
                       title: AppLocalizations.of(context)!.title1,
-                      isFinished: true,
+                      isFinished:
+                          selectedName.isNotEmpty &&
+                          selectedDesc.isNotEmpty &&
+                          selectedCat.isNotEmpty &&
+                          selectedImage.isNotEmpty,
                       onTap: () =>
                           _showStepModal(AppLocalizations.of(context)!.title1),
                     ),
                     _buildStepTile(
                       title: AppLocalizations.of(context)!.title2,
-                      isFinished: true,
+                      isFinished:
+                          selectedPhone.isNotEmpty &&
+                          selectedEmail.isNotEmpty &&
+                          selectedAddress.isNotEmpty,
                       onTap: () => _showBusinessDetailsModal(
                         AppLocalizations.of(context)!.title2,
                       ),
                     ),
                     _buildStepTile(
                       title: AppLocalizations.of(context)!.title3,
-                      isFinished: true,
+                      isFinished:
+                          selectedFees.isNotEmpty &&
+                          (!isDelivery || selectedDelivery.isNotEmpty),
                       onTap: () =>
                           _showFeesModal(AppLocalizations.of(context)!.title3),
                     ),
@@ -82,17 +119,18 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
                       onTap: _showReviewAndPublishModal,
                     ),
                     SizedBox(height: AppPadding.medium),
-                    _buildStepTile(
-                      title: AppLocalizations.of(context)!.signout,
-                      isFinished: false,
-                      onTap: () async {
-                        await FirebaseAuth.instance.signOut();
-                        getIt<NavigationService>().navigatePushRemoveUntil(
-                          AuthScreen(),
-                        );
-                      },
-                      isSignOut: true,
-                    ),
+                    (selectedName.isNotEmpty)
+                        ? SizedBox.shrink()
+                        : _buildStepTile(
+                            title: AppLocalizations.of(context)!.signout,
+                            isFinished: false,
+                            onTap: () async {
+                              await FirebaseAuth.instance.signOut();
+                              getIt<NavigationService>()
+                                  .navigatePushRemoveUntil(const AuthScreen());
+                            },
+                            isSignOut: true,
+                          ),
                   ],
                 ),
               ),
@@ -182,24 +220,25 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
   void _showFeesModal(String title) {
     getIt<NavigationService>().showCustomBottomDialog(
       content: FeesAndDelivery(
-        onClick: (
-          String fees,
-          String delivery,
-          bool deliveryEnabled,
-          List<String>? governorates,
-          String? time,
-          String? info,
-        ) {
-          setState(() {
-            selectedFees = fees;
-            selectedDelivery = delivery;
-            isDelivery = deliveryEnabled;
-            deliveryGovernorates = governorates;
-            deliveryTime = time;
-            deliveryInfo = info;
-          });
-          Navigator.pop(context);
-        },
+        onClick:
+            (
+              String fees,
+              String delivery,
+              bool deliveryEnabled,
+              List<String>? governorates,
+              String? time,
+              String? info,
+            ) {
+              setState(() {
+                selectedFees = fees;
+                selectedDelivery = delivery;
+                isDelivery = deliveryEnabled;
+                deliveryGovernorates = governorates;
+                deliveryTime = time;
+                deliveryInfo = info;
+              });
+              Navigator.pop(context);
+            },
         fees: selectedFees,
         deliveryPrice: selectedDelivery,
         isDelivery: isDelivery,
@@ -213,7 +252,7 @@ class _SellerCreationScreenState extends State<SellerCreationScreen> {
   void _showReviewAndPublishModal() {
     getIt<NavigationService>().showCustomBottomDialog(
       content: ReviewAndPublishContent(
-        selectedImage: File(selectedImage),
+        selectedImage: selectedImage,
         storeName: selectedName,
         storeDesc: selectedDesc,
         storeCategory: selectedCat,

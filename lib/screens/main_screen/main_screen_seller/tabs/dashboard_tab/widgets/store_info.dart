@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:boo/core/services/navigation_service.dart';
+import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -87,12 +88,20 @@ class _StoreInfoState extends State<StoreInfo> {
                   child: selectedImage != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            selectedImage!,
-                            height: 120,
-                            width: 120,
-                            fit: BoxFit.cover,
-                          ),
+                          child: (widget.image.startsWith('http') == true)
+                              ? SizedBox(
+                                  width: 105,
+                                  height : 105,
+                                  child: CachedImageWidget(
+                                    imagePath: widget.image,
+                                  ),
+                                )
+                              : Image.file(
+                                  selectedImage!,
+                                  height: 120,
+                                  width: 120,
+                                  fit: BoxFit.cover,
+                                ),
                         )
                       : Container(
                           height: 120,

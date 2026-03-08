@@ -76,6 +76,7 @@
   "userDoesNotExist": "المستخدم غير موجود",
   "loginSuccessful": "تم تسجيل الدخول بنجاح",
   "createStore": "انشاء متجر",
+  "myStore": "المتجر",
   "title1": "معلومات المتجر",
   "description1": "إدخال اسم المتجر، وصفه، وإضافة الشعار والصورة التعريفية.",
   "title2": "تفاصيل النشاط التجاري",
@@ -202,7 +203,6 @@
   "deliveryInformation": "معلومات التوصيل",
   "paymentSummary": "ملخص الدفع",
   "orderPlaced": "تم تقديم الطلب بنجاح ✅",
-
   "myOrders": "طلباتي",
   "noOrdersFound": "لا توجد طلبات.",
   "order": "طلب",
@@ -213,7 +213,14 @@
   "qty": "الكمية",
   "pending": "قيد الانتظار",
   "canceled": "ملغى",
-  "shipped": "تم الشحن"
-
+  "shipped": "تم الشحن",
+  "statistics": "الإحصائيات",
+  "totalEarnings": "إجمالي الأرباح",
+  "comingEarnings": "أرباح قادمة",
+  "lossCancelled": "خسارة (ملغاة)",
+  "totalOrders": "إجمالي الطلبات",
+  "revenueBreakdown": "تفاصيل الإيرادات",
+  "topSellingProducts": "أكثر المنتجات مبيعاً",
+  "sold": "تم بيعها"
 }
 

@@ -32,7 +32,7 @@ class ErrorHandler {
       return ErrorHandler._(loc.somethingWentWrong);
     }
 
-    if (error is FirebaseAuthException) {
+    if (error is FirebaseException) {
       switch (error.code) {
         case 'user-not-found':
         case 'invalid-credential':

@@ -1,6 +1,8 @@
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/dashboard_tab/dashboard_tab.dart';
 import 'package:boo/screens/main_screen/main_screen_seller/tabs/orders_tab/orders_tab.dart';
+import 'package:boo/screens/main_screen/main_screen_seller/tabs/profile_seller_tab/profile_seller_tab.dart';
+import 'package:boo/screens/main_screen/main_screen_seller/tabs/statics_tab/statics_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -22,8 +24,8 @@ class _MainScreenSellerState extends State<MainScreenSeller> {
     screens = [
       DashboardTab(),
       OrdersTab(),
-      const Center(child: Text("Products")),
-      const Center(child: Text("Profile")),
+      StaticsTab(),
+      ProfileSellerTab(),
     ];
   }
 
@@ -68,7 +70,7 @@ class CustomBottomNavBar extends StatelessWidget {
             children: [
               _navItem(Icons.dashboard_outlined, 0),
               _navItem(Icons.border_all_rounded, 1),
-              _navItem(Icons.view_agenda_outlined, 2),
+              _navItem(Icons.stacked_bar_chart_sharp, 2),
               _navItem(Icons.person_outline_sharp, 3),
             ],
           ),

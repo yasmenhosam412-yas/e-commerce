@@ -551,6 +551,12 @@ abstract class AppLocalizations {
   /// **'Create Store'**
   String get createStore;
 
+  /// No description provided for @myStore.
+  ///
+  /// In en, this message translates to:
+  /// **'My Store'**
+  String get myStore;
+
   /// No description provided for @title1.
   ///
   /// In en, this message translates to:
@@ -1372,6 +1378,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Shipped'**
   String get shipped;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @totalEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earnings'**
+  String get totalEarnings;
+
+  /// No description provided for @comingEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Earnings'**
+  String get comingEarnings;
+
+  /// No description provided for @lossCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss (Cancelled)'**
+  String get lossCancelled;
+
+  /// No description provided for @totalOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Orders'**
+  String get totalOrders;
+
+  /// No description provided for @revenueBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue Breakdown'**
+  String get revenueBreakdown;
+
+  /// No description provided for @topSellingProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Selling Products'**
+  String get topSellingProducts;
+
+  /// No description provided for @sold.
+  ///
+  /// In en, this message translates to:
+  /// **'sold'**
+  String get sold;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

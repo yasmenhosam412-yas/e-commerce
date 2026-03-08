@@ -237,6 +237,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createStore => 'انشاء متجر';
 
   @override
+  String get myStore => 'المتجر';
+
+  @override
   String get title1 => 'معلومات المتجر';
 
   @override
@@ -646,4 +649,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get shipped => 'تم الشحن';
+
+  @override
+  String get statistics => 'الإحصائيات';
+
+  @override
+  String get totalEarnings => 'إجمالي الأرباح';
+
+  @override
+  String get comingEarnings => 'أرباح قادمة';
+
+  @override
+  String get lossCancelled => 'خسارة (ملغاة)';
+
+  @override
+  String get totalOrders => 'إجمالي الطلبات';
+
+  @override
+  String get revenueBreakdown => 'تفاصيل الإيرادات';
+
+  @override
+  String get topSellingProducts => 'أكثر المنتجات مبيعاً';
+
+  @override
+  String get sold => 'تم بيعها';
 }

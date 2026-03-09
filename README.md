@@ -21,15 +21,14 @@ The app provides a smooth shopping experience with a clean UI and scalable archi
 
 - **Flutter**
 - **Firebase**
-- **Bloc / Cubit State Management**
-- **REST APIs**
+- **Cubit State Management**
 - **Localization (ARB)**
 
 ---
 
 # 📸 App Screenshots
 
-## Onboarding & Authentication
+## 1
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/6d40431b-f3d4-4df7-916b-ac33e5f04a71" width="250"/>
@@ -39,7 +38,7 @@ The app provides a smooth shopping experience with a clean UI and scalable archi
 
 ---
 
-## Home & Product Browsing
+## 2
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/791a8158-271b-4a37-b7ee-e6e3c3275f6b" width="250"/>
@@ -49,7 +48,7 @@ The app provides a smooth shopping experience with a clean UI and scalable archi
 
 ---
 
-## Product Details
+## 3
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/8c18e862-e2f5-45fb-8c77-1d56170a6cbd" width="250"/>
@@ -59,7 +58,7 @@ The app provides a smooth shopping experience with a clean UI and scalable archi
 
 ---
 
-## Cart & Orders
+## 4
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/6ebd4c5f-1656-44bc-bb43-d339ce401231" width="250"/>
@@ -69,7 +68,7 @@ The app provides a smooth shopping experience with a clean UI and scalable archi
 
 ---
 
-## Profile & Settings
+## 5
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/418c6c5d-c52d-4936-801b-fdcd47ab9d62" width="250"/>
@@ -78,11 +77,3 @@ The app provides a smooth shopping experience with a clean UI and scalable archi
 </p>
 
 ---
-
-## 🚀 Getting Started
-
-```bash
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
-flutter pub get
-flutter run

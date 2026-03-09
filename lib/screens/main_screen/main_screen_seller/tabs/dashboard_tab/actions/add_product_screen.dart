@@ -41,7 +41,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
-  List<File> _pickedImages = [];
+  final List<File> _pickedImages = [];
   List<String> _existingImages = [];
 
   Map<String, List<String>> _attributes = {};

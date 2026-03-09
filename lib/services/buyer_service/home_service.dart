@@ -1,5 +1,6 @@
 import 'package:boo/core/models/create_store_model.dart';
 import 'package:boo/core/models/products_model.dart';
+import 'package:boo/core/models/rate_review_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeService {
@@ -25,6 +26,14 @@ class HomeService {
         }, doc.id);
       }).toList(),
     );
+  }
+
+  Future<List<RateReviewModel>> getReviews(String id) async {
+    final snapshot = await firebaseFirestore.collection("featuredProducts").doc(id).collection("reviews").get();
+
+    return snapshot.docs.map((doc) {
+      return RateReviewModel.fromJson(doc.data());
+    }).toList();
   }
 
   Future<List<CreateStoreModel>> getStores() async {

@@ -201,7 +201,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.redAccent.withOpacity(0.4),
+                              color: Colors.redAccent.withValues(alpha: 0.4),
                               blurRadius: 6,
                               offset: Offset(0, 2),
                             ),
@@ -398,10 +398,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withOpacity(0.08),
+                            color: AppColors.primaryColor.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppColors.primaryColor.withOpacity(0.3),
+                              color: AppColors.primaryColor.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Column(

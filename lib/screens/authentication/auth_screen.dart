@@ -1,3 +1,4 @@
+import 'package:boo/controllers/locale_cubit.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/utils/app_images.dart';
 import 'package:boo/core/utils/app_padding.dart';
@@ -5,6 +6,7 @@ import 'package:boo/l10n/app_localizations.dart';
 import 'package:boo/screens/authentication/tabs/login_tab.dart';
 import 'package:boo/screens/authentication/tabs/signup_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -42,13 +44,38 @@ class _AuthScreenState extends State<AuthScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(
+                  onPressed: () {
+                    context.read<LocaleCubit>().toggleLanguage();
+                  },
+                  child: Text(
+                    locale.languageCode == 'en' ? "العربية" : "English",
+                    style: TextStyle(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: AppPadding.large),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 10),
               SvgPicture.asset(AppImages.auth, height: 220),
 
               SizedBox(height: 30),

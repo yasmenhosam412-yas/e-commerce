@@ -110,8 +110,8 @@ class ProductWrapper {
       name: p.name,
       price: p.newPrice ?? p.price,
       oldPrice: p.price,
-      rating: 0,
-      reviewsCount: 0,
+      rating: p.ratingAvg ?? 0.0,
+      reviewsCount: p.reviewsCount ?? 0,
       productModel: p,
       userProductModel: null,
     );

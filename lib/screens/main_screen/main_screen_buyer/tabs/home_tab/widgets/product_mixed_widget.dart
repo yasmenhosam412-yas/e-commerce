@@ -5,10 +5,10 @@ import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_cubit.dart';
 import '../../../../../../controllers/buyer_cubits/fav_cubit/fav_state.dart';
-
 
 enum ProductOwnerType { store, user }
 
@@ -75,7 +75,7 @@ class ProductItem extends StatelessWidget {
     borderRadius: BorderRadius.circular(12),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.08),
+        color: Colors.black.withValues(alpha: 0.08),
         blurRadius: 6,
         offset: const Offset(0, 4),
       ),
@@ -98,7 +98,9 @@ class ProductItem extends StatelessWidget {
                 return state.favourites.any((e) => e.id == productModel!.id);
               } else {
                 if (userProductModel == null) return false;
-                return state.favouritesUsers.any((e) => e.id == userProductModel!.id);
+                return state.favouritesUsers.any(
+                  (e) => e.id == userProductModel!.id,
+                );
               }
             },
             builder: (context, state) {
@@ -113,7 +115,9 @@ class ProductItem extends StatelessWidget {
                       }
                     } else {
                       if (userProductModel != null) {
-                        context.read<FavCubit>().toggleUserFav(userProductModel!);
+                        context.read<FavCubit>().toggleUserFav(
+                          userProductModel!,
+                        );
                       }
                     }
                   },
@@ -177,11 +181,13 @@ class ProductItem extends StatelessWidget {
         const SizedBox(height: 6),
         _sellerInfo(context),
         const SizedBox(height: 4),
-        _sellerRating(context),
+        (ownerType.name == ProductOwnerType.store.name)
+            ? _sellerRating(context)
+            : SizedBox.shrink(),
         const SizedBox(height: 6),
         _price(context, null),
         const SizedBox(height: 8),
-        _chatButton(),
+        _chatButton(context),
       ],
     );
   }
@@ -295,17 +301,29 @@ class ProductItem extends StatelessWidget {
     );
   }
 
-  Widget _chatButton() {
+  Widget _chatButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 34,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () async {
+          final Uri phoneUri = Uri(
+            scheme: 'tel',
+            path: userProductModel?.contactNumber,
+          );
+
+          if (await canLaunchUrl(phoneUri)) {
+            await launchUrl(phoneUri);
+          }
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text("Chat with seller", style: TextStyle(fontSize: 13)),
+        child: Text(
+          AppLocalizations.of(context)!.contactSeller,
+          style: TextStyle(fontSize: 13),
+        ),
       ),
     );
   }

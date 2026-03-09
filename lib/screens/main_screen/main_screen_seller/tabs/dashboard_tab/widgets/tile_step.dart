@@ -29,12 +29,12 @@ class TileStep extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppPadding.medium),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryColor.withOpacity(0.08),
+              color: AppColors.primaryColor.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: AppColors.primaryColor.withOpacity(0.3)),
+          border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -42,7 +42,7 @@ class TileStep extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
+                color: AppColors.primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.checklist, color: AppColors.primaryColor),

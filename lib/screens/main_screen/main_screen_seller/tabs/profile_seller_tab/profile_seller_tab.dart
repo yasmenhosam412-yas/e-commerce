@@ -1,4 +1,5 @@
 import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
+import 'package:boo/controllers/locale_cubit.dart';
 import 'package:boo/core/services/get_init.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
@@ -87,7 +88,7 @@ class _ProfileSellerTabState extends State<ProfileSellerTab> {
 
           _profileItem(
             icon: Icons.store_outlined,
-            title: "Store Settings",
+            title: AppLocalizations.of(context)!.myStore,
             onTap: () {
               getIt<NavigationService>().navigatePush(
                 const SellerCreationScreen(),
@@ -96,7 +97,7 @@ class _ProfileSellerTabState extends State<ProfileSellerTab> {
           ),
           _profileItem(
             icon: Icons.person_outline,
-            title: "Personal Information",
+            title: AppLocalizations.of(context)!.myInfo,
             onTap: () {
               final state = context.read<ManageCubit>().state;
               if (state is ManageLoaded) {
@@ -104,6 +105,18 @@ class _ProfileSellerTabState extends State<ProfileSellerTab> {
                   InfoScreen(userModel: state.userModel),
                 );
               }
+            },
+          ),
+
+          BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return _profileItem(
+                icon: Icons.language,
+                title: locale.languageCode == 'en' ? "العربية" : "English",
+                onTap: () {
+                  context.read<LocaleCubit>().toggleLanguage();
+                },
+              );
             },
           ),
 

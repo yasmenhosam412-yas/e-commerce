@@ -6,8 +6,10 @@ import 'package:boo/controllers/buyer_cubits/info_cubit/info_cubit.dart';
 import 'package:boo/controllers/buyer_cubits/sell_cubit/sell_cubit.dart';
 import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
 import 'package:boo/controllers/orders_cubit/orders_cubit.dart';
+import 'package:boo/controllers/review_cubit/review_cubit.dart';
 import 'package:boo/controllers/stores_cubit/dashboard_cubit/dashboard_cubit.dart';
 import 'package:boo/controllers/stores_cubit/store_creation_cubit/store_creation_cubit.dart';
+import 'package:boo/controllers/locale_cubit.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_theme.dart';
 import 'package:boo/screens/main_screen/loading_screen.dart';
@@ -18,6 +20,7 @@ import 'package:boo/services/buyer_service/checkout_service.dart';
 import 'package:boo/services/buyer_service/fav_service.dart';
 import 'package:boo/services/buyer_service/home_service.dart';
 import 'package:boo/services/buyer_service/info_service.dart';
+import 'package:boo/services/buyer_service/rate_review_service.dart';
 import 'package:boo/services/buyer_service/sell_servcie.dart';
 import 'package:boo/services/orders_service.dart';
 import 'package:boo/services/store_creation_service.dart';
@@ -45,6 +48,7 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => LocaleCubit()),
         BlocProvider(
           create: (context) => AuthCubit(
             authService: AuthService(),
@@ -71,8 +75,9 @@ Future<void> main() async {
         BlocProvider(create: (context) => CheckoutCubit(CheckoutService())),
         BlocProvider(create: (context) => InfoCubit(InfoService())),
         BlocProvider(create: (context) => OrdersCubit(OrdersService())),
+        BlocProvider(create: (context) => ReviewCubit(RateReviewService())),
       ],
-      child: MainApp(),
+      child: const MainApp(),
     ),
   );
 }
@@ -82,22 +87,27 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: getIt<NavigationService>().navigatorKey,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en'), Locale('ar')],
-      home: (FirebaseAuth.instance.currentUser?.uid != null)
-          ? LoadingScreen()
-          : OnBoardingScreen(),
+    return BlocBuilder<LocaleCubit, Locale>(
+      builder: (context, locale) {
+        return MaterialApp(
+          navigatorKey: getIt<NavigationService>().navigatorKey,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: (FirebaseAuth.instance.currentUser?.uid != null)
+              ? LoadingScreen()
+              : OnBoardingScreen(),
+        );
+      },
     );
   }
 }

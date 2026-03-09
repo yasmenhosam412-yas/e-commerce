@@ -11,14 +11,35 @@ class OrderDetails extends StatelessWidget {
 
   const OrderDetails({super.key, required this.order});
 
+  String getLocalizedStatus(BuildContext context, String status) {
+    final locale = AppLocalizations.of(context)!;
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return locale.pending;
+      case 'accepted':
+        return locale.accepted;
+      case 'ready':
+        return locale.ready;
+      case 'onway':
+        return locale.onWay;
+      case 'delivered':
+        return locale.delivered;
+      case 'rejected':
+        return locale.rejected;
+      default:
+        return status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
-        title: const Text("Order Details"),
+        title: Text(locale.orderDetails),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -46,7 +67,7 @@ class OrderDetails extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Order #${order.orderId}",
+                        "${locale.order} #${order.orderId.substring(0, 8).toUpperCase()}",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -60,11 +81,11 @@ class OrderDetails extends StatelessWidget {
                           horizontal: 14,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          order.status.toUpperCase(),
+                          getLocalizedStatus(context, order.status).toUpperCase(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -80,7 +101,6 @@ class OrderDetails extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // User Info Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -99,8 +119,8 @@ class OrderDetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Customer Info",
+                    Text(
+                      locale.deliveryInformation,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -124,7 +144,7 @@ class OrderDetails extends StatelessWidget {
                         const Icon(Icons.phone, color: Colors.grey),
                         const SizedBox(width: 8),
                         Text(
-                          order.userModel.phone ?? "No phone",
+                          order.userModel.phone,
                           style: const TextStyle(color: AppColors.primaryColor),
                         ),
                       ],
@@ -136,7 +156,7 @@ class OrderDetails extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            order.userModel.address ?? "No address",
+                            order.userModel.address,
                             style: const TextStyle(
                               color: AppColors.primaryColor,
                             ),
@@ -157,8 +177,8 @@ class OrderDetails extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Products",
+                  Text(
+                    locale.products,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -189,7 +209,7 @@ class OrderDetails extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.network(
-                                  product.productsModel.image ?? "",
+                                  product.productsModel.image,
                                   width: 60,
                                   height: 60,
                                   fit: BoxFit.cover,
@@ -201,7 +221,7 @@ class OrderDetails extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      product.productsModel.name ?? "",
+                                      product.productsModel.name,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.primaryColor,
@@ -209,7 +229,7 @@ class OrderDetails extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      "Qty: ${product.quantity}",
+                                      "${locale.qty}: ${product.quantity}",
                                       style: const TextStyle(
                                         color: Colors.grey,
                                       ),
@@ -218,7 +238,7 @@ class OrderDetails extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${product.productsModel.newPrice?.toStringAsFixed(0) ?? product.productsModel.price.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
+                                "${product.productsModel.newPrice?.toStringAsFixed(0) ?? product.productsModel.price.toStringAsFixed(0)} ${locale.currency}",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primaryColor,
@@ -234,8 +254,8 @@ class OrderDetails extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Row(
                                   children: [
-                                    const Text(
-                                      "Size: ",
+                                    Text(
+                                      "${locale.productSizes}: ",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 19,
@@ -307,8 +327,8 @@ class OrderDetails extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Total",
+                        Text(
+                          locale.total,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -316,7 +336,7 @@ class OrderDetails extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          order.totalPrice,
+                          "${order.totalPrice} ${locale.currency}",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -379,7 +399,7 @@ class OrderDetails extends StatelessWidget {
                                                 strokeWidth: 2,
                                               ),
                                             )
-                                          : const Text("Accept"),
+                                          : Text(locale.accept),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
@@ -406,11 +426,11 @@ class OrderDetails extends StatelessWidget {
                                                           16,
                                                         ),
                                                   ),
-                                                  title: const Text(
-                                                    "Reject Order",
+                                                  title: Text(
+                                                    locale.rejectOrder,
                                                   ),
-                                                  content: const Text(
-                                                    "Are you sure you want to reject this order?",
+                                                  content: Text(
+                                                    locale.areYouSureReject,
                                                   ),
                                                   actions: [
                                                     TextButton(
@@ -418,8 +438,8 @@ class OrderDetails extends StatelessWidget {
                                                           Navigator.pop(
                                                             context,
                                                           ),
-                                                      child: const Text(
-                                                        "Cancel",
+                                                      child: Text(
+                                                        locale.cancel,
                                                       ),
                                                     ),
                                                     ElevatedButton(
@@ -445,15 +465,15 @@ class OrderDetails extends StatelessWidget {
                                                               "rejected",
                                                             );
                                                       },
-                                                      child: const Text(
-                                                        "Reject",
+                                                      child: Text(
+                                                        locale.reject,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               );
                                             },
-                                      child: const Text("Reject"),
+                                      child: Text(locale.reject),
                                     ),
                                   ),
                                 ],
@@ -491,7 +511,7 @@ class OrderDetails extends StatelessWidget {
                                             strokeWidth: 2,
                                           ),
                                         )
-                                      : const Text("Ready"),
+                                      : Text(locale.ready),
                                 ),
                               ),
                             ] else if (order.status == "ready") ...[
@@ -527,7 +547,7 @@ class OrderDetails extends StatelessWidget {
                                             strokeWidth: 2,
                                           ),
                                         )
-                                      : const Text("On the way"),
+                                      : Text(locale.onWay),
                                 ),
                               ),
                             ] else if (order.status == "onWay") ...[
@@ -563,7 +583,7 @@ class OrderDetails extends StatelessWidget {
                                             strokeWidth: 2,
                                           ),
                                         )
-                                      : const Text("Delivered"),
+                                      : Text(locale.delivered),
                                 ),
                               ),
                             ],

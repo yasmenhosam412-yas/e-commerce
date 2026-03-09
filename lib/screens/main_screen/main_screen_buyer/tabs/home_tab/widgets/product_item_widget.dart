@@ -1,3 +1,4 @@
+import 'package:boo/controllers/buyer_cubits/home_cubit/home_cubit.dart';
 import 'package:boo/core/models/products_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
@@ -32,13 +33,16 @@ class ProductClothesItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context);
+    if (locale == null) return const SizedBox.shrink();
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -56,7 +60,6 @@ class ProductClothesItem extends StatelessWidget {
                   ),
                   child: CachedImageWidget(imagePath: image),
                 ),
-
                 BlocSelector<FavCubit, FavState, bool>(
                   selector: (state) {
                     return state.favourites.any((e) => e.id == productModel.id);
@@ -85,7 +88,6 @@ class ProductClothesItem extends StatelessWidget {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
@@ -102,28 +104,197 @@ class ProductClothesItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-
                 Row(
                   children: [
                     _buildRatingStars(rating),
                     if (ratingCount != null) ...[
                       const SizedBox(width: 4),
                       Text(
-                        "($ratingCount ${AppLocalizations.of(context)!.reviews})",
+                        "($ratingCount ${locale.reviews})",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 12,
                           color: Colors.grey,
                         ),
                       ),
                     ],
+                    const Spacer(),
+                    InkWell(
+                      onTap: () async {
+                        final homeCubit = context.read<HomeCubit>();
+                        await homeCubit.getReviewOfProducts(
+                          productModel.id.toString(),
+                        );
+
+                        if (!context.mounted) return;
+
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(25),
+                            ),
+                          ),
+                          builder: (modalContext) {
+                            return BlocBuilder<HomeCubit, HomeState>(
+                              bloc: homeCubit,
+                              builder: (context, state) {
+                                return Container(
+                                  padding: const EdgeInsets.all(16),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Center(
+                                        child: Text(
+                                          "Reviews",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      if (state.isLoadingR == true)
+                                        const Expanded(
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        )
+                                      else if (state.review == null ||
+                                          state.review!.isEmpty)
+                                        const Expanded(
+                                          child: Center(
+                                            child: Text("No reviews yet"),
+                                          ),
+                                        )
+                                      else
+                                        Expanded(
+                                          child: ListView.separated(
+                                            itemCount: state.review!.length,
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    const SizedBox(height: 12),
+                                            itemBuilder: (context, index) {
+                                              final item = state.review![index];
+                                              return Container(
+                                                padding: const EdgeInsets.all(
+                                                  12,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 40,
+                                                      height: 40,
+                                                      child: ClipOval(
+                                                        child:
+                                                            (item.userImage !=
+                                                                    null &&
+                                                                item
+                                                                    .userImage!
+                                                                    .isNotEmpty)
+                                                            ? CachedImageWidget(
+                                                                imagePath: item
+                                                                    .userImage!,
+                                                              )
+                                                            : const Icon(
+                                                                Icons.person,
+                                                                size: 30,
+                                                              ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            item.userName ??
+                                                                "Anonymous",
+                                                            style: const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: AppColors
+                                                                  .primaryColor,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 4,
+                                                          ),
+                                                          Row(
+                                                            children: List.generate(
+                                                              item.rating
+                                                                      ?.toInt()
+                                                                      .clamp(
+                                                                        0,
+                                                                        5,
+                                                                      ) ??
+                                                                  0,
+                                                              (
+                                                                index,
+                                                              ) => const Icon(
+                                                                Icons.star,
+                                                                color: Colors
+                                                                    .amber,
+                                                                size: 16,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 6,
+                                                          ),
+                                                          Text(
+                                                            item.review ?? "",
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .grey
+                                                                  .shade700,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: const Icon(
+                        Icons.chat,
+                        size: 18,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
                   ],
                 ),
-
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     Text(
-                      "${price.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
+                      "${price.toStringAsFixed(0)} ${locale.currency}",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -133,7 +304,7 @@ class ProductClothesItem extends StatelessWidget {
                     if (oldPrice != null) ...[
                       const SizedBox(width: 6),
                       Text(
-                        "${oldPrice!.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
+                        "${oldPrice!.toStringAsFixed(0)} ${locale.currency}",
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontSize: 13,
                           color: Colors.grey,

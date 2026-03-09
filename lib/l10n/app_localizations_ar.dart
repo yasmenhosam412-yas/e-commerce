@@ -673,4 +673,73 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sold => 'تم بيعها';
+
+  @override
+  String get rateProduct => 'قيم المنتج';
+
+  @override
+  String get submit => 'إرسال';
+
+  @override
+  String get rating => 'التقييم';
+
+  @override
+  String get writeReview => 'اكتب مراجعتك';
+
+  @override
+  String get reviewAdded => 'تم إضافة المراجعة بنجاح';
+
+  @override
+  String get myInfo => 'البيانات الشخصية';
+
+  @override
+  String get newP => 'جديد';
+
+  @override
+  String get userP => 'مستعمل';
+
+  @override
+  String get contactSeller => 'تواصل مع البائع';
+
+  @override
+  String get coupon => 'كوبون';
+
+  @override
+  String get enterCouponCodee => 'أدخل كود الكوبون';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get ready => 'جاهز';
+
+  @override
+  String get onWay => 'في الطريق';
+
+  @override
+  String get rejected => 'مرفوض';
+
+  @override
+  String get accepted => 'مقبول';
+
+  @override
+  String get delivered => 'تم التوصيل';
+
+  @override
+  String get size => 'المقاس';
+
+  @override
+  String get orderDetails => 'Order Details';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get rejectOrder => 'Reject Order';
+
+  @override
+  String get areYouSureReject => 'Are you sure you want to reject this order?';
 }

@@ -3,10 +3,13 @@ part of 'home_cubit.dart';
 class HomeState extends Equatable {
   final List<ProductsModel>? featuredProducts;
   final List<CreateStoreModel>? stores;
+  final List<RateReviewModel>? review;
   final List<Map<String, dynamic>>? ads;
+  final bool? isLoadingR;
   final bool? isLoadingF;
   final bool? isLoadingS;
   final bool? isLoadingAds;
+  final String? errorR;
   final String? errorF;
   final String? errorS;
   final String? errorAds;
@@ -20,7 +23,7 @@ class HomeState extends Equatable {
     this.errorAds,
     this.stores,
     this.isLoadingS,
-    this.errorS,
+    this.errorS, this.review, this.isLoadingR, this.errorR,
   });
 
   HomeState copyWith({
@@ -33,6 +36,9 @@ class HomeState extends Equatable {
     List<CreateStoreModel>? stores,
     bool? isLoadingS,
     String? errorS,
+    List<RateReviewModel>? review,
+    bool? isLoadingR,
+    String? errorR,
   }) {
     return HomeState(
       featuredProducts: featuredProducts ?? this.featuredProducts,
@@ -44,6 +50,9 @@ class HomeState extends Equatable {
       stores: stores ?? this.stores,
       isLoadingS: isLoadingS ?? this.isLoadingS,
       errorS: errorS ?? this.errorS,
+      review: review ?? this.review,
+      isLoadingR: isLoadingR ?? this.isLoadingR,
+      errorR: errorR ?? this.errorR,
     );
   }
 
@@ -58,5 +67,8 @@ class HomeState extends Equatable {
     stores,
     isLoadingS,
     errorS,
+    review,
+    isLoadingR,
+    errorR,
   ];
 }

@@ -111,14 +111,14 @@ class _DashboardTabState extends State<DashboardTab> {
           );
         },
       ),
-      ActionModel(
-        title: AppLocalizations.of(context)!.signout,
-        color: Colors.red,
-        onTab: () {
-          FirebaseAuth.instance.signOut();
-          getIt<NavigationService>().navigatePushReplace(AuthScreen());
-        },
-      ),
+      // ActionModel(
+      //   title: AppLocalizations.of(context)!.signout,
+      //   color: Colors.red,
+      //   onTab: () {
+      //     FirebaseAuth.instance.signOut();
+      //     getIt<NavigationService>().navigatePushReplace(AuthScreen());
+      //   },
+      // ),
     ];
 
     return Scaffold(

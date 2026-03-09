@@ -61,10 +61,10 @@ class WantToSellList extends StatelessWidget {
                     ),
                     margin: const EdgeInsets.all(AppPadding.large),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryColor.withOpacity(0.1),
+                      color: AppColors.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primaryColor.withOpacity(0.3),
+                        color: AppColors.primaryColor.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),

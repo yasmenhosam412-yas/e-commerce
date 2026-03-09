@@ -1,6 +1,10 @@
 import 'package:boo/controllers/buyer_cubits/checkout_cubit/checkout_cubit.dart';
+import 'package:boo/controllers/review_cubit/review_cubit.dart';
+import 'package:boo/core/models/cart_model.dart';
 import 'package:boo/core/models/order_model.dart';
+import 'package:boo/core/models/user_model.dart';
 import 'package:boo/core/utils/app_colors.dart';
+import 'package:boo/core/widgets/custom_form_field.dart';
 import 'package:boo/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +14,9 @@ import '../../../../../core/services/get_init.dart';
 import '../../../../../core/services/navigation_service.dart';
 
 class OrdersScreen extends StatefulWidget {
-  const OrdersScreen({super.key});
+  final UserModel userModel;
+
+  const OrdersScreen({super.key, required this.userModel});
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
@@ -29,15 +35,118 @@ class _OrdersScreenState extends State<OrdersScreen> {
     switch (status.toLowerCase()) {
       case 'pending':
         return Colors.orange;
-      case 'completed':
+      case 'accepted':
         return Colors.green;
-      case 'canceled':
+      case 'rejected':
         return Colors.red;
-      case 'shipped':
+      case 'ready':
         return Colors.blue;
+      case 'delivered':
+        return Colors.teal;
       default:
         return Colors.grey;
     }
+  }
+
+  void _showReviewDialog(BuildContext context, CartModel item) {
+    final locale = AppLocalizations.of(context)!;
+    final reviewController = TextEditingController();
+    double currentRating = 0;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: Text(
+                locale.rateProduct,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.primaryColor),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          onPressed: () {
+                            setState(() {
+                              currentRating = index + 1.0;
+                            });
+                          },
+                          icon: Icon(
+                            index < currentRating
+                                ? Icons.star
+                                : Icons.star_border,
+                            color: Colors.amber,
+                            size: 32,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomFormField(
+                      controller: reviewController,
+                      hint: locale.writeReview,
+                      maxLines: 5,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(locale.cancel),
+                ),
+                BlocConsumer<ReviewCubit, ReviewState>(
+                  listener: (context, state) {
+                    if (state is ReviewAdded) {
+                      getIt<NavigationService>().showToast(locale.reviewAdded);
+                      Navigator.pop(context);
+                    } else if (state is ReviewError) {
+                      getIt<NavigationService>().showToast(state.error);
+                    }
+                  },
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      onPressed: state is ReviewLoading
+                          ? null
+                          : () {
+                              if (currentRating > 0) {
+                                context.read<ReviewCubit>().addRate(
+                                      currentRating,
+                                      reviewController.text,
+                                      item.productsModel.id.toString(),
+                                      item.createStoreModel.id ?? "",
+                                      widget.userModel.displayName,
+                                      widget.userModel.photoURL,
+                                    );
+                              }
+                            },
+                      child: state is ReviewLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(locale.submit),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -117,7 +226,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           decoration: BoxDecoration(
                             color: getStatusColor(
                               order.status,
-                            ).withOpacity(0.15),
+                            ).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -139,7 +248,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           'dd MMM yyyy, hh:mm a',
                         ).format(order.createdAt!),
                         style: TextStyle(
-                          color: primaryColor.withOpacity(0.6),
+                          color: primaryColor.withValues(alpha: 0.6),
                           fontSize: 13,
                         ),
                       ),
@@ -148,50 +257,69 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ...order.products.map(
                       (item) => Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        child: Column(
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                item.productsModel.images.first,
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.broken_image, size: 60),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.productsModel.name,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: primaryColor,
-                                    ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    item.productsModel.images.first,
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.broken_image,
+                                              size: 60,
+                                            ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${locale.qty}: ${item.quantity}',
-                                    style: TextStyle(
-                                      color: primaryColor.withOpacity(0.7),
-                                      fontSize: 12,
-                                    ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.productsModel.name,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: primaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${locale.qty}: ${item.quantity}',
+                                        style: TextStyle(
+                                          color: primaryColor.withValues(alpha: 0.7),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                Text(
+                                  '${item.productsModel.newPrice ?? item.productsModel.price} ${locale.currency}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: primaryColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              '${item.productsModel.newPrice ?? item.productsModel.price} ${locale.currency}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: primaryColor,
+                            if (order.status.toLowerCase() == 'delivered')
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton.icon(
+                                  onPressed: () =>
+                                      _showReviewDialog(context, item),
+                                  icon: const Icon(Icons.star_outline, size: 18),
+                                  label: Text(locale.rateProduct),
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),

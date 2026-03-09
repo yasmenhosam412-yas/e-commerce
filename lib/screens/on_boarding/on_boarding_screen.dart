@@ -19,19 +19,8 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  bool _firstBuild = true;
 
-  late final List<OnboardingModel> _dataList;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _firstBuild = false;
-      });
-    });
-  }
+  late List<OnboardingModel> _dataList;
 
   @override
   void didChangeDependencies() {
@@ -59,8 +48,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     ];
   }
 
+
   bool _isVisible(int index) {
-    return _firstBuild || _currentPage == index;
+    return _currentPage == index;
   }
 
   @override
@@ -100,8 +90,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             opacity: visible ? 1 : 0,
                             child: SvgPicture.asset(
                               data.image,
-                              height:
-                              MediaQuery.sizeOf(context).width * 0.8,
+                              height: MediaQuery.sizeOf(context).width * 0.8,
                             ),
                           ),
                         ),
@@ -125,36 +114,32 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                       .textTheme
                                       .headlineMedium
                                       ?.copyWith(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 28,
-                                  ),
+                                        color: AppColors.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 28,
+                                      ),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
                                   data.subtitle,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
-                                    color: AppColors.primaryColor
-                                        .withValues(alpha: 0.8),
-                                    fontSize: 20,
-                                  ),
+                                        color: AppColors.primaryColor
+                                            .withValues(alpha: 0.8),
+                                        fontSize: 20,
+                                      ),
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 20),
                                 Text(
                                   data.description,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
+                                  style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
-                                    color: AppColors.primaryColor
-                                        .withValues(alpha: 0.7),
-                                    fontSize: 18,
-                                  ),
+                                        color: AppColors.primaryColor
+                                            .withValues(alpha: 0.7),
+                                        fontSize: 18,
+                                      ),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -172,7 +157,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _dataList.length,
-                    (index) => AnimatedContainer(
+                (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   margin: const EdgeInsets.symmetric(horizontal: 5),
                   width: _currentPage == index ? 20 : 8,
@@ -217,8 +202,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     _currentPage == _dataList.length - 1
                         ? AppLocalizations.of(context)!.getStarted
                         : AppLocalizations.of(context)!.next,
-                    style:
-                    const TextStyle(color: Colors.white, fontSize: 18),
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
               ),

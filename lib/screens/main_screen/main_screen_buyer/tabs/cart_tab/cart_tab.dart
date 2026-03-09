@@ -76,10 +76,10 @@ class _CartTabState extends State<CartTab> {
                   ),
                   margin: const EdgeInsets.all(AppPadding.large),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor.withOpacity(0.1),
+                    color: AppColors.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppColors.primaryColor.withOpacity(0.3),
+                      color: AppColors.primaryColor.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -196,7 +196,7 @@ class ShopCartSection extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12),
         ],
       ),
       child: Column(
@@ -204,7 +204,7 @@ class ShopCartSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.1),
+              color: AppColors.primaryColor.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(20),
               ),
@@ -439,7 +439,7 @@ class CartItemRow extends StatelessWidget {
                     Text(
                       "${price.toStringAsFixed(0)} ${AppLocalizations.of(context)!.currency}",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.primaryColor.withOpacity(0.8),
+                        color: AppColors.primaryColor.withValues(alpha: 0.8),
                         fontSize: 15,
                       ),
                     ),

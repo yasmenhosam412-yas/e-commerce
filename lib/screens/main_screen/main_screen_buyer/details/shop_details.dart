@@ -87,7 +87,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         scrollDirection: Axis.horizontal,
                         itemCount: 5,
-                        separatorBuilder: (_, _) => const SizedBox(width: 10),
+                        separatorBuilder: (_, __) => const SizedBox(width: 10),
                         itemBuilder: (context, index) {
                           final isSelected = selectedIndex == index;
 

@@ -51,7 +51,7 @@ class _FiltersContainerState extends State<FiltersContainer> {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -115,7 +115,7 @@ class _FiltersContainerState extends State<FiltersContainer> {
                   const SizedBox(height: 14),
 
                   DropdownButtonFormField<String>(
-                    value: widget.selectedDiscount,
+                    initialValue: widget.selectedDiscount,
                     dropdownColor: AppColors.whiteColor,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.discount,
@@ -142,7 +142,7 @@ class _FiltersContainerState extends State<FiltersContainer> {
                   const SizedBox(height: 16),
 
                   DropdownButtonFormField<String>(
-                    value: widget.selectedCollection,
+                    initialValue: widget.selectedCollection,
                     dropdownColor: AppColors.whiteColor,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context)!.collection_label,

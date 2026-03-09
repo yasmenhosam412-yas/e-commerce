@@ -673,4 +673,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sold => 'sold';
+
+  @override
+  String get rateProduct => 'Rate Product';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get writeReview => 'Write a review';
+
+  @override
+  String get reviewAdded => 'Review added successfully';
+
+  @override
+  String get myInfo => 'My Information';
+
+  @override
+  String get newP => 'New';
+
+  @override
+  String get userP => 'Used';
+
+  @override
+  String get contactSeller => 'Contact Seller';
+
+  @override
+  String get coupon => 'Coupon';
+
+  @override
+  String get enterCouponCodee => 'Enter coupon code';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get ready => 'Ready';
+
+  @override
+  String get onWay => 'On the Way';
+
+  @override
+  String get rejected => 'Rejected';
+
+  @override
+  String get accepted => 'Accepted';
+
+  @override
+  String get delivered => 'Delivered';
+
+  @override
+  String get size => 'Size';
+
+  @override
+  String get orderDetails => 'Order Details';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get rejectOrder => 'Reject Order';
+
+  @override
+  String get areYouSureReject => 'Are you sure you want to reject this order?';
 }

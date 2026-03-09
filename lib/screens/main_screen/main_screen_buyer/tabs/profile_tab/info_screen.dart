@@ -95,7 +95,7 @@ class _InfoScreenState extends State<InfoScreen> {
               onTap: pickImage,
               child: CircleAvatar(
                 radius: 55,
-                backgroundColor: AppColors.primaryColor.withOpacity(.1),
+                backgroundColor: AppColors.primaryColor.withValues(alpha: .1),
                 backgroundImage: selectedImage != null
                     ? FileImage(selectedImage!)
                     : (widget.userModel?.photoURL != null &&
@@ -251,7 +251,7 @@ class _InfoScreenState extends State<InfoScreen> {
     if (permission == LocationPermission.deniedForever) return;
 
     final position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
 
     try {

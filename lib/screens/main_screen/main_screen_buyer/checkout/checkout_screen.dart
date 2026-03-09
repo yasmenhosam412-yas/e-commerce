@@ -84,7 +84,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 10),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .05),
+              blurRadius: 10,
+            ),
           ],
         ),
         child: BlocConsumer<CheckoutCubit, CheckoutState>(
@@ -282,7 +285,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 20),
 
             _buildSectionCard(
-              title: "Coupon",
+              title: AppLocalizations.of(context)!.coupon,
               child: Column(
                 children: [
                   Row(
@@ -290,7 +293,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Expanded(
                         child: CustomFormField(
                           controller: couponController,
-                          hint: "Enter coupon code",
+                          hint: AppLocalizations.of(context)!.enterCouponCodee,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -488,7 +491,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (permission == LocationPermission.deniedForever) return;
 
     final position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
 
     try {

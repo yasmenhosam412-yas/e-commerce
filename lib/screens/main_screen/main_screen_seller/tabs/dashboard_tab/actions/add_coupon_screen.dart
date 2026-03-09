@@ -79,7 +79,7 @@ class _AddCouponScreenState extends State<AddCouponScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _discountType,
+                initialValue: _discountType,
                 dropdownColor: AppColors.whiteColor,
 
                 decoration: InputDecoration(

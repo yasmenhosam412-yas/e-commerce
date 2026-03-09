@@ -1,4 +1,6 @@
 import 'package:boo/controllers/manage_cubit/manage_cubit.dart';
+import 'package:boo/controllers/locale_cubit.dart';
+import 'package:boo/core/models/user_model.dart';
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/utils/app_colors.dart';
 import 'package:boo/l10n/app_localizations.dart';
@@ -48,7 +50,7 @@ class _ProfileTabState extends State<ProfileTab> {
                               color: AppColors.whiteColor,
                             ),
                           ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       state.userModel?.displayName ?? "",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -57,7 +59,7 @@ class _ProfileTabState extends State<ProfileTab> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       state.userModel?.email ?? "",
                       style: Theme.of(
@@ -67,7 +69,7 @@ class _ProfileTabState extends State<ProfileTab> {
                   ],
                 );
               }
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             },
           ),
 
@@ -77,12 +79,35 @@ class _ProfileTabState extends State<ProfileTab> {
             icon: Icons.local_shipping_outlined,
             title: AppLocalizations.of(context)!.myOrders,
             onTap: () {
-              getIt<NavigationService>().navigatePush(OrdersScreen());
+              getIt<NavigationService>().navigatePush(
+                BlocBuilder<ManageCubit, ManageState>(
+                  builder: (context, state) {
+                    if (state is ManageLoaded) {
+                      return OrdersScreen(
+                        userModel:
+                            state.userModel ??
+                            UserModel(
+                              uid: "",
+                              email: "",
+                              displayName: "",
+                              photoURL: "",
+                              userType: "",
+                              phone: "",
+                              address: "",
+                              location: "",
+                              governorate: "",
+                            ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              );
             },
           ),
           _profileItem(
             icon: Icons.data_array,
-            title: "My Information",
+            title: AppLocalizations.of(context)!.myInfo,
             onTap: () {
               getIt<NavigationService>().navigatePush(
                 BlocBuilder<ManageCubit, ManageState>(
@@ -90,20 +115,25 @@ class _ProfileTabState extends State<ProfileTab> {
                     if (state is ManageLoaded) {
                       return InfoScreen(userModel: state.userModel);
                     }
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   },
                 ),
               );
             },
           ),
 
-          // _profileItem(
-          //   icon: Icons.person_outline,
-          //   title: "My Account",
-          //   onTap: () {
-          //     getIt<NavigationService>().navigatePush(MyAccount());
-          //   },
-          // ),
+          BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return _profileItem(
+                icon: Icons.language,
+                title: locale.languageCode == 'en' ? "العربية" : "English",
+                onTap: () {
+                  context.read<LocaleCubit>().toggleLanguage();
+                },
+              );
+            },
+          ),
+
           const Divider(height: 32),
 
           _profileItem(
@@ -113,7 +143,7 @@ class _ProfileTabState extends State<ProfileTab> {
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               getIt<NavigationService>().navigatePushRemoveUntil(
-                OnBoardingScreen(),
+                const OnBoardingScreen(),
               );
             },
           ),

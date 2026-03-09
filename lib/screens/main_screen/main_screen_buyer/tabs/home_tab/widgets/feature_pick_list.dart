@@ -28,7 +28,9 @@ class FeaturedPickList extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                getIt<NavigationService>().navigatePush(ProductDetails(productsModel: product,));
+                getIt<NavigationService>().navigatePush(
+                  ProductDetails(productsModel: product),
+                );
               },
               child: ProductClothesItem(
                 image: product.image,
@@ -38,8 +40,9 @@ class FeaturedPickList extends StatelessWidget {
                 oldPrice: (product.newPrice != product.price)
                     ? product.price
                     : null,
-                rating: 0,
-                ratingCount: 0, productModel: product,
+                rating: product.ratingAvg ?? 0,
+                ratingCount: product.reviewsCount,
+                productModel: product,
               ),
             ),
           );

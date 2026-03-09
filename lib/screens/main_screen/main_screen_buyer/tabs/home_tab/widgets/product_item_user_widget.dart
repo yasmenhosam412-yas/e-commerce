@@ -39,7 +39,7 @@ class UserProductClothesItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -68,8 +68,8 @@ class UserProductClothesItem extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: isUsed
-                          ? Colors.orange.withOpacity(0.9)
-                          : Colors.green.withOpacity(0.9),
+                          ? Colors.orange.withValues(alpha: 0.9)
+                          : Colors.green.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -205,8 +205,8 @@ class UserProductClothesItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      "Contact seller",
+                    child:  Text(
+                      AppLocalizations.of(context)!.contactSeller,
                       style: TextStyle(fontSize: 13),
                     ),
                   ),

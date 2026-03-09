@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:boo/core/services/navigation_service.dart';
 import 'package:boo/core/widgets/cached_image_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 

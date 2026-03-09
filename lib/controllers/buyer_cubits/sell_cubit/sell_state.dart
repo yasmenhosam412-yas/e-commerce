@@ -15,7 +15,7 @@ final class SellLoading extends SellState {
 final class SellLoaded extends SellState {
   final List<UserProductModel> userProducts;
 
-  SellLoaded({required this.userProducts});
+  const SellLoaded({required this.userProducts});
   @override
   List<Object> get props => [];
 }

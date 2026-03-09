@@ -1,5 +1,6 @@
-import 'package:boo/core/models/create_store_model.dart';
 import 'package:equatable/equatable.dart';
+
+import 'create_store_model.dart';
 
 class ProductsModel extends Equatable {
   final int id;
@@ -13,12 +14,14 @@ class ProductsModel extends Equatable {
   final int quantity;
   final List<String> sizes;
   final Map<String, List<String>> attributes;
-
   final bool? isFeatured;
   final String? collectionName;
   final String? discount;
   final CreateStoreModel createStoreModel;
   final String storeId;
+
+  final double? ratingAvg;
+  final int? reviewsCount;
 
   const ProductsModel({
     required this.id,
@@ -35,7 +38,10 @@ class ProductsModel extends Equatable {
     this.isFeatured,
     this.collectionName,
     this.discount,
-    required this.createStoreModel, required this.storeId,
+    required this.createStoreModel,
+    required this.storeId,
+    this.ratingAvg,
+    this.reviewsCount,
   });
 
   @override
@@ -55,6 +61,8 @@ class ProductsModel extends Equatable {
     collectionName,
     discount,
     createStoreModel,
+    reviewsCount,
+    ratingAvg,
   ];
 
   factory ProductsModel.fromMap(Map<String, dynamic> map, String docId) {
@@ -91,7 +99,9 @@ class ProductsModel extends Equatable {
       collectionName: map['collectionName'],
       discount: map['discount'],
       createStoreModel: CreateStoreModel.fromJson(map['store']),
-      storeId: map['storeId']
+      storeId: map['storeId'],
+      ratingAvg: map['ratingAvg'] ?? 0.0,
+      reviewsCount: map['reviewsCount'] ?? 0,
     );
   }
 
@@ -111,7 +121,9 @@ class ProductsModel extends Equatable {
     String? collectionName,
     String? discount,
     String? storeId,
-    CreateStoreModel? createStoreModel
+    CreateStoreModel? createStoreModel,
+    double? ratingAvg,
+    int? reviewsCount,
   }) {
     return ProductsModel(
       id: id ?? this.id,
@@ -127,9 +139,11 @@ class ProductsModel extends Equatable {
       attributes: attributes ?? this.attributes,
       isFeatured: isFeatured ?? this.isFeatured,
       collectionName: collectionName ?? this.collectionName,
-      discount: discount ?? this.discount, createStoreModel: createStoreModel ?? this.createStoreModel,
-      storeId: storeId ?? this
-        .storeId
+      discount: discount ?? this.discount,
+      createStoreModel: createStoreModel ?? this.createStoreModel,
+      storeId: storeId ?? this.storeId,
+      reviewsCount: reviewsCount ?? this.reviewsCount,
+      ratingAvg: ratingAvg ?? this.ratingAvg,
     );
   }
 
@@ -150,7 +164,9 @@ class ProductsModel extends Equatable {
       'collectionName': collectionName,
       'discount': discount,
       'store': createStoreModel.toJson(),
-      'storeId':storeId,
+      'storeId': storeId,
+      "ratingAvg": ratingAvg,
+      "reviewsCount": reviewsCount,
     };
   }
 }

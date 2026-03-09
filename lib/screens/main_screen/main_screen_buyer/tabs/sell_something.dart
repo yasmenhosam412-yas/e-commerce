@@ -192,7 +192,7 @@ class _SellSomethingState extends State<SellSomething> {
                             isUsed = value!;
                           });
                         },
-                        title: const Text("Used"),
+                        title: Text(AppLocalizations.of(context)!.userP),
                       ),
                     ),
                     Expanded(
@@ -205,7 +205,7 @@ class _SellSomethingState extends State<SellSomething> {
                             isUsed = value!;
                           });
                         },
-                        title: const Text("New"),
+                        title: Text(AppLocalizations.of(context)!.newP),
                       ),
                     ),
                   ],

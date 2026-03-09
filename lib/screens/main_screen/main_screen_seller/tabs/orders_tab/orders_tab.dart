@@ -19,17 +19,6 @@ class OrdersTab extends StatefulWidget {
 class _OrdersTabState extends State<OrdersTab> {
   String selectedStatus = "all";
 
-  final List<Map<String, String>> statuses = [
-    {"key": "all", "label": "All"},
-    {"key": "pending", "label": "Pending"},
-    {"key": "ready", "label": "Ready"},
-    {"key": "onWay", "label": "On Way"},
-    {"key": "canceled", "label": "Canceled"},
-    {"key": "rejected", "label": "Rejected"},
-    {"key": "accepted", "label": "Accepted"},
-    {"key": "delivered", "label": "Delivered"},
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -38,6 +27,17 @@ class _OrdersTabState extends State<OrdersTab> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> statuses = [
+      {"key": "all", "label": AppLocalizations.of(context)!.all},
+      {"key": "pending", "label": AppLocalizations.of(context)!.pending},
+      {"key": "ready", "label": AppLocalizations.of(context)!.ready},
+      {"key": "onWay", "label": AppLocalizations.of(context)!.onWay},
+      {"key": "canceled", "label": AppLocalizations.of(context)!.canceled},
+      {"key": "rejected", "label": AppLocalizations.of(context)!.rejected},
+      {"key": "accepted", "label": AppLocalizations.of(context)!.accepted},
+      {"key": "delivered", "label": AppLocalizations.of(context)!.delivered},
+    ];
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
@@ -73,7 +73,9 @@ class _OrdersTabState extends State<OrdersTab> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                               side: BorderSide(
-                                color: AppColors.primaryColor.withOpacity(.3),
+                                color: AppColors.primaryColor.withValues(
+                                  alpha: .3,
+                                ),
                               ),
                             ),
                             backgroundColor: Colors.white,
@@ -126,7 +128,7 @@ class _OrdersTabState extends State<OrdersTab> {
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(.05),
+                                  color: Colors.black.withValues(alpha: .05),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -195,7 +197,7 @@ class _OrdersTabState extends State<OrdersTab> {
                                       decoration: BoxDecoration(
                                         color: getBorderColor(
                                           order.status,
-                                        ).withOpacity(.12),
+                                        ).withValues(alpha: .12),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
